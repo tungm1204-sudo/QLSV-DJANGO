@@ -1,0 +1,71 @@
+{% extends 'core/base.html' %} {% block title %} Teachers - QLSV {% endblock %}
+{% block header_title %} Teachers {% endblock %} {% block content %}
+<div class="page-header" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center;">
+  <form method="get" action="{% url 'teachers:teacher_list' %}" style="display: flex; gap: 0.5rem">
+    <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Search teachers..." style="padding: 0.6rem 1rem; border: 1px solid var(--border); border-radius: 10px; width: 300px; outline: none;" />
+    <button type="submit" class="btn" style="background: var(--light); color: var(--primary)">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+    {% if request.GET.q %}
+    <a href="{% url 'teachers:teacher_list' %}" class="btn" style="background: #fff1f2; color: #e11d48">Clear</a>
+    {% endif %}
+  </form>
+  {% if perms.teachers.add_teacher %}
+  <a href="{% url 'teachers:teacher_create' %}" class="btn btn-primary">
+    <i class="fa-solid fa-plus"></i> Add Teacher
+  </a>
+  {% endif %}
+</div>
+
+<div class="card animate-fade-in">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Full Name</th>
+          <th>Email</th>
+          <th>Department</th>
+          <th>Status</th>
+          {% if perms.teachers.change_teacher or perms.teachers.delete_teacher %}
+          <th>Actions</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for teacher in teachers %}
+        <tr>
+          <td style="font-weight: 500">
+            {{ teacher.fname }} {{ teacher.lname }}
+          </td>
+          <td>{{ teacher.email }}</td>
+          <td>{{ teacher.department|default:"-" }}</td>
+          <td><span class="status-badge status-active">Active</span></td>
+          {% if perms.teachers.change_teacher or perms.teachers.delete_teacher %}
+          <td>
+            <div style="display: flex; gap: 0.5rem">
+              {% if perms.teachers.change_teacher %}
+              <a href="{% url 'teachers:teacher_update' teacher.pk %}" class="btn" style="background: #f0f4ff; color: var(--primary); padding: 0.4rem 0.8rem;">
+                <i class="fa-solid fa-edit"></i>
+              </a>
+              {% endif %} 
+              {% if perms.teachers.delete_teacher %}
+              <a href="{% url 'teachers:teacher_delete' teacher.pk %}" class="btn" style="background: #fff1f2; color: #e11d48; padding: 0.4rem 0.8rem;">
+                <i class="fa-solid fa-trash"></i>
+              </a>
+              {% endif %}
+            </div>
+          </td>
+          {% endif %}
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align: center; color: var(--gray)">
+            No teachers found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

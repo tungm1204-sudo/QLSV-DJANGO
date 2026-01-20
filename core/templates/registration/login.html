@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %} {% block title %}Login - QLSV Pro{% endblock %}
+{% block header_title %}System Access{% endblock %} {% block content %}
+<div class="animate-fade-in" style="max-width: 400px; margin: 4rem auto">
+  <div class="card">
+    <div style="text-align: center; margin-bottom: 2rem">
+      <i
+        class="fa-solid fa-graduation-cap"
+        style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem"
+      ></i>
+      <h2 style="font-weight: 700">Login to QLSV Pro</h2>
+      <p style="color: var(--gray)">Please enter your credentials</p>
+    </div>
+
+    <form method="post">
+      {% csrf_token %} {% if form.errors %}
+      <div
+        style="
+          background: #fee2e2;
+          color: #991b1b;
+          padding: 0.8rem;
+          border-radius: 10px;
+          margin-bottom: 1rem;
+          font-size: 0.9rem;
+        "
+      >
+        Invalid username or password. Please try again.
+      </div>
+      {% endif %} {% for field in form %}
+      <div style="margin-bottom: 1.5rem">
+        <label
+          style="
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-2);
+          "
+        >
+          {{ field.label }}
+        </label>
+        <input
+          type="{{ field.field.widget.input_type }}"
+          name="{{ field.html_name }}"
+          style="
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            transition: var(--transition);
+          "
+          placeholder="{{ field.label }}"
+          required
+        />
+        {% if field.errors %} {% for error in field.errors %}
+        <span style="color: var(--danger); font-size: 0.8rem">{{ error }}</span>
+        {% endfor %} {% endif %}
+      </div>
+      {% endfor %}
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        style="width: 100%; padding: 1rem"
+      >
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

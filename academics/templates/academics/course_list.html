@@ -1,0 +1,83 @@
+{% extends 'core/base.html' %} {% block title %} Courses - QLSV {% endblock %}
+{% block header_title %} Courses {% endblock %} {% block content %}
+<div class="page-header" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+  <form method="get" action="{% url 'academics:course_list' %}" style="display: flex; gap: 0.5rem; flex: 1; flex-wrap: wrap;">
+    <input
+      type="text"
+      name="q"
+      value="{{ request.GET.q|default:'' }}"
+      placeholder="Search subjects..."
+      style="
+        padding: 0.6rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        width: 250px;
+        outline: none;
+      "
+    />
+    <select name="grade" style="padding: 0.6rem 1rem; border: 1px solid var(--border); border-radius: 10px; outline: none; background: white;">
+      <option value="">All Grades</option>
+      {% for grade in grades %}
+      <option value="{{ grade.grade_id }}" {% if request.GET.grade == grade.grade_id|stringformat:"i" %}selected{% endif %}>{{ grade.name }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn" style="background: var(--light); color: var(--primary)">
+      <i class="fa-solid fa-magnifying-glass"></i> Filter
+    </button>
+    {% if request.GET.q or request.GET.grade %}
+    <a href="{% url 'academics:course_list' %}" class="btn" style="background: #fff1f2; color: #e11d48">Clear</a>
+    {% endif %}
+  </form>
+    {% if perms.academics.add_course %}
+    <a href="{% url 'academics:course_create' %}" class="btn btn-primary">
+      <i class="fa-solid fa-plus"></i> Add Course
+    </a>
+    {% endif %}
+  </div>
+
+<div class="card animate-fade-in">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Grade</th>
+          {% if perms.academics.change_course or perms.academics.delete_course %}
+          <th style="text-align: right">Actions</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for course in courses %}
+        <tr>
+          <td style="font-weight: 500">{{ course.name }}</td>
+          <td>{{ course.grade }}</td>
+          {% if perms.academics.change_course or perms.academics.delete_course %}
+          <td style="text-align: right">
+            <div style="display: flex; gap: 0.5rem; justify-content: flex-end">
+              {% if perms.academics.change_course %}
+              <a href="{% url 'academics:course_update' course.pk %}" class="btn" style="background: #f0f4ff; color: var(--primary); padding: 0.4rem 0.8rem;">
+                <i class="fa-solid fa-edit"></i>
+              </a>
+              {% endif %}
+              {% if perms.academics.delete_course %}
+              <a href="{% url 'academics:course_delete' course.pk %}" class="btn" style="background: #fff1f2; color: #e11d48; padding: 0.4rem 0.8rem;">
+                <i class="fa-solid fa-trash"></i>
+              </a>
+              {% endif %}
+            </div>
+          </td>
+          {% endif %}
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="text-align: center; padding: 2rem">
+            No courses found.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
