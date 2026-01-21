@@ -4,25 +4,29 @@ from students.models import Student
 from teachers.models import Teacher
 from academics.models import Course, Classroom
 
-@login_required
+@login_required # Yêu cầu user phải đăng nhập mới xem được view này
 def dashboard(request):
+    """
+    View Dashboard (Trang chủ sau khi đăng nhập).
+    Hiển thị thống kê tổng quan của hệ thống.
+    """
     try:
-        student_count = Student.objects.count()
+        student_count = Student.objects.count() # Đếm tổng sinh viên
     except:
         student_count = 0
         
     try:
-        teacher_count = Teacher.objects.count()
+        teacher_count = Teacher.objects.count() # Đếm tổng giáo viên
     except:
         teacher_count = 0
         
     try:
-        course_count = Course.objects.count()
+        course_count = Course.objects.count()   # Đếm tổng môn học
     except:
         course_count = 0
         
     try:
-        classroom_count = Classroom.objects.count()
+        classroom_count = Classroom.objects.count() # Đếm tổng lớp học
     except:
         classroom_count = 0
 

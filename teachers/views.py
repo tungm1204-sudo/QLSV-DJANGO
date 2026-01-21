@@ -7,15 +7,22 @@ from .forms import TeacherForm
 from django.db.models import Q
 
 class TeacherListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    """
+    View hiển thị danh sách tất cả giáo viên.
+    """
     model = Teacher
     template_name = 'teachers/teacher_list.html'
     context_object_name = 'teachers'
     permission_required = 'teachers.view_teacher'
 
     def get_queryset(self):
+        """
+        Lọc danh sách giáo viên theo từ khóa tìm kiếm (nếu có).
+        """
         query = self.request.GET.get('q')
         queryset = Teacher.objects.all()
         if query:
+            # Tìm kiếm theo Tên, Họ hoặc Email
             queryset = queryset.filter(
                 Q(fname__icontains=query) | 
                 Q(lname__icontains=query) | 
@@ -24,6 +31,9 @@ class TeacherListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         return queryset
 
 class TeacherCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    """
+    View thêm mới giáo viên.
+    """
     model = Teacher
     form_class = TeacherForm
     template_name = 'teachers/teacher_form.html'
@@ -36,6 +46,9 @@ class TeacherCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
         return context
 
 class TeacherUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    """
+    View chỉnh sửa thông tin giáo viên.
+    """
     model = Teacher
     form_class = TeacherForm
     template_name = 'teachers/teacher_form.html'
@@ -48,6 +61,9 @@ class TeacherUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
         return context
 
 class TeacherDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    """
+    View xóa giáo viên (có xác nhận).
+    """
     model = Teacher
     template_name = 'teachers/teacher_confirm_delete.html'
     success_url = reverse_lazy('teachers:teacher_list')

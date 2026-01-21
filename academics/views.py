@@ -6,7 +6,12 @@ from .models import Course, Classroom, Grade
 from .forms import CourseForm, ClassroomForm
 from django.db.models import Q
 
+# --- Views cho Môn học (Course) ---
 class CourseListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    """
+    Danh sách Môn học.
+    Hỗ trợ lọc theo tên và theo khối (Grade).
+    """
     model = Course
     template_name = 'academics/course_list.html'
     context_object_name = 'courses'
@@ -16,6 +21,7 @@ class CourseListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         query = self.request.GET.get('q')
         grade_id = self.request.GET.get('grade')
         queryset = Course.objects.select_related('grade').all()
+        
         if query:
             queryset = queryset.filter(name__icontains=query)
         if grade_id:
@@ -23,11 +29,13 @@ class CourseListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
+        """Thêm danh sách các khối vào context để tạo dropdown lọc"""
         context = super().get_context_data(**kwargs)
         context['grades'] = Grade.objects.all()
         return context
 
 class CourseCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    """Thêm môn học mới"""
     model = Course
     form_class = CourseForm
     template_name = 'academics/course_form.html'
@@ -40,6 +48,7 @@ class CourseCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         return context
 
 class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    """Sửa môn học"""
     model = Course
     form_class = CourseForm
     template_name = 'academics/course_form.html'
@@ -52,12 +61,18 @@ class CourseUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
         return context
 
 class CourseDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    """Xóa môn học"""
     model = Course
     template_name = 'academics/course_confirm_delete.html'
     success_url = reverse_lazy('academics:course_list')
     permission_required = 'academics.delete_course'
 
+# --- Views cho Lớp học (Classroom) ---
 class ClassroomListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    """
+    Danh sách Lớp học.
+    Hỗ trợ lọc theo tên lớp, giáo viên, khối và năm học.
+    """
     model = Classroom
     template_name = 'academics/classroom_list.html'
     context_object_name = 'classrooms'
@@ -68,6 +83,7 @@ class ClassroomListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
         grade_id = self.request.GET.get('grade')
         year = self.request.GET.get('year')
         queryset = Classroom.objects.select_related('grade', 'teacher').all()
+        
         if query:
             queryset = queryset.filter(
                 Q(section__icontains=query) |
@@ -83,10 +99,12 @@ class ClassroomListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['grades'] = Grade.objects.all()
+        # Lấy danh sách các năm học có trong DB để lọc
         context['years'] = Classroom.objects.values_list('year', flat=True).distinct().order_by('-year')
         return context
 
 class ClassroomCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    """Thêm lớp học mới"""
     model = Classroom
     form_class = ClassroomForm
     template_name = 'academics/classroom_form.html'
@@ -99,6 +117,7 @@ class ClassroomCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateVie
         return context
 
 class ClassroomUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    """Sửa thông tin lớp học"""
     model = Classroom
     form_class = ClassroomForm
     template_name = 'academics/classroom_form.html'
@@ -111,6 +130,7 @@ class ClassroomUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateVie
         return context
 
 class ClassroomDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    """Xóa lớp học"""
     model = Classroom
     template_name = 'academics/classroom_confirm_delete.html'
     success_url = reverse_lazy('academics:classroom_list')

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Các app tự định nghĩa của dự án
     'core',
     'students',
     'teachers',
@@ -120,5 +121,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Cấu hình chuyển hướng sau khi đăng nhập/đăng xuất thành công
 LOGIN_REDIRECT_URL = 'core:dashboard'
 LOGOUT_REDIRECT_URL = 'core:dashboard'
