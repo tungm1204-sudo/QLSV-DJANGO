@@ -7,8 +7,20 @@ __pycache__/
 *.log
 local_settings.py
 db.sqlite3
-media
-staticfiles
+# Ignore uploaded media files but keep folder structure
+media/*
+!media/.gitkeep
+!media/students/
+!media/teachers/
+!media/documents/
+media/students/*
+media/teachers/*
+media/documents/*
+!media/students/.gitkeep
+!media/teachers/.gitkeep
+!media/documents/.gitkeep
+# Static files collected for production
+staticfiles/
 
 # Environments
 .env
