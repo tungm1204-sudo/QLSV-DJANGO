@@ -17,7 +17,7 @@ Chào mừng bạn tham gia dự án! Dưới đây là báo cáo phân tích to
 - **Tóm tắt các chức năng cốt lõi (Core Features):**
   - **Hệ thống Tài khoản & Phân quyền:** Quản lý người dùng tập trung với Role-based Access Control (Admin, Giáo vụ, Giảng viên, Sinh viên).
   - **Quản lý Hồ sơ (Profiles):** Quản lý chi tiết sinh viên (kèm liên hệ khẩn cấp/phụ huynh) và giảng viên (kèm thông tin khoa/bộ môn). Hỗ trợ Import/Export Excel dữ liệu sinh viên.
-  - **Nghiệp vụ Học vụ (Academics):** Quản lý cấu trúc đào tạo bao gồm Học kỳ, Khóa, Lớp sinh hoạt, Môn học, Phân công giảng dạy, Điểm danh và Quản lý Điểm số (Exam Results).
+  - **Nghiệp vụ Học vụ (Academics):** Quản lý cấu trúc đào tạo bao gồm Học kỳ, Khóa, Lớp sinh hoạt, Môn học, Phân công giảng dạy, Điểm danh và Quản lý Điểm số. (Ví dụ API điểm danh: `bulk-update` và `attendance-sheet` đã hoàn thiện cho phép giáo viên thao tác cực nhanh).
 
 ---
 

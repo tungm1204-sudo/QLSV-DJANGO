@@ -54,11 +54,11 @@ Dự án được chuyển đổi từ nền tảng Django Template (Monolithic)
 3. **Hệ thống Giảng viên:** CRUD đầy đủ.
 4. **Academics Foundation:** Đã có giao diện danh sách cho Khóa, Học phần, Lớp sinh hoạt.
 5. **Testing:** Đã có bộ test backend và frontend ổn định.
+6. **Hệ thống Điểm danh (Attendance):** Đã hoàn thiện API (Filtering, Bulk Update, Attendance Sheet).
 
 ### 🚧 Đang thực hiện (Phase 3):
 1. Hoàn thiện Form Thêm/Sửa cho Lớp sinh hoạt & Học phần.
 2. Xây dựng logic **Phân công giảng dạy** (Course Assignments).
-3. Hệ thống **Điểm danh (Attendance)**.
 
 ---
 
@@ -91,5 +91,10 @@ npm run dev
 - **API First:** Mọi thao tác frontend phải thông qua `axiosClient` trong `src/api/`.
 - **UI Consistency:** Sử dụng bộ component trong `src/components/ui/`.
 
+## 7. Tài Liệu API & Kiến Thức Cốt Lõi (Knowledge Items)
+Để tránh việc các lập trình viên và AI sau này phải "đọc lại toàn bộ code", dự án áp dụng hệ thống ghi nhớ và tài liệu hóa:
+- **Tài liệu Walkthrough:** Bất cứ khi nào hoàn thành một tính năng, một bản báo cáo `walkthrough.md` sẽ được tạo ra để lưu trữ lại các endpoints mới (như Bulk Update Điểm danh). Bạn có thể tìm thấy trong lịch sử thay đổi của mình.
+- **Báo cáo này (`PROJECT_REPORT.md` và `ONBOARDING_REPORT.md`):** Đóng vai trò là trí nhớ dài hạn (Long-term memory) chứa tóm tắt kiến trúc. Các AI mới khi join vào dự án có thể đọc file này để nắm ngay bối cảnh dự án thay vì tự scan source code.
+
 ---
-> *Tài liệu cập nhật ngày: 18/04/2026 bởi Antigravity AI.*
+> *Tài liệu cập nhật ngày: 08/06/2026 bởi Antigravity AI.*
