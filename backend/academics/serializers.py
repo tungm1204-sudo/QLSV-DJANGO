@@ -57,6 +57,10 @@ class AttendanceSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class BulkAttendanceSerializer(serializers.Serializer):
+    attendances = AttendanceSerializer(many=True)
+
+
 class ExamTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExamType
