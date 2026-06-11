@@ -4,7 +4,13 @@ from teachers.models import TeacherProfile
 
 
 class Semester(models.Model):
-    """Học kỳ (VD: HK1 2024-2025)."""
+    """
+    Class: Semester (Học kỳ)
+    Mục đích: Định nghĩa các học kỳ trong năm học (VD: HK1 2024-2025).
+    Business logic: 
+    - Quản lý timeline (ngày bắt đầu/kết thúc) để lọc dữ liệu.
+    - `is_current` dùng để xác định học kỳ mặc định đang diễn ra trong toàn hệ thống.
+    """
     name = models.CharField(max_length=50, verbose_name="Tên học kỳ")
     academic_year = models.CharField(max_length=20, verbose_name="Năm học")  # VD: "2024-2025"
     start_date = models.DateField(verbose_name="Ngày bắt đầu")
@@ -14,14 +20,18 @@ class Semester(models.Model):
     class Meta:
         verbose_name = "Học kỳ"
         verbose_name_plural = "Học kỳ"
-        ordering = ["-start_date"]
+        ordering = ["-start_date"] # Mặc định sắp xếp học kỳ mới nhất lên đầu
 
     def __str__(self):
         return f"{self.name} ({self.academic_year})"
 
 
 class Grade(models.Model):
-    """Khóa / Năm học (VD: K20, Năm 1)."""
+    """
+    Class: Grade (Khóa / Năm học)
+    Mục đích: Định danh khóa học của sinh viên (VD: K20, Năm 1).
+    Business logic: Phân loại môn học và sinh viên theo khóa học để dễ quản lý lộ trình.
+    """
     name = models.CharField(max_length=50, verbose_name="Tên khóa/năm")
     description = models.TextField(blank=True, null=True)
 
@@ -34,7 +44,11 @@ class Grade(models.Model):
 
 
 class Course(models.Model):
-    """Môn học (VD: Toán, Lập trình Python)."""
+    """
+    Class: Course (Môn học)
+    Mục đích: Danh mục các môn học được giảng dạy.
+    Business logic: Mỗi môn học thuộc về một khóa học (`grade`) và có số tín chỉ (credits) riêng để tính điểm hệ 4.
+    """
     name = models.CharField(max_length=100, verbose_name="Tên môn")
     code = models.CharField(max_length=20, unique=True, verbose_name="Mã môn")
     description = models.TextField(blank=True, null=True)
@@ -50,7 +64,13 @@ class Course(models.Model):
 
 
 class Classroom(models.Model):
-    """Lớp sinh hoạt (VD: 20CNTT1 — HK1 2024-2025)."""
+    """
+    Class: Classroom (Lớp học)
+    Mục đích: Quản lý lớp sinh hoạt và lớp học phần theo từng học kỳ.
+    Business logic:
+    - Ràng buộc unique giữa `name` và `semester` -> Trong một kỳ không thể có 2 lớp trùng tên.
+    - Giảng viên chủ nhiệm (`homeroom_teacher`) có thể null nếu chưa phân công.
+    """
     name = models.CharField(max_length=20, verbose_name="Tên lớp")
     grade = models.ForeignKey(Grade, on_delete=models.CASCADE, verbose_name="Khóa/Năm")
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="classrooms", verbose_name="Học kỳ")
@@ -72,7 +92,12 @@ class Classroom(models.Model):
 
 
 class ClassroomStudent(models.Model):
-    """Bảng trung gian: Sinh viên trong Lớp."""
+    """
+    Class: ClassroomStudent (Bảng trung gian)
+    Mục đích: Liên kết nhiều-nhiều giữa Sinh viên và Lớp học (Enrollment).
+    Business logic: 
+    - Một sinh viên không thể tham gia cùng một lớp 2 lần (unique_together).
+    """
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, related_name="enrollments")
     student = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="enrollments"
@@ -89,7 +114,11 @@ class ClassroomStudent(models.Model):
 
 
 class CourseAssignment(models.Model):
-    """Phân công giáo viên dạy môn trong lớp."""
+    """
+    Class: CourseAssignment (Phân công giảng dạy)
+    Mục đích: Gán Giảng viên phụ trách Môn học cho một Lớp học cụ thể.
+    Business logic: Một lớp học chỉ có một giáo viên dạy một môn (unique_together).
+    """
     classroom = models.ForeignKey(Classroom, on_delete=models.CASCADE, related_name="assignments")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="assignments")
     teacher = models.ForeignKey(TeacherProfile, on_delete=models.CASCADE, related_name="assignments")
@@ -104,7 +133,11 @@ class CourseAssignment(models.Model):
 
 
 class Attendance(models.Model):
-    """Điểm danh theo buổi học."""
+    """
+    Class: Attendance (Điểm danh)
+    Mục đích: Quản lý điểm danh sinh viên trong các lớp theo ngày.
+    Business logic: Mỗi sinh viên chỉ có một bản ghi điểm danh duy nhất cho một lớp trong một ngày.
+    """
     class Status(models.TextChoices):
         PRESENT = "present", "Có mặt"
         ABSENT = "absent", "Vắng"
@@ -127,7 +160,11 @@ class Attendance(models.Model):
 
 
 class ExamType(models.Model):
-    """Loại kỳ thi: Giữa kỳ, Cuối kỳ, Kiểm tra thường xuyên..."""
+    """
+    Class: ExamType (Loại kỳ thi)
+    Mục đích: Phân loại điểm số (Giữa kỳ, Cuối kỳ, Chuyên cần...).
+    Business logic: `weight` dùng để tính điểm trung bình môn dựa trên hệ số.
+    """
     name = models.CharField(max_length=50, verbose_name="Tên loại")
     weight = models.FloatField(default=1.0, verbose_name="Hệ số")
 
@@ -140,7 +177,11 @@ class ExamType(models.Model):
 
 
 class ExamResult(models.Model):
-    """Kết quả thi / Điểm số của sinh viên."""
+    """
+    Class: ExamResult (Kết quả thi)
+    Mục đích: Lưu điểm số của sinh viên theo từng môn, học kỳ và loại kỳ thi.
+    Business logic: Một sinh viên chỉ có 1 đầu điểm duy nhất cho 1 loại bài thi của 1 môn trong 1 học kỳ.
+    """
     student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="exam_results")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="exam_results")
     semester = models.ForeignKey(Semester, on_delete=models.CASCADE, related_name="exam_results")
@@ -161,4 +202,9 @@ class ExamResult(models.Model):
 
     @property
     def percentage(self):
+        """
+        Hàm: percentage
+        Chức năng: Tính phần trăm điểm đạt được.
+        Output: (float) Giá trị phần trăm được làm tròn 2 chữ số thập phân.
+        """
         return round((self.marks / self.max_marks) * 100, 2) if self.max_marks else 0
