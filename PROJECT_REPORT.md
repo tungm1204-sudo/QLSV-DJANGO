@@ -99,3 +99,8 @@ npm run dev
 
 ---
 > *Tài liệu cập nhật ngày: 08/06/2026 bởi Antigravity AI.*
+
+## Cập nhật cleanup
+- Repo đã được dọn sạch backend bằng cách loại bỏ file local và artifact không cần thiết.
+- Thư mục `backend/core` hiện chỉ giữ lại cấu trúc cần thiết cho lệnh quản lý: `management/commands/setup_groups.py`.
+- `.gitignore` đã được mở rộng để bỏ qua các file local `*.coverage` và `pytest_report.txt`.

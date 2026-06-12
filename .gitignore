@@ -6,6 +6,8 @@ __pycache__/
 # Django
 *.log
 local_settings.py
+*.coverage
+pytest_report.txt
 db.sqlite3
 # Ignore uploaded media files but keep folder structure
 media/*
