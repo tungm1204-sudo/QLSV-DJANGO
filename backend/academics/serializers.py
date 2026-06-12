@@ -55,10 +55,14 @@ class ClassroomSerializer(serializers.ModelSerializer):
 
 
 class CourseAssignmentSerializer(serializers.ModelSerializer):
-    """Serializer cho phân công giảng dạy — trả về tất cả trường."""
+    """Serializer cho phân công giảng dạy."""
+    classroom_name = serializers.CharField(source="classroom.name", read_only=True)
+    course_name = serializers.CharField(source="course.name", read_only=True)
+    teacher_name = serializers.CharField(source="teacher.user.get_full_name", read_only=True)
+
     class Meta:
         model = CourseAssignment
-        fields = "__all__"
+        fields = ["id", "classroom", "classroom_name", "course", "course_name", "teacher", "teacher_name"]
 
 
 class AttendanceSerializer(serializers.ModelSerializer):

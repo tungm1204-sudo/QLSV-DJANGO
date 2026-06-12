@@ -48,6 +48,17 @@ class TeacherCreateSerializer(serializers.ModelSerializer):
     last_name = serializers.CharField(write_only=True)
     email = serializers.EmailField(write_only=True)
     password = serializers.CharField(write_only=True, min_length=8)
+    department = serializers.PrimaryKeyRelatedField(
+        queryset=Department.objects.all(),
+        required=False,
+        allow_null=True,
+        write_only=True   # Không xuất ra API response
+    )
+    dob = serializers.DateField(
+        required=False,
+        allow_null=True,
+        write_only=True
+    )
 
     class Meta:
         model = TeacherProfile

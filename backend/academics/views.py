@@ -72,6 +72,8 @@ class CourseAssignmentViewSet(viewsets.ModelViewSet):
     queryset = CourseAssignment.objects.all().select_related("classroom", "course", "teacher__user")
     serializer_class = CourseAssignmentSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_fields = ["classroom", "course", "teacher"]
 
 
 class AttendanceViewSet(viewsets.ModelViewSet):
