@@ -55,10 +55,11 @@ Dự án được chuyển đổi từ nền tảng Django Template (Monolithic)
 4. **Academics Foundation:** Đã có giao diện danh sách cho Khóa, Học phần, Lớp sinh hoạt.
 5. **Testing:** Đã có bộ test backend và frontend ổn định.
 6. **Hệ thống Điểm danh (Attendance):** Đã hoàn thiện API (Filtering, Bulk Update, Attendance Sheet).
+7. **API Phân công giảng dạy:** Backend API đã sẵn sàng với nested data (`classroom_name`, `course_name`, `teacher_name`) và hỗ trợ filter (`?classroom=`, `?course=`, `?teacher=`).
 
 ### 🚧 Đang thực hiện (Phase 3):
 1. Hoàn thiện Form Thêm/Sửa cho Lớp sinh hoạt & Học phần.
-2. Xây dựng logic **Phân công giảng dạy** (Course Assignments).
+2. Xây dựng giao diện Frontend (UI) cho module **Phân công giảng dạy** dựa trên API đã có.
 
 ---
 

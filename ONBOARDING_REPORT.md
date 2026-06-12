@@ -17,7 +17,7 @@ Chào mừng bạn tham gia dự án! Dưới đây là báo cáo phân tích to
 - **Tóm tắt các chức năng cốt lõi (Core Features):**
   - **Hệ thống Tài khoản & Phân quyền:** Quản lý người dùng tập trung với Role-based Access Control (Admin, Giáo vụ, Giảng viên, Sinh viên).
   - **Quản lý Hồ sơ (Profiles):** Quản lý chi tiết sinh viên (kèm liên hệ khẩn cấp/phụ huynh) và giảng viên (kèm thông tin khoa/bộ môn). Hỗ trợ Import/Export Excel dữ liệu sinh viên.
-  - **Nghiệp vụ Học vụ (Academics):** Quản lý cấu trúc đào tạo bao gồm Học kỳ, Khóa, Lớp sinh hoạt, Môn học, Phân công giảng dạy, Điểm danh và Quản lý Điểm số. (Ví dụ API điểm danh: `bulk-update` và `attendance-sheet` đã hoàn thiện cho phép giáo viên thao tác cực nhanh).
+  - **Nghiệp vụ Học vụ (Academics):** Quản lý cấu trúc đào tạo bao gồm Học kỳ, Khóa, Lớp sinh hoạt, Môn học, Phân công giảng dạy, Điểm danh và Quản lý Điểm số. (Ví dụ API điểm danh: `bulk-update` và `attendance-sheet` đã hoàn thiện; API Phân công giảng dạy `/api/assignments/` đã hỗ trợ filter theo Lớp/Môn/GV và trả về tên chi tiết để làm UI).
 
 ---
 
@@ -117,4 +117,4 @@ Các model được chia rành mạch theo từng domain nghiệp vụ:
 - **Tối ưu hóa (Optimization):** Áp dụng Redis Caching cho các API danh mục (Khoa, Khóa, Môn học) vì các dữ liệu này ít thay đổi.
 - **Bảo mật:** Rà soát lại việc xử lý refresh token, cân nhắc set `HttpOnly Cookies` thay vì lưu token trên client (localStorage) để chống tấn công XSS.
 - **Tự động hóa (DevOps):** Thiết lập GitHub Actions Pipeline. Tự động chạy `pytest` và Frontend Linter (`eslint`) mỗi khi có Pull Request, ngăn chặn lỗi từ sớm.
-- **Nghiệp vụ:** Hoàn thiện module Điểm danh (Attendance) và Phân công giảng dạy theo như kế hoạch Phase 3 trong Project Report. Trang bị tính năng tính Điểm Trung Bình (GPA) ở module `ExamResult`.
+- **Nghiệp vụ:** Xây dựng UI Frontend cho module Phân công giảng dạy (API Backend đã sẵn sàng). Trang bị tính năng tính Điểm Trung Bình (GPA) ở module `ExamResult`.
