@@ -1,8 +1,9 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import (
+    DashboardView,
     SemesterViewSet, GradeViewSet, CourseViewSet, 
-    ClassroomViewSet, CourseAssignmentViewSet, 
+    ClassroomViewSet, ClassroomStudentViewSet, CourseAssignmentViewSet, 
     AttendanceViewSet, ExamTypeViewSet, ExamResultViewSet
 )
 
@@ -14,6 +15,7 @@ router.register(r"semesters", SemesterViewSet)        # API quản lý Học k�
 router.register(r"grades", GradeViewSet)              # API quản lý Khóa/Năm học
 router.register(r"courses", CourseViewSet)            # API quản lý Môn học
 router.register(r"classrooms", ClassroomViewSet)      # API quản lý Lớp học
+router.register(r"enrollments", ClassroomStudentViewSet)  # API ghi danh SV vào lớp
 router.register(r"assignments", CourseAssignmentViewSet) # API phân công giảng viên dạy môn
 router.register(r"attendances", AttendanceViewSet)    # API điểm danh
 router.register(r"exam-types", ExamTypeViewSet)       # API quản lý Loại kỳ thi (giữa kỳ, cuối kỳ)
@@ -22,4 +24,6 @@ router.register(r"exam-results", ExamResultViewSet)   # API lưu trữ và quả
 urlpatterns = [
     # Include tất cả các route đã đăng ký vào path gốc của app
     path("", include(router.urls)),
+    # Dashboard stats endpoint
+    path("dashboard/", DashboardView.as_view(), name="dashboard"),
 ]

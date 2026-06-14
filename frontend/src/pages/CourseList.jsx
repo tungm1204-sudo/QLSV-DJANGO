@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useCourses } from "../features/academics/hooks";
+import { useCourses, useDeleteCourse } from "../features/academics/hooks";
+import CourseForm from "@/components/CourseForm";
 import { Button } from "@/components/ui/button";
 import { Plus, Edit, Trash2, Library } from "lucide-react";
 import { 
@@ -10,7 +11,25 @@ import { Badge } from "@/components/ui/badge";
 
 export default function CourseList() {
   const { data, isLoading } = useCourses();
+  const deleteMutation = useDeleteCourse();
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+
+  const handleDelete = (id) => {
+    if (window.confirm("Bạn có chắc chắn muốn xóa môn học này?")) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  const handleOpenEdit = (course) => {
+    setSelectedCourse(course);
+    setIsOpen(true);
+  };
+
+  const handleOpenCreate = () => {
+    setSelectedCourse(null);
+    setIsOpen(true);
+  };
 
   const courses = Array.isArray(data) ? data : data?.results || [];
 
@@ -23,10 +42,12 @@ export default function CourseList() {
           <h1 className="text-3xl font-bold tracking-tight">Cấu trúc Khối & Môn học</h1>
           <p className="text-muted-foreground">Quản lý danh mục môn học và phân bổ tín chỉ.</p>
         </div>
-        <Button onClick={() => setIsOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> Thêm Môn học
+        <Button onClick={handleOpenCreate}>
+          <Plus className="mr-2 h-4 w-4" /> Thêm Môn Học
         </Button>
       </div>
+
+      <CourseForm isOpen={isOpen} setIsOpen={setIsOpen} courseToEdit={selectedCourse} />
 
       <div className="border rounded-lg bg-white shadow-sm overflow-hidden">
         <Table>
@@ -66,10 +87,10 @@ export default function CourseList() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => handleOpenEdit(course)}>
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDelete(course.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Outlet, Navigate, useNavigate, useLocation, Link } from 'react-router-dom';
+import { Outlet, Navigate, useLocation, Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import {
   LayoutDashboard,
@@ -9,7 +9,8 @@ import {
   CalendarDays,
   LogOut,
   Menu,
-  X
+  X,
+  Trophy
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -24,6 +25,11 @@ const getMenuItems = (role) => {
     { name: 'Hồ sơ Sinh viên', path: '/students', icon: GraduationCap },
     { name: 'Khóa & Học phần', path: '/courses', icon: BookOpen },
     { name: 'Lớp sinh hoạt', path: '/classrooms', icon: CalendarDays },
+    { name: 'SV trong Lớp', path: '/enrollments', icon: Users },
+    { name: 'Phân công GD', path: '/assignments', icon: BookOpen },
+    { name: 'Điểm danh', path: '/attendance', icon: CalendarDays },
+    { name: 'Nhập điểm', path: '/enter-grades', icon: Trophy },
+    { name: 'Cấu hình HT', path: '/config', icon: GraduationCap },
   ];
 
   const studentItems = [
@@ -32,7 +38,7 @@ const getMenuItems = (role) => {
   ];
 
   if (role === 'admin' || role === 'academic_staff') return [...common, ...adminItems];
-  if (role === 'teacher') return [...common, { name: 'Lớp Chủ nhiệm', path: '/homeroom', icon: Users }, { name: 'Nhập điểm', path: '/grades', icon: BookOpen }];
+  if (role === 'teacher') return [...common, { name: 'Lớp Chủ nhiệm', path: '/homeroom', icon: Users }, { name: 'Điểm danh', path: '/attendance', icon: CalendarDays }, { name: 'Nhập điểm', path: '/enter-grades', icon: BookOpen }];
   if (role === 'student') return [...common, ...studentItems];
   
   return common;
