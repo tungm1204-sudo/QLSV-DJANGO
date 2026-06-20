@@ -44,6 +44,11 @@ Theo dõi tiến trình xây dựng dự án qua từng giai đoạn (Phase). Kh
 - **Phân quyền Custom (DRF Permissions):** Cấu trúc lại bảo mật ở backend bằng các class quyền (vd: `IsAdminOrReadOnly`, `IsAdminOrTeacher`) chặn đứng các thao tác trái phép theo Role (Admin, Giáo vụ, Giảng viên, Sinh viên).
 - **CI/CD Pipeline:** Triển khai GitHub Actions (`ci.yml`) để tự động kiểm thử code mỗi khi Push/Pull Request (chạy `pytest` cho Python và `eslint` cho React).
 
+### Phase 5: Cổng Thông Tin Cá Nhân Hóa (Portals & Personalization)
+- **Kiến trúc dữ liệu an toàn:** Ghi đè `get_queryset` theo `user.role` để lọc dữ liệu ở Backend. Giảng viên chỉ xem được lớp mình phụ trách, Sinh viên chỉ thấy dữ liệu của chính mình mà không cần tách các endpoint riêng biệt.
+- **Giao diện Sinh Viên:** Ra mắt trang "Thời khóa biểu & Lịch sử điểm danh" độc lập, hiển thị trực quan các môn học đã đăng ký.
+- **Giao diện Giảng Viên:** Ẩn hoàn toàn tính năng Thêm/Sửa/Xóa lớp học/phân công, bảo vệ an toàn dữ liệu khỏi các thao tác nhầm lẫn.
+
 ---
 
 ## 4. Hướng Dẫn Cài Đặt (Local Setup)

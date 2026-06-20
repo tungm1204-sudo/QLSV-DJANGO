@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuthStore } from "../stores/authStore";
 import { useAssignments, useDeleteAssignment, useClassrooms, useCourses } from "../features/academics/hooks";
 import { useTeachers } from "../features/teachers/hooks";
 import AssignmentForm from "@/components/AssignmentForm";
@@ -11,6 +12,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 export default function AssignmentList() {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'admin' || user?.role === 'academic_staff';
+
   const [filterClassroom, setFilterClassroom] = useState("");
   const [filterCourse, setFilterCourse] = useState("");
   const [filterTeacher, setFilterTeacher] = useState("");
@@ -62,12 +66,14 @@ export default function AssignmentList() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Phân Công Giảng Dạy</h1>
-          <p className="text-muted-foreground">Quản lý việc phân công giảng viên dạy các học phần cho từng lớp.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{isAdmin ? "Phân Công Giảng Dạy" : "Lịch Dạy Của Bạn"}</h1>
+          <p className="text-muted-foreground">{isAdmin ? "Quản lý việc phân công giảng viên dạy các học phần cho từng lớp." : "Danh sách các lớp học phần bạn được phân công giảng dạy."}</p>
         </div>
-        <Button onClick={handleOpenCreate}>
-          <Plus className="mr-2 h-4 w-4" /> Thêm Phân Công
-        </Button>
+        {isAdmin && (
+          <Button onClick={handleOpenCreate}>
+            <Plus className="mr-2 h-4 w-4" /> Thêm Phân Công
+          </Button>
+        )}
       </div>
 
       <AssignmentForm isOpen={isOpen} setIsOpen={setIsOpen} assignmentToEdit={selectedAssignment} />
@@ -120,7 +126,7 @@ export default function AssignmentList() {
               <TableHead>Lớp Sinh Hoạt</TableHead>
               <TableHead>Học Phần (Môn Học)</TableHead>
               <TableHead>Giảng Viên Phụ Trách</TableHead>
-              <TableHead className="text-right">Thao tác</TableHead>
+              {isAdmin && <TableHead className="text-right">Thao tác</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -151,16 +157,18 @@ export default function AssignmentList() {
                   <TableCell className="font-medium text-gray-700">
                     {assignment.teacher_name}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => handleOpenEdit(assignment)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDelete(assignment.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+                  {isAdmin && (
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => handleOpenEdit(assignment)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDelete(assignment.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}

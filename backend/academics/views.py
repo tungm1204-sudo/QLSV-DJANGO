@@ -1,6 +1,6 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
-from accounts.permissions import IsAdminOrReadOnly, IsAdminOrTeacher
+from accounts.permissions import IsAdminOrReadOnly, IsAdminOrTeacher, IsAdminOrTeacherOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
@@ -122,6 +122,18 @@ class ClassroomViewSet(viewsets.ModelViewSet):
     serializer_class = ClassroomSerializer
     permission_classes = [IsAdminOrReadOnly]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if not user.is_authenticated:
+            return qs.none()
+        if user.role == 'teacher':
+            from django.db.models import Q
+            return qs.filter(Q(homeroom_teacher__user=user) | Q(assignments__teacher__user=user)).distinct()
+        if user.role == 'student':
+            return qs.filter(enrollments__student=user).distinct()
+        return qs
+
     @action(detail=True, methods=["get"], url_path="attendance-sheet")
     def attendance_sheet(self, request, pk=None):
         classroom = self.get_object()
@@ -166,6 +178,18 @@ class ClassroomStudentViewSet(viewsets.ModelViewSet):
     filterset_fields = ["classroom", "student"]
     search_fields = ["student__first_name", "student__last_name", "student__student_profile__mssv"]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if not user.is_authenticated:
+            return qs.none()
+        if user.role == 'teacher':
+            from django.db.models import Q
+            return qs.filter(Q(classroom__homeroom_teacher__user=user) | Q(classroom__assignments__teacher__user=user)).distinct()
+        if user.role == 'student':
+            return qs.filter(classroom__enrollments__student=user).distinct()
+        return qs
+
 
 class CourseAssignmentViewSet(viewsets.ModelViewSet):
     queryset = CourseAssignment.objects.all().select_related("classroom", "course", "teacher__user")
@@ -174,13 +198,36 @@ class CourseAssignmentViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["classroom", "course", "teacher"]
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if not user.is_authenticated:
+            return qs.none()
+        if user.role == 'teacher':
+            return qs.filter(teacher__user=user)
+        if user.role == 'student':
+            return qs.filter(classroom__enrollments__student=user).distinct()
+        return qs
+
 
 class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.all().select_related("student", "classroom")
     serializer_class = AttendanceSerializer
-    permission_classes = [IsAdminOrTeacher]
+    permission_classes = [IsAdminOrTeacherOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["date", "student", "classroom", "status"]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if not user.is_authenticated:
+            return qs.none()
+        if user.role == 'student':
+            return qs.filter(student=user)
+        if user.role == 'teacher':
+            from django.db.models import Q
+            return qs.filter(Q(classroom__homeroom_teacher__user=user) | Q(classroom__assignments__teacher__user=user)).distinct()
+        return qs
 
     @action(detail=False, methods=["post"], url_path="bulk-update")
     def bulk_update_attendance(self, request):
@@ -224,7 +271,22 @@ class ExamTypeViewSet(viewsets.ModelViewSet):
 class ExamResultViewSet(viewsets.ModelViewSet):
     queryset = ExamResult.objects.all().select_related("student", "course", "semester", "exam_type")
     serializer_class = ExamResultSerializer
-    permission_classes = [IsAdminOrTeacher]
+    permission_classes = [IsAdminOrTeacherOrReadOnly]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        user = self.request.user
+        if not user.is_authenticated:
+            return qs.none()
+        if user.role == 'student':
+            return qs.filter(student=user)
+        if user.role == 'teacher':
+            from django.db.models import Q
+            return qs.filter(
+                Q(course__assignments__teacher__user=user, semester__classrooms__assignments__teacher__user=user) | 
+                Q(semester__classrooms__homeroom_teacher__user=user)
+            ).distinct()
+        return qs
 
     @action(detail=False, methods=["get"], url_path="grade-sheet")
     def grade_sheet(self, request):

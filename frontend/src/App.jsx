@@ -10,6 +10,7 @@ import AssignmentList from './pages/AssignmentList';
 import AttendancePage from './pages/AttendancePage';
 import ExamResultPage from './pages/ExamResultPage';
 import StudentGradesPage from './pages/StudentGradesPage';
+import StudentSchedulePage from './pages/StudentSchedulePage';
 import AcademicsConfigPage from './pages/AcademicsConfigPage';
 import EnrollmentPage from './pages/EnrollmentPage';
 
@@ -57,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: 'grades',
         element: <StudentGradesPage />,
+      },
+      {
+        path: 'schedule',
+        element: <StudentSchedulePage />,
       },
       {
         path: 'config',

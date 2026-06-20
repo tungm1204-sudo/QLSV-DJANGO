@@ -45,6 +45,7 @@ const academicsApi = {
   deleteAssignment: (id) => axiosClient.delete(`academics/assignments/${id}/`),
 
   // Attendances
+  getAttendances: (params) => axiosClient.get("academics/attendances/", { params }),
   getAttendanceSheet: (classroomId, date) => axiosClient.get(`academics/classrooms/${classroomId}/attendance-sheet/`, { params: { date } }),
   bulkUpdateAttendance: (data) => axiosClient.post("academics/attendances/bulk-update/", data),
 

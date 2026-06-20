@@ -241,6 +241,13 @@ export const useDeleteAssignment = () => {
 };
 
 // --- Attendances ---
+export const useAttendances = (params) => {
+  return useQuery({
+    queryKey: ["attendances", params],
+    queryFn: () => academicsApi.getAttendances(params).then(res => res.data),
+  });
+};
+
 export const useAttendanceSheet = (classroomId, date) => {
   return useQuery({
     queryKey: ["attendanceSheet", classroomId, date],

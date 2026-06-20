@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuthStore } from "../stores/authStore";
 import { useClassrooms, useDeleteClassroom } from "../features/academics/hooks";
 import ClassroomForm from "@/components/ClassroomForm";
 import { Button } from "@/components/ui/button";
@@ -10,6 +11,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 export default function ClassroomList() {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'admin' || user?.role === 'academic_staff';
   const { data, isLoading } = useClassrooms();
   const deleteMutation = useDeleteClassroom();
   const [isOpen, setIsOpen] = useState(false);
@@ -39,12 +42,14 @@ export default function ClassroomList() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Quản lý Lớp học</h1>
-          <p className="text-muted-foreground">Danh sách các lớp học theo từng học kỳ.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{isAdmin ? "Quản lý Lớp học" : "Lớp Chủ Nhiệm"}</h1>
+          <p className="text-muted-foreground">{isAdmin ? "Danh sách các lớp học theo từng học kỳ." : "Các lớp sinh hoạt bạn đang làm chủ nhiệm."}</p>
         </div>
-        <Button onClick={handleOpenCreate}>
-          <Plus className="mr-2 h-4 w-4" /> Thêm Lớp học
-        </Button>
+        {isAdmin && (
+          <Button onClick={handleOpenCreate}>
+            <Plus className="mr-2 h-4 w-4" /> Thêm Lớp học
+          </Button>
+        )}
       </div>
 
       <ClassroomForm isOpen={isOpen} setIsOpen={setIsOpen} classroomToEdit={selectedClassroom} />
@@ -59,7 +64,7 @@ export default function ClassroomList() {
               <TableHead>GV Chủ Nhiệm</TableHead>
               <TableHead>Sĩ Số</TableHead>
               <TableHead>Trạng Thái</TableHead>
-              <TableHead className="text-right">Thao tác</TableHead>
+              {isAdmin && <TableHead className="text-right">Thao tác</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -89,16 +94,18 @@ export default function ClassroomList() {
                       <Badge variant="secondary">Đã đóng</Badge>
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => handleOpenEdit(cls)}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDelete(cls.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
+                  {isAdmin && (
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600" onClick={() => handleOpenEdit(cls)}>
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600" onClick={() => handleDelete(cls.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}

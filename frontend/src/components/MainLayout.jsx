@@ -38,7 +38,7 @@ const getMenuItems = (role) => {
   ];
 
   if (role === 'admin' || role === 'academic_staff') return [...common, ...adminItems];
-  if (role === 'teacher') return [...common, { name: 'Lớp Chủ nhiệm', path: '/homeroom', icon: Users }, { name: 'Điểm danh', path: '/attendance', icon: CalendarDays }, { name: 'Nhập điểm', path: '/enter-grades', icon: BookOpen }];
+  if (role === 'teacher') return [...common, { name: 'Lịch dạy', path: '/assignments', icon: BookOpen }, { name: 'Lớp Chủ nhiệm', path: '/classrooms', icon: Users }, { name: 'Điểm danh', path: '/attendance', icon: CalendarDays }, { name: 'Nhập điểm', path: '/enter-grades', icon: Trophy }];
   if (role === 'student') return [...common, ...studentItems];
   
   return common;
