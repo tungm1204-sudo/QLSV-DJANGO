@@ -49,6 +49,10 @@ Theo dõi tiến trình xây dựng dự án qua từng giai đoạn (Phase). Kh
 - **Giao diện Sinh Viên:** Ra mắt trang "Thời khóa biểu & Lịch sử điểm danh" độc lập, hiển thị trực quan các môn học đã đăng ký.
 - **Giao diện Giảng Viên:** Ẩn hoàn toàn tính năng Thêm/Sửa/Xóa lớp học/phân công, bảo vệ an toàn dữ liệu khỏi các thao tác nhầm lẫn.
 
+### Phase 5.5: Tái Cấu Trúc (Refactor) Ứng dụng Academics
+- **Chia nhỏ `views.py` & `serializers.py`:** Phân rã mã nguồn nguyên khối thành các package nhỏ gọn (`core_views`, `classroom_views`, `attendance_views`, `exam_views`) giúp dễ bảo trì và khoanh vùng lỗi.
+- **Giữ nguyên định tuyến (Transparent Integration):** Sử dụng `__init__.py` để expose các class ra ngoài nên `urls.py` không cần thay đổi.
+
 ---
 
 ## 4. Hướng Dẫn Cài Đặt (Local Setup)
