@@ -1,45 +1,95 @@
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import CustomTokenObtainPairSerializer, UserSerializer, ChangePasswordSerializer
 from .models import User
+import os
 
+# Có thể check ENV để set secure=True trên production
+IS_SECURE_COOKIE = os.environ.get("ENV") == "production"
 
 class LoginView(TokenObtainPairView):
     """
     POST /api/auth/login/
-    Mục đích: Xác thực người dùng và trả về cặp JWT (access + refresh token).
-    Input: { username, password }
-    Output: { access, refresh, user: { id, username, email, role, ... } }
+    Mục đích: Xác thực người dùng và trả về cặp JWT.
+    Refresh token sẽ được set vào HttpOnly Cookie để bảo mật.
+    Output JSON chỉ chứa access token và user info.
     """
     serializer_class = CustomTokenObtainPairSerializer
-    permission_classes = [permissions.AllowAny] # Endpoint công khai, không cần xác thực trước
+    permission_classes = [permissions.AllowAny]
 
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            refresh_token = response.data.get('refresh')
+            if refresh_token:
+                response.set_cookie(
+                    key='refresh_token',
+                    value=refresh_token,
+                    httponly=True,
+                    secure=IS_SECURE_COOKIE,
+                    samesite='Lax',
+                    max_age=15 * 24 * 60 * 60 # 15 ngày
+                )
+                del response.data['refresh']
+        return response
+
+class CookieTokenRefreshView(TokenRefreshView):
+    """
+    POST /api/auth/token/refresh/
+    Lấy refresh_token từ Cookie thay vì body request.
+    """
+    def post(self, request, *args, **kwargs):
+        # Lấy từ cookie hoặc fallback qua body (phòng hờ)
+        refresh_token = request.COOKIES.get('refresh_token') or request.data.get('refresh')
+        
+        if refresh_token:
+            # Gắn vào data để parent class xử lý
+            if not getattr(request, '_full_data_loaded', False):
+                # Copy request data mutable nếu cần
+                from django.http import QueryDict
+                if isinstance(request.data, QueryDict):
+                    request.data._mutable = True
+            request.data['refresh'] = refresh_token
+        
+        response = super().post(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            new_refresh_token = response.data.get('refresh')
+            if new_refresh_token:
+                response.set_cookie(
+                    key='refresh_token',
+                    value=new_refresh_token,
+                    httponly=True,
+                    secure=IS_SECURE_COOKIE,
+                    samesite='Lax',
+                    max_age=15 * 24 * 60 * 60
+                )
+                del response.data['refresh']
+        return response
 
 class LogoutView(APIView):
     """
     POST /api/auth/logout/
-    Mục đích: Đăng xuất người dùng bằng cách blacklist refresh token, vô hiệu hoá phiên đăng nhập hiện tại.
-    Input: { refresh: "<refresh_token>" }
-    Output: { detail: "Đăng xuất thành công." }
-    Lưu ý: Cần bật SIMPLE_JWT blacklist app trong INSTALLED_APPS để tính năng này hoạt động.
+    Đăng xuất: Blacklist token và xoá Cookie.
     """
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        """
-        Input: request.data phải chứa key "refresh" là chuỗi refresh token hợp lệ.
-        Các trường hợp đặc biệt: Trả về 400 nếu token không hợp lệ hoặc đã hết hạn.
-        """
-        try:
-            refresh_token = request.data["refresh"]
-            token = RefreshToken(refresh_token)
-            token.blacklist()
-            return Response({"detail": "Đăng xuất thành công."}, status=status.HTTP_200_OK)
-        except Exception:
-            return Response({"detail": "Token không hợp lệ hoặc đã hết hạn."}, status=status.HTTP_400_BAD_REQUEST)
+        refresh_token = request.COOKIES.get('refresh_token') or request.data.get('refresh')
+        response = Response({"detail": "Đăng xuất thành công."}, status=status.HTTP_200_OK)
+        
+        if refresh_token:
+            try:
+                token = RefreshToken(refresh_token)
+                token.blacklist()
+            except Exception:
+                pass # Bỏ qua nếu token đã hết hạn hoặc bị lỗi
+                
+        response.delete_cookie('refresh_token')
+        return response
 
 
 class MeView(generics.RetrieveUpdateAPIView):

@@ -10,10 +10,9 @@ export const useAuthStore = create((set) => ({
   login: async (username, password) => {
     try {
       const response = await api.post('/auth/login/', { username, password });
-      const { access, refresh } = response.data;
+      const { access } = response.data;
       
       localStorage.setItem('access_token', access);
-      localStorage.setItem('refresh_token', refresh);
       
       // Decode JWT for basic user info, then optionally fetch full profile
       const decoded = jwtDecode(access);
@@ -35,15 +34,11 @@ export const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      const refresh = localStorage.getItem('refresh_token');
-      if (refresh) {
-        await api.post('/auth/logout/', { refresh });
-      }
-    } catch(e) {
-      // ignore
+      await api.post('/auth/logout/', {});
+    } catch(error) {
+      console.error(error);
     } finally {
       localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
       set({ user: null, isAuthenticated: false });
     }
   },
@@ -74,7 +69,8 @@ export const useAuthStore = create((set) => ({
         isAuthenticated: true,
         isLoading: false
       });
-    } catch (e) {
+    } catch (error) {
+      console.error(error);
       set({ user: null, isAuthenticated: false, isLoading: false });
     }
   }

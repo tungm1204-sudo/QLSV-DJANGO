@@ -1,5 +1,6 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
+from accounts.permissions import IsAdminOrReadOnly, IsAdminOrTeacher
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django_filters.rest_framework import DjangoFilterBackend
@@ -101,25 +102,25 @@ class DashboardView(APIView):
 class SemesterViewSet(viewsets.ModelViewSet):
     queryset = Semester.objects.all()
     serializer_class = SemesterSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class GradeViewSet(viewsets.ModelViewSet):
     queryset = Grade.objects.all()
     serializer_class = GradeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all().select_related("grade")
     serializer_class = CourseSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class ClassroomViewSet(viewsets.ModelViewSet):
     queryset = Classroom.objects.all().select_related("grade", "semester", "homeroom_teacher__user")
     serializer_class = ClassroomSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
     @action(detail=True, methods=["get"], url_path="attendance-sheet")
     def attendance_sheet(self, request, pk=None):
@@ -160,7 +161,7 @@ class ClassroomStudentViewSet(viewsets.ModelViewSet):
         "classroom", "student", "student__student_profile"
     )
     serializer_class = ClassroomStudentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["classroom", "student"]
     search_fields = ["student__first_name", "student__last_name", "student__student_profile__mssv"]
@@ -169,7 +170,7 @@ class ClassroomStudentViewSet(viewsets.ModelViewSet):
 class CourseAssignmentViewSet(viewsets.ModelViewSet):
     queryset = CourseAssignment.objects.all().select_related("classroom", "course", "teacher__user")
     serializer_class = CourseAssignmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["classroom", "course", "teacher"]
 
@@ -177,7 +178,7 @@ class CourseAssignmentViewSet(viewsets.ModelViewSet):
 class AttendanceViewSet(viewsets.ModelViewSet):
     queryset = Attendance.objects.all().select_related("student", "classroom")
     serializer_class = AttendanceSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrTeacher]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ["date", "student", "classroom", "status"]
 
@@ -217,13 +218,13 @@ class AttendanceViewSet(viewsets.ModelViewSet):
 class ExamTypeViewSet(viewsets.ModelViewSet):
     queryset = ExamType.objects.all()
     serializer_class = ExamTypeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrReadOnly]
 
 
 class ExamResultViewSet(viewsets.ModelViewSet):
     queryset = ExamResult.objects.all().select_related("student", "course", "semester", "exam_type")
     serializer_class = ExamResultSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAdminOrTeacher]
 
     @action(detail=False, methods=["get"], url_path="grade-sheet")
     def grade_sheet(self, request):

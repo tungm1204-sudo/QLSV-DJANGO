@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:8000/api/',
+  withCredentials: true,
 });
 
 // Request interceptor: attach token
@@ -43,12 +44,6 @@ api.interceptors.response.use(
 
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      const refreshToken = localStorage.getItem('refresh_token');
-
-      if (!refreshToken) {
-        // No refresh token means totally logged out
-        return Promise.reject(error);
-      }
 
       if (isRefreshing) {
         return new Promise(function(resolve, reject) {
@@ -59,12 +54,11 @@ api.interceptors.response.use(
         }).catch(err => Promise.reject(err));
       }
 
-      originalRequest._retry = true;
       isRefreshing = true;
 
       try {
-        const { data } = await axios.post('http://localhost:8000/api/auth/token/refresh/', {
-          refresh: refreshToken
+        const { data } = await axios.post('http://localhost:8000/api/auth/token/refresh/', {}, {
+          withCredentials: true
         });
         
         localStorage.setItem('access_token', data.access);
