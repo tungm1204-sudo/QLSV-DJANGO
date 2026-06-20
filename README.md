@@ -53,6 +53,10 @@ Theo dõi tiến trình xây dựng dự án qua từng giai đoạn (Phase). Kh
 - **Chia nhỏ `views.py` & `serializers.py`:** Phân rã mã nguồn nguyên khối thành các package nhỏ gọn (`core_views`, `classroom_views`, `attendance_views`, `exam_views`) giúp dễ bảo trì và khoanh vùng lỗi.
 - **Giữ nguyên định tuyến (Transparent Integration):** Sử dụng `__init__.py` để expose các class ra ngoài nên `urls.py` không cần thay đổi.
 
+### Phase 5.6: Tái Cấu Trúc (Refactor) Frontend Academics
+- **Module Hóa API & Hooks:** Phân rã `academics.js` và `hooks.js` (hơn 300 dòng) thành các file theo từng tính năng tương ứng với Backend (Core, Classrooms, Attendance, Exams).
+- **Barrel Export:** Giữ nguyên các đường dẫn import ở UI thông qua `index.js`, đảm bảo UI không đứt gãy.
+
 ---
 
 ## 4. Hướng Dẫn Cài Đặt (Local Setup)
