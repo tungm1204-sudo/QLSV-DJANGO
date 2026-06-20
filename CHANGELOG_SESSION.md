@@ -69,7 +69,16 @@ Sử dụng Dialog forms kết hợp `useMutation` để làm Thêm/Sửa/Xóa m
 
 ---
 
-## 5. HƯỚNG DẪN DÀNH CHO NGƯỜI VÀO SAU
+## 5. BẢO MẬT & DEVOPS (CẬP NHẬT MỚI)
+
+1. **Bảo mật JWT Token**: Chuyển đổi phương thức lưu trữ `refresh_token` từ `localStorage` sang **HttpOnly Cookies**. Trình duyệt sẽ tự động đính kèm cookie này ở mỗi request refresh token mà không làm lộ token ra Javascript, ngăn chặn triệt để tấn công XSS. Backend đã được custom lại `CookieTokenRefreshView` và `LogoutView` để xử lý cookie.
+2. **Phân quyền tuỳ chỉnh (Custom Permissions)**: Xây dựng các rules phân quyền dựa trên `Role` của user (Admin, Teacher, Student) trong file `accounts/permissions.py`. Ví dụ `IsAdminOrReadOnly` cho các API quản lý Khóa/Lớp, và `IsAdminOrTeacher` cho các API nhập điểm/điểm danh.
+3. **Tối ưu Database**: Đã rà soát các ViewSet trong module Academics để thiết lập `select_related` và `prefetch_related`, dọn dẹp hoàn toàn vấn đề N+1 query.
+4. **CI/CD Pipeline**: Tích hợp GitHub Actions Workflow (`ci.yml`) để tự động chạy kiểm thử cho Frontend (npm run lint) và Backend (pytest) mỗi khi có Push hoặc Pull Request.
+
+---
+
+## 6. HƯỚNG DẪN DÀNH CHO NGƯỜI VÀO SAU
 
 ### Khởi chạy dự án
 ```bash
