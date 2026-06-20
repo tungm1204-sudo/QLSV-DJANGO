@@ -1,326 +1,326 @@
-﻿# PHẦN 1: TỔNG QUAN DỰ ÁN (PROJECT REPORT)
+# PHẦN 1: TỔNG QUAN DỰ ÁN (PROJECT REPORT)
 
-# BÃ¡o CÃ¡o Dá»± Ãn: Hiá»‡n Äáº¡i HÃ³a Há»‡ Thá»‘ng QLSV (University Edition)
+# Báo Cáo Dự Án: Hiện Đại Hóa Hệ Thống QLSV (University Edition)
 
-TÃ i liá»‡u nÃ y cung cáº¥p cÃ¡i nhÃ¬n tá»•ng quan vá» kiáº¿n trÃºc, cÃ´ng nghá»‡ vÃ  tiáº¿n Ä‘á»™ hiá»‡n táº¡i cá»§a dá»± Ã¡n dÃ nh cho thÃ nh viÃªn má»›i tham gia.
-
----
-
-## 1. Tá»•ng Quan & Má»¥c TiÃªu
-Dá»± Ã¡n Ä‘Æ°á»£c chuyá»ƒn Ä‘á»•i tá»« ná»n táº£ng Django Template (Monolithic) sang kiáº¿n trÃºc hiá»‡n Ä‘áº¡i **Decoupled API-First**:
-- **Backend:** Django REST Framework (DRF) Ä‘Ã³ng vai trÃ² lÃ  API Server.
-- **Frontend:** React (Vite) Ä‘Ã³ng vai trÃ² lÃ  Single Page Application (SPA).
-- **Äá»‘i tÆ°á»£ng:** Há»‡ thá»‘ng Ä‘Æ°á»£c thiáº¿t káº¿ riÃªng cho quáº£n lÃ½ sinh viÃªn cáº¥p **Äáº¡i há»c**.
+Tài liệu này cung cấp cái nhìn tổng quan về kiến trúc, công nghệ và tiến độ hiện tại của dự án dành cho thành viên mới tham gia.
 
 ---
 
-## 2. Tech Stack (CÃ´ng Nghá»‡ Sá»­ Dá»¥ng)
+## 1. Tổng Quan & Mục Tiêu
+Dự án được chuyển đổi từ nền tảng Django Template (Monolithic) sang kiến trúc hiện đại **Decoupled API-First**:
+- **Backend:** Django REST Framework (DRF) đóng vai trò là API Server.
+- **Frontend:** React (Vite) đóng vai trò là Single Page Application (SPA).
+- **Đối tượng:** Hệ thống được thiết kế riêng cho quản lý sinh viên cấp **Đại học**.
+
+---
+
+## 2. Tech Stack (Công Nghệ Sử Dụng)
 
 ### Backend (Python/Django)
 - **Framework:** Django 6.x + Django REST Framework.
-- **Authentication:** JWT (SimpleJWT) - ÄÄƒng nháº­p nháº­n token.
+- **Authentication:** JWT (SimpleJWT) - Đăng nhập nhận token.
 - **Database:** PostgreSQL (Cloud - Neon.tech).
 - **Excel Processing:** `openpyxl`.
 - **Testing:** `pytest` + `pytest-django` + `model-bakery`.
 
 ### Frontend (JavaScript/React)
 - **Build Tool:** Vite.
-- **Styling:** Tailwind CSS + **shadcn/ui** (Bá»™ component hiá»‡n Ä‘áº¡i).
+- **Styling:** Tailwind CSS + **shadcn/ui** (Bộ component hiện đại).
 - **State Management:** Zustand (Auth/Settings).
 - **Data Fetching:** TanStack Query v5 (React Query).
 - **Icons:** Lucide React.
 
 ---
 
-## 3. Cáº¥u TrÃºc ThÆ° Má»¥c (Directory Structure)
+## 3. Cấu Trúc Thư Mục (Directory Structure)
 
 ### `/backend`
-- `accounts/`: Quáº£n lÃ½ User, vai trÃ² (Admin, Giáº£ng viÃªn, Sinh viÃªn) vÃ  Auth.
-- `students/`: Quáº£n lÃ½ há»“ sÆ¡ sinh viÃªn, liÃªn há»‡ kháº©n cáº¥p vÃ  tÃ­nh nÄƒng Excel.
-- `teachers/`: Quáº£n lÃ½ thÃ´ng tin Giáº£ng viÃªn vÃ  Khoa/Bá»™ mÃ´n.
-- `academics/`: Chá»©a core logic vá» KhÃ³a (Grade), Lá»›p sinh hoáº¡t (Classroom), Há»c pháº§n (Course) vÃ  Äiá»ƒm sá»‘.
+- `accounts/`: Quản lý User, vai trò (Admin, Giảng viên, Sinh viên) và Auth.
+- `students/`: Quản lý hồ sơ sinh viên, liên hệ khẩn cấp và tính năng Excel.
+- `teachers/`: Quản lý thông tin Giảng viên và Khoa/Bộ môn.
+- `academics/`: Chứa core logic về Khóa (Grade), Lớp sinh hoạt (Classroom), Học phần (Course) và Điểm số.
 
 ### `/frontend`
-- `src/api/`: Cáº¥u hÃ¬nh `axiosClient` vÃ  cÃ¡c service API chung.
-- `src/features/`: Chia theo module (students, teachers, academics). Má»—i module cÃ³ `api.js` vÃ  `hooks.js` (React Query).
-- `src/components/ui/`: CÃ¡c component nguyÃªn tá»­ tá»« shadcn.
-- `src/pages/`: CÃ¡c mÃ n hÃ¬nh chÃ­nh cá»§a á»©ng dá»¥ng.
+- `src/api/`: Cấu hình `axiosClient` và các service API chung.
+- `src/features/`: Chia theo module (students, teachers, academics). Mỗi module có `api.js` và `hooks.js` (React Query).
+- `src/components/ui/`: Các component nguyên tử từ shadcn.
+- `src/pages/`: Các màn hình chính của ứng dụng.
 
 ---
 
-## 4. Tiáº¿n Äá»™ Hiá»‡n Táº¡i (Káº¿t ThÃºc Phase 2)
+## 4. Tiến Độ Hiện Tại (Kết Thúc Phase 2)
 
-### âœ… ÄÃ£ hoÃ n thÃ nh (100%):
-1. **Refactor Äáº¡i há»c:** Chuyá»ƒn Ä‘á»•i toÃ n bá»™ thuáº­t ngá»¯ (Giáº£ng viÃªn, KhÃ³a, Lá»›p sinh hoáº¡t).
-2. **Há»‡ thá»‘ng Sinh viÃªn:** CRUD Ä‘áº§y Ä‘á»§ + **Import/Export Excel**.
-3. **Há»‡ thá»‘ng Giáº£ng viÃªn:** CRUD Ä‘áº§y Ä‘á»§.
-4. **Academics Foundation:** ÄÃ£ cÃ³ giao diá»‡n danh sÃ¡ch cho KhÃ³a, Há»c pháº§n, Lá»›p sinh hoáº¡t.
-5. **Testing:** ÄÃ£ cÃ³ bá»™ test backend vÃ  frontend á»•n Ä‘á»‹nh.
-6. **Há»‡ thá»‘ng Äiá»ƒm danh (Attendance):** ÄÃ£ hoÃ n thiá»‡n API (Filtering, Bulk Update, Attendance Sheet).
-7. **API PhÃ¢n cÃ´ng giáº£ng dáº¡y:** Backend API Ä‘Ã£ sáºµn sÃ ng vá»›i nested data (`classroom_name`, `course_name`, `teacher_name`) vÃ  há»— trá»£ filter (`?classroom=`, `?course=`, `?teacher=`).
+### ✅ Đã hoàn thành (100%):
+1. **Refactor Đại học:** Chuyển đổi toàn bộ thuật ngữ (Giảng viên, Khóa, Lớp sinh hoạt).
+2. **Hệ thống Sinh viên:** CRUD đầy đủ + **Import/Export Excel**.
+3. **Hệ thống Giảng viên:** CRUD đầy đủ.
+4. **Academics Foundation:** Đã có giao diện danh sách cho Khóa, Học phần, Lớp sinh hoạt.
+5. **Testing:** Đã có bộ test backend và frontend ổn định.
+6. **Hệ thống Điểm danh (Attendance):** Đã hoàn thiện API (Filtering, Bulk Update, Attendance Sheet).
+7. **API Phân công giảng dạy:** Backend API đã sẵn sàng với nested data (`classroom_name`, `course_name`, `teacher_name`) và hỗ trợ filter (`?classroom=`, `?course=`, `?teacher=`).
 
-### ðŸš§ Äang thá»±c hiá»‡n (Phase 3):
-1. HoÃ n thiá»‡n Form ThÃªm/Sá»­a cho Lá»›p sinh hoáº¡t & Há»c pháº§n.
-2. XÃ¢y dá»±ng giao diá»‡n Frontend (UI) cho module **PhÃ¢n cÃ´ng giáº£ng dáº¡y** dá»±a trÃªn API Ä‘Ã£ cÃ³.
+### 🚧 Đang thực hiện (Phase 3):
+1. Hoàn thiện Form Thêm/Sửa cho Lớp sinh hoạt & Học phần.
+2. Xây dựng giao diện Frontend (UI) cho module **Phân công giảng dạy** dựa trên API đã có.
 
 ---
 
-## 5. HÆ°á»›ng Dáº«n CÃ i Äáº·t (Cho NgÆ°á»i Má»›i)
+## 5. Hướng Dẫn Cài Đặt (Cho Người Mới)
 
-### BÆ°á»›c 1: Clone Repo & Backend Setup
+### Bước 1: Clone Repo & Backend Setup
 ```bash
 git clone https://github.com/tungm1204-sudo/QLSV-DJANGO
 cd QLSV-DJANGO/backend
-# Táº¡o venv vÃ  cÃ i dependencies (náº¿u cÃ³ requirements.txt)
+# Tạo venv và cài dependencies (nếu có requirements.txt)
 python manage.py migrate
 python manage.py runserver
 ```
 
-### BÆ°á»›c 2: Frontend Setup
+### Bước 2: Frontend Setup
 ```bash
 cd ../frontend
 npm install
 npm run dev
 ```
 
-### BÆ°á»›c 3: TÃ i khoáº£n Test
+### Bước 3: Tài khoản Test
 - **Trang Login:** `http://localhost:5173/login`
-- **TÃ i khoáº£n Admin:** `admin` / `password123`
+- **Tài khoản Admin:** `admin` / `password123`
 
 ---
 
-## 6. LÆ°u Ã Quan Trá»ng Cho Dev Má»›i
-- **University Logic:** LuÃ´n sá»­ dá»¥ng thuáº­t ngá»¯ "Lá»›p sinh hoáº¡t" thay vÃ¬ "Lá»›p há»c" Ä‘á»ƒ trÃ¡nh nháº§m láº«n vá»›i "Lá»›p há»c pháº§n".
-- **API First:** Má»i thao tÃ¡c frontend pháº£i thÃ´ng qua `axiosClient` trong `src/api/`.
-- **UI Consistency:** Sá»­ dá»¥ng bá»™ component trong `src/components/ui/`.
+## 6. Lưu Ý Quan Trọng Cho Dev Mới
+- **University Logic:** Luôn sử dụng thuật ngữ "Lớp sinh hoạt" thay vì "Lớp học" để tránh nhầm lẫn với "Lớp học phần".
+- **API First:** Mọi thao tác frontend phải thông qua `axiosClient` trong `src/api/`.
+- **UI Consistency:** Sử dụng bộ component trong `src/components/ui/`.
 
-## 7. TÃ i Liá»‡u API & Kiáº¿n Thá»©c Cá»‘t LÃµi (Knowledge Items)
-Äá»ƒ trÃ¡nh viá»‡c cÃ¡c láº­p trÃ¬nh viÃªn vÃ  AI sau nÃ y pháº£i "Ä‘á»c láº¡i toÃ n bá»™ code", dá»± Ã¡n Ã¡p dá»¥ng há»‡ thá»‘ng ghi nhá»› vÃ  tÃ i liá»‡u hÃ³a:
-- **TÃ i liá»‡u Walkthrough:** Báº¥t cá»© khi nÃ o hoÃ n thÃ nh má»™t tÃ­nh nÄƒng, má»™t báº£n bÃ¡o cÃ¡o `walkthrough.md` sáº½ Ä‘Æ°á»£c táº¡o ra Ä‘á»ƒ lÆ°u trá»¯ láº¡i cÃ¡c endpoints má»›i (nhÆ° Bulk Update Äiá»ƒm danh). Báº¡n cÃ³ thá»ƒ tÃ¬m tháº¥y trong lá»‹ch sá»­ thay Ä‘á»•i cá»§a mÃ¬nh.
-- **BÃ¡o cÃ¡o nÃ y (`PROJECT_REPORT.md` vÃ  `ONBOARDING_REPORT.md`):** ÄÃ³ng vai trÃ² lÃ  trÃ­ nhá»› dÃ i háº¡n (Long-term memory) chá»©a tÃ³m táº¯t kiáº¿n trÃºc. CÃ¡c AI má»›i khi join vÃ o dá»± Ã¡n cÃ³ thá»ƒ Ä‘á»c file nÃ y Ä‘á»ƒ náº¯m ngay bá»‘i cáº£nh dá»± Ã¡n thay vÃ¬ tá»± scan source code.
+## 7. Tài Liệu API & Kiến Thức Cốt Lõi (Knowledge Items)
+Để tránh việc các lập trình viên và AI sau này phải "đọc lại toàn bộ code", dự án áp dụng hệ thống ghi nhớ và tài liệu hóa:
+- **Tài liệu Walkthrough:** Bất cứ khi nào hoàn thành một tính năng, một bản báo cáo `walkthrough.md` sẽ được tạo ra để lưu trữ lại các endpoints mới (như Bulk Update Điểm danh). Bạn có thể tìm thấy trong lịch sử thay đổi của mình.
+- **Báo cáo này (`PROJECT_REPORT.md` và `ONBOARDING_REPORT.md`):** Đóng vai trò là trí nhớ dài hạn (Long-term memory) chứa tóm tắt kiến trúc. Các AI mới khi join vào dự án có thể đọc file này để nắm ngay bối cảnh dự án thay vì tự scan source code.
 
 ---
-> *TÃ i liá»‡u cáº­p nháº­t ngÃ y: 08/06/2026 bá»Ÿi Antigravity AI.*
+> *Tài liệu cập nhật ngày: 08/06/2026 bởi Antigravity AI.*
 
-## Cáº­p nháº­t cleanup
-- Repo Ä‘Ã£ Ä‘Æ°á»£c dá»n sáº¡ch backend báº±ng cÃ¡ch loáº¡i bá» file local vÃ  artifact khÃ´ng cáº§n thiáº¿t.
-- ThÆ° má»¥c `backend/core` hiá»‡n chá»‰ giá»¯ láº¡i cáº¥u trÃºc cáº§n thiáº¿t cho lá»‡nh quáº£n lÃ½: `management/commands/setup_groups.py`.
-- `.gitignore` Ä‘Ã£ Ä‘Æ°á»£c má»Ÿ rá»™ng Ä‘á»ƒ bá» qua cÃ¡c file local `*.coverage` vÃ  `pytest_report.txt`.
+## Cập nhật cleanup
+- Repo đã được dọn sạch backend bằng cách loại bỏ file local và artifact không cần thiết.
+- Thư mục `backend/core` hiện chỉ giữ lại cấu trúc cần thiết cho lệnh quản lý: `management/commands/setup_groups.py`.
+- `.gitignore` đã được mở rộng để bỏ qua các file local `*.coverage` và `pytest_report.txt`.
 
 
 ---
 
 # PHẦN 2: HƯỚNG DẪN ONBOARDING
 
-# BÃ¡o CÃ¡o Onboarding Dá»± Ãn Chi Tiáº¿t (A-Z)
+# Báo Cáo Onboarding Dự Án Chi Tiết (A-Z)
 
-ChÃ o má»«ng báº¡n tham gia dá»± Ã¡n! DÆ°á»›i Ä‘Ã¢y lÃ  bÃ¡o cÃ¡o phÃ¢n tÃ­ch toÃ n diá»‡n vá» há»‡ thá»‘ng hiá»‡n táº¡i, giÃºp báº¡n nhanh chÃ³ng náº¯m báº¯t kiáº¿n trÃºc vÃ  tá»± tin Ä‘Ã³ng gÃ³p vÃ o dá»± Ã¡n.
+Chào mừng bạn tham gia dự án! Dưới đây là báo cáo phân tích toàn diện về hệ thống hiện tại, giúp bạn nhanh chóng nắm bắt kiến trúc và tự tin đóng góp vào dự án.
 
 ---
 
-## 1. Tá»•ng Quan Dá»± Ãn & Nghiá»‡p Vá»¥ (Business Logic)
+## 1. Tổng Quan Dự Án & Nghiệp Vụ (Business Logic)
 
 > [!NOTE]
-> **BÃ i toÃ¡n giáº£i quyáº¿t:** ÄÃ¢y lÃ  há»‡ thá»‘ng quáº£n lÃ½ sinh viÃªn dÃ nh riÃªng cho mÃ´i trÆ°á»ng **Äáº¡i há»c**. Dá»± Ã¡n Ä‘ang trong quÃ¡ trÃ¬nh chuyá»ƒn Ä‘á»•i (hiá»‡n Ä‘áº¡i hÃ³a) tá»« ná»n táº£ng web monolithic truyá»n thá»‘ng (Django Template) sang kiáº¿n trÃºc Decoupled API-First hiá»‡n Ä‘áº¡i.
+> **Bài toán giải quyết:** Đây là hệ thống quản lý sinh viên dành riêng cho môi trường **Đại học**. Dự án đang trong quá trình chuyển đổi (hiện đại hóa) từ nền tảng web monolithic truyền thống (Django Template) sang kiến trúc Decoupled API-First hiện đại.
 
-- **Äá»‘i tÆ°á»£ng ngÆ°á»i dÃ¹ng hÆ°á»›ng Ä‘áº¿n:**
-  - **Admin / GiÃ¡o vá»¥ (Academic Staff):** Quáº£n lÃ½ cáº¥u hÃ¬nh toÃ n há»‡ thá»‘ng, táº¡o dá»¯ liá»‡u gá»‘c (Khoa, KhÃ³a, MÃ´n há»c, Lá»›p), cáº¥u hÃ¬nh há»c ká»³ vÃ  phÃ¢n cÃ´ng giáº£ng dáº¡y.
-  - **Giáº£ng viÃªn (Teacher):** Quáº£n lÃ½ thÃ´ng tin lá»›p sinh hoáº¡t/lá»›p há»c pháº§n Ä‘Æ°á»£c phÃ¢n cÃ´ng, thá»±c hiá»‡n Ä‘iá»ƒm danh vÃ  nháº­p Ä‘iá»ƒm sinh viÃªn.
-  - **Sinh viÃªn (Student):** Tra cá»©u thÃ´ng tin cÃ¡ nhÃ¢n, xem Ä‘iá»ƒm sá»‘, thá»i khÃ³a biá»ƒu vÃ  lá»‹ch sá»­ Ä‘iá»ƒm danh.
+- **Đối tượng người dùng hướng đến:**
+  - **Admin / Giáo vụ (Academic Staff):** Quản lý cấu hình toàn hệ thống, tạo dữ liệu gốc (Khoa, Khóa, Môn học, Lớp), cấu hình học kỳ và phân công giảng dạy.
+  - **Giảng viên (Teacher):** Quản lý thông tin lớp sinh hoạt/lớp học phần được phân công, thực hiện điểm danh và nhập điểm sinh viên.
+  - **Sinh viên (Student):** Tra cứu thông tin cá nhân, xem điểm số, thời khóa biểu và lịch sử điểm danh.
 
-- **TÃ³m táº¯t cÃ¡c chá»©c nÄƒng cá»‘t lÃµi (Core Features):**
-  - **Há»‡ thá»‘ng TÃ i khoáº£n & PhÃ¢n quyá»n:** Quáº£n lÃ½ ngÆ°á»i dÃ¹ng táº­p trung vá»›i Role-based Access Control (Admin, GiÃ¡o vá»¥, Giáº£ng viÃªn, Sinh viÃªn).
-  - **Quáº£n lÃ½ Há»“ sÆ¡ (Profiles):** Quáº£n lÃ½ chi tiáº¿t sinh viÃªn (kÃ¨m liÃªn há»‡ kháº©n cáº¥p/phá»¥ huynh) vÃ  giáº£ng viÃªn (kÃ¨m thÃ´ng tin khoa/bá»™ mÃ´n). Há»— trá»£ Import/Export Excel dá»¯ liá»‡u sinh viÃªn.
-  - **Nghiá»‡p vá»¥ Há»c vá»¥ (Academics):** Quáº£n lÃ½ cáº¥u trÃºc Ä‘Ã o táº¡o bao gá»“m Há»c ká»³, KhÃ³a, Lá»›p sinh hoáº¡t, MÃ´n há»c, PhÃ¢n cÃ´ng giáº£ng dáº¡y, Äiá»ƒm danh vÃ  Quáº£n lÃ½ Äiá»ƒm sá»‘. (VÃ­ dá»¥ API Ä‘iá»ƒm danh: `bulk-update` vÃ  `attendance-sheet` Ä‘Ã£ hoÃ n thiá»‡n; API PhÃ¢n cÃ´ng giáº£ng dáº¡y `/api/assignments/` Ä‘Ã£ há»— trá»£ filter theo Lá»›p/MÃ´n/GV vÃ  tráº£ vá» tÃªn chi tiáº¿t Ä‘á»ƒ lÃ m UI).
+- **Tóm tắt các chức năng cốt lõi (Core Features):**
+  - **Hệ thống Tài khoản & Phân quyền:** Quản lý người dùng tập trung với Role-based Access Control (Admin, Giáo vụ, Giảng viên, Sinh viên).
+  - **Quản lý Hồ sơ (Profiles):** Quản lý chi tiết sinh viên (kèm liên hệ khẩn cấp/phụ huynh) và giảng viên (kèm thông tin khoa/bộ môn). Hỗ trợ Import/Export Excel dữ liệu sinh viên.
+  - **Nghiệp vụ Học vụ (Academics):** Quản lý cấu trúc đào tạo bao gồm Học kỳ, Khóa, Lớp sinh hoạt, Môn học, Phân công giảng dạy, Điểm danh và Quản lý Điểm số. (Ví dụ API điểm danh: `bulk-update` và `attendance-sheet` đã hoàn thiện; API Phân công giảng dạy `/api/assignments/` đã hỗ trợ filter theo Lớp/Môn/GV và trả về tên chi tiết để làm UI).
 
 ---
 
-## 2. Chi Tiáº¿t Báº£n Äá»“ CÃ´ng Nghá»‡ (Tech Stack Analysis)
+## 2. Chi Tiết Bản Đồ Công Nghệ (Tech Stack Analysis)
 
-Dá»± Ã¡n sá»­ dá»¥ng má»™t stack cÃ´ng nghá»‡ ráº¥t hiá»‡n Ä‘áº¡i, chia tÃ¡ch rÃµ rÃ ng giá»¯a Frontend vÃ  Backend.
+Dự án sử dụng một stack công nghệ rất hiện đại, chia tách rõ ràng giữa Frontend và Backend.
 
-| TÃªn CÃ´ng Nghá»‡/ThÆ° Viá»‡n | Vai trÃ²/TÃ¡c dá»¥ng cá»¥ thá»ƒ | ÄÃ¡nh giÃ¡ phiÃªn báº£n |
+| Tên Công Nghệ/Thư Viện | Vai trò/Tác dụng cụ thể | Đánh giá phiên bản |
 | :--- | :--- | :--- |
-| **Django (v5.0+)** | Framework cá»‘t lÃµi á»Ÿ Backend, quáº£n lÃ½ ORM, Model, vÃ  logic nghiá»‡p vá»¥. | Má»›i, báº£o máº­t cao. |
-| **Django REST Framework (DRF)** | XÃ¢y dá»±ng há»‡ thá»‘ng API (RESTful) giao tiáº¿p vá»›i Frontend. API-First thay vÃ¬ SSR. | Chuáº©n cÃ´ng nghiá»‡p, á»•n Ä‘á»‹nh. |
-| **SimpleJWT** | XÃ¡c thá»±c ngÆ°á»i dÃ¹ng (Authentication) qua JSON Web Token (Access/Refresh token). | Lá»±a chá»n tá»‘t nháº¥t cho SPA. |
-| **PostgreSQL (Neon Cloud)** | Database chÃ­nh trÃªn mÃ´i trÆ°á»ng production, lÆ°u trá»¯ dá»¯ liá»‡u quan há»‡. | Hiá»‡n Ä‘áº¡i, cloud-native. |
-| **SQLite / pytest-django** | Database nháº¹ dÃ¹ng cho mÃ´i trÆ°á»ng dev/testing Ä‘á»ƒ test cháº¡y siÃªu tá»‘c. | PhÃ¹ há»£p cho CI vÃ  Dev local. |
-| **openpyxl** | ThÆ° viá»‡n xá»­ lÃ½ nghiá»‡p vá»¥ Import/Export danh sÃ¡ch sinh viÃªn qua file Excel (`.xlsx`). | TiÃªu chuáº©n vÃ  á»•n Ä‘á»‹nh. |
-| **React (v19) + Vite (v8)** | Frontend Single Page Application (SPA). Vite giÃºp build vÃ  reload cá»±c nhanh thay vÃ¬ CRA/Webpack. | Ráº¥t má»›i, hiá»‡u nÄƒng tá»‘i Ä‘a. |
-| **Tailwind CSS (v4) + shadcn/ui** | Styling UI. Tailwind giÃºp style nhanh, `shadcn/ui` cung cáº¥p cÃ¡c component Ä‘áº¹p, cÃ³ thá»ƒ tÃ¹y biáº¿n source code. | Äang cá»±c ká»³ trending. |
-| **TanStack Query (v5)** | React Query quáº£n lÃ½ server-state: tá»± Ä‘á»™ng fetch, cache, vÃ  Ä‘á»“ng bá»™ dá»¯ liá»‡u API. | PhiÃªn báº£n má»›i, tá»‘i Æ°u tá»‘t. |
-| **Zustand (v5)** | Quáº£n lÃ½ global client-state gá»n nháº¹ (nhÆ° session user, auth token). | Nháº¹ vÃ  dá»… hiá»ƒu hÆ¡n Redux. |
-| **React Hook Form + Zod** | Xá»­ lÃ½ tráº¡ng thÃ¡i Form vÃ  validate dá»¯ liá»‡u cháº·t cháº½ dá»±a trÃªn schema. | Combo tiÃªu chuáº©n hiá»‡n nay. |
+| **Django (v5.0+)** | Framework cốt lõi ở Backend, quản lý ORM, Model, và logic nghiệp vụ. | Mới, bảo mật cao. |
+| **Django REST Framework (DRF)** | Xây dựng hệ thống API (RESTful) giao tiếp với Frontend. API-First thay vì SSR. | Chuẩn công nghiệp, ổn định. |
+| **SimpleJWT** | Xác thực người dùng (Authentication) qua JSON Web Token (Access/Refresh token). | Lựa chọn tốt nhất cho SPA. |
+| **PostgreSQL (Neon Cloud)** | Database chính trên môi trường production, lưu trữ dữ liệu quan hệ. | Hiện đại, cloud-native. |
+| **SQLite / pytest-django** | Database nhẹ dùng cho môi trường dev/testing để test chạy siêu tốc. | Phù hợp cho CI và Dev local. |
+| **openpyxl** | Thư viện xử lý nghiệp vụ Import/Export danh sách sinh viên qua file Excel (`.xlsx`). | Tiêu chuẩn và ổn định. |
+| **React (v19) + Vite (v8)** | Frontend Single Page Application (SPA). Vite giúp build và reload cực nhanh thay vì CRA/Webpack. | Rất mới, hiệu năng tối đa. |
+| **Tailwind CSS (v4) + shadcn/ui** | Styling UI. Tailwind giúp style nhanh, `shadcn/ui` cung cấp các component đẹp, có thể tùy biến source code. | Đang cực kỳ trending. |
+| **TanStack Query (v5)** | React Query quản lý server-state: tự động fetch, cache, và đồng bộ dữ liệu API. | Phiên bản mới, tối ưu tốt. |
+| **Zustand (v5)** | Quản lý global client-state gọn nhẹ (như session user, auth token). | Nhẹ và dễ hiểu hơn Redux. |
+| **React Hook Form + Zod** | Xử lý trạng thái Form và validate dữ liệu chặt chẽ dựa trên schema. | Combo tiêu chuẩn hiện nay. |
 
 ---
 
-## 3. Kiáº¿n TrÃºc Há»‡ Thá»‘ng & Luá»“ng Dá»¯ Liá»‡u (Architecture & Data Flow)
+## 3. Kiến Trúc Hệ Thống & Luồng Dữ Liệu (Architecture & Data Flow)
 
 > [!TIP]
-> **Kiáº¿n trÃºc:** Há»‡ thá»‘ng Ã¡p dá»¥ng mÃ´ hÃ¬nh **Decoupled Client-Server**. Backend thuáº§n tÃºy chá»‰ tráº£ vá» JSON qua API, vÃ  Frontend lÃ  má»™t SPA hoÃ n toÃ n Ä‘á»™c láº­p.
+> **Kiến trúc:** Hệ thống áp dụng mô hình **Decoupled Client-Server**. Backend thuần túy chỉ trả về JSON qua API, và Frontend là một SPA hoàn toàn độc lập.
 
-### Thiáº¿t káº¿ Database (Models)
-CÃ¡c model Ä‘Æ°á»£c chia rÃ nh máº¡ch theo tá»«ng domain nghiá»‡p vá»¥:
-- Báº£ng **`User`** (AbstractUser) Ä‘Ã³ng vai trÃ² trung tÃ¢m Ä‘á»ƒ Ä‘Äƒng nháº­p, Ä‘i kÃ¨m trÆ°á»ng `role`.
-- Báº£ng **`StudentProfile`** vÃ  **`TeacherProfile`** liÃªn káº¿t `OneToOne` vá»›i `User` Ä‘á»ƒ má»Ÿ rá»™ng thÃ´ng tin.
-- Module Há»c vá»¥ xoay quanh: **`Grade`** (KhÃ³a) -> **`Classroom`** (Lá»›p sinh hoáº¡t) -> chá»©a **`ClassroomStudent`** (M-N).
-- Lá»›p há»c gáº¯n vá»›i **`Semester`** (Há»c ká»³) vÃ  cÃ³ phÃ¢n cÃ´ng **`CourseAssignment`** cho Giáº£ng viÃªn dáº¡y MÃ´n há»c (**`Course`**).
+### Thiết kế Database (Models)
+Các model được chia rành mạch theo từng domain nghiệp vụ:
+- Bảng **`User`** (AbstractUser) đóng vai trò trung tâm để đăng nhập, đi kèm trường `role`.
+- Bảng **`StudentProfile`** và **`TeacherProfile`** liên kết `OneToOne` với `User` để mở rộng thông tin.
+- Module Học vụ xoay quanh: **`Grade`** (Khóa) -> **`Classroom`** (Lớp sinh hoạt) -> chứa **`ClassroomStudent`** (M-N).
+- Lớp học gắn với **`Semester`** (Học kỳ) và có phân công **`CourseAssignment`** cho Giảng viên dạy Môn học (**`Course`**).
 
-### Luá»“ng Dá»¯ Liá»‡u (Data Flow) - VÃ­ dá»¥ luá»“ng ÄÄƒng nháº­p:
-1. **User Action:** NgÆ°á»i dÃ¹ng Ä‘iá»n Form Login á»Ÿ Frontend. `React Hook Form` káº¿t há»£p `Zod` validate email/password ngay táº¡i client.
-2. **API Call:** HÃ m xá»­ lÃ½ gá»i API login thÃ´ng qua `axiosClient` (`POST /api/token/`).
-3. **Backend Auth:** DRF nháº­n request, xÃ¡c thá»±c qua model `User`. Náº¿u Ä‘Ãºng, `SimpleJWT` sinh ra `access_token` vÃ  `refresh_token` tráº£ vá» JSON.
-4. **Client State:** Frontend nháº­n token, lÆ°u vÃ o `Zustand` store (hoáº·c localStorage) Ä‘á»ƒ duy trÃ¬ phiÃªn.
-5. **Next Request:** Khi Frontend muá»‘n láº¥y danh sÃ¡ch sinh viÃªn, `TanStack Query` gá»i API kÃ¨m Header `Authorization: Bearer <token>`. DRF nháº­n token, phÃ¢n quyá»n (Permissions), query Model qua ORM, Serializer chuyá»ƒn Ä‘á»•i thÃ nh JSON vÃ  tráº£ vá» cho React render báº£ng.
-
----
-
-## 4. Cáº¥u TrÃºc ThÆ° Má»¥c & CÃ¡ch Tiáº¿p Cáº­n Code (Codebase Navigation)
-
-### Backend (`/backend`) - Cáº¥u trÃºc Django App
-- `qlsv/`: Chá»©a file cáº¥u hÃ¬nh gá»‘c `settings.py` (cáº¥u hÃ¬nh DB, App), `urls.py` (Ä‘á»‹nh tuyáº¿n root API). File `.env` lÆ°u key báº£o máº­t.
-- `accounts/`, `students/`, `teachers/`, `academics/`: ÄÃ¢y lÃ  cÃ¡c Module (App). Trong má»—i App báº¡n sáº½ lÃ m viá»‡c vá»›i:
-  - `models.py`: NÆ¡i Ä‘á»‹nh nghÄ©a cáº¥u trÃºc báº£ng CSDL (ORM).
-  - `serializers.py`: NÆ¡i Ä‘á»‹nh nghÄ©a format JSON tráº£ vá» cho API.
-  - `views.py` / `api.py`: NÆ¡i viáº¿t logic API (ViewSets), xá»­ lÃ½ lá»c dá»¯ liá»‡u, pháº§n quyá»n.
-  - `urls.py`: NÆ¡i khai bÃ¡o Endpoint (Router).
-
-### Frontend (`/frontend`) - Cáº¥u trÃºc React Feature-based
-- `package.json`: Chá»©a script start (`npm run dev`) vÃ  thÆ° viá»‡n.
-- `src/api/`: NÆ¡i chá»©a cáº¥u hÃ¬nh Axios (interceptors tá»± Ä‘á»™ng gáº¯n token vÃ o header).
-- `src/components/ui/`: ThÆ° má»¥c chá»©a cÃ¡c component atomic cá»§a `shadcn`. (KhÃ´ng nÃªn sá»­a logic á»Ÿ Ä‘Ã¢y, chá»‰ Ä‘á»•i style náº¿u cáº§n).
-- `src/features/`: **ÄÃ¢y lÃ  nÆ¡i báº¡n sáº½ code nhiá»u nháº¥t.** Logic Ä‘Æ°á»£c gom theo tÃ­nh nÄƒng (vd: `students`, `teachers`). Má»—i feature sáº½ cÃ³ `api.js` (gá»i endpoint) vÃ  `hooks.js` (TanStack Query hooks).
-- `src/pages/`: CÃ¡c View ghÃ©p cÃ¡c component láº¡i vá»›i nhau Ä‘á»ƒ táº¡o thÃ nh giao diá»‡n nguyÃªn trang.
+### Luồng Dữ Liệu (Data Flow) - Ví dụ luồng Đăng nhập:
+1. **User Action:** Người dùng điền Form Login ở Frontend. `React Hook Form` kết hợp `Zod` validate email/password ngay tại client.
+2. **API Call:** Hàm xử lý gọi API login thông qua `axiosClient` (`POST /api/token/`).
+3. **Backend Auth:** DRF nhận request, xác thực qua model `User`. Nếu đúng, `SimpleJWT` sinh ra `access_token` và `refresh_token` trả về JSON.
+4. **Client State:** Frontend nhận token, lưu vào `Zustand` store (hoặc localStorage) để duy trì phiên.
+5. **Next Request:** Khi Frontend muốn lấy danh sách sinh viên, `TanStack Query` gọi API kèm Header `Authorization: Bearer <token>`. DRF nhận token, phân quyền (Permissions), query Model qua ORM, Serializer chuyển đổi thành JSON và trả về cho React render bảng.
 
 ---
 
-## 5. Lá»™ TrÃ¬nh Há»c Cáº¥p Tá»‘c Cho ThÃ nh ViÃªn Má»›i (Accelerated Learning Path)
+## 4. Cấu Trúc Thư Mục & Cách Tiếp Cận Code (Codebase Navigation)
 
-Äá»ƒ nhanh chÃ³ng náº¯m báº¯t há»‡ thá»‘ng vÃ  commit code, báº¡n hÃ£y theo sÃ¡t lá»™ trÃ¬nh 4 bÆ°á»›c sau:
+### Backend (`/backend`) - Cấu trúc Django App
+- `qlsv/`: Chứa file cấu hình gốc `settings.py` (cấu hình DB, App), `urls.py` (định tuyến root API). File `.env` lưu key bảo mật.
+- `accounts/`, `students/`, `teachers/`, `academics/`: Đây là các Module (App). Trong mỗi App bạn sẽ làm việc với:
+  - `models.py`: Nơi định nghĩa cấu trúc bảng CSDL (ORM).
+  - `serializers.py`: Nơi định nghĩa format JSON trả về cho API.
+  - `views.py` / `api.py`: Nơi viết logic API (ViewSets), xử lý lọc dữ liệu, phần quyền.
+  - `urls.py`: Nơi khai báo Endpoint (Router).
 
-**BÆ°á»›c 1: Django ORM & DRF (Backend - 2 ngÃ y)**
-- **Tá»« khÃ³a cáº§n há»c:** Django Models, QuerySet, ModelSerializer, ModelViewSet, DRF Permissions.
-- *Thá»±c hÃ nh:* Äá»c hiá»ƒu file `academics/models.py`. Thá»­ táº¡o má»™t API má»›i Ä‘Æ¡n giáº£n (vÃ­ dá»¥ API Ä‘áº¿m sá»‘ lÆ°á»£ng lá»›p há»c).
-
-**BÆ°á»›c 2: React Core & Tailwind CSS (Frontend UI - 2 ngÃ y)**
-- **Tá»« khÃ³a cáº§n há»c:** Functional Component, `useState`, `useEffect`, Utility Classes cá»§a Tailwind.
-- *Thá»±c hÃ nh:* Táº¡o má»™t Component tÄ©nh UI báº±ng Tailwind, thá»­ sá»­ dá»¥ng component Button, Input tá»« `shadcn/ui`.
-
-**BÆ°á»›c 3: TanStack Query & Quáº£n lÃ½ Form (Frontend Logic - 2 ngÃ y)**
-- **Tá»« khÃ³a cáº§n há»c:** `useQuery` (fetch data), `useMutation` (create/update data), React Hook Form, Zod schema validation.
-- *Thá»±c hÃ nh:* Viáº¿t code gá»i API tá»« BÆ°á»›c 1 vÃ o Component BÆ°á»›c 2, Ä‘á»• dá»¯ liá»‡u ra giao diá»‡n. ThÃªm tÃ­nh nÄƒng Search Ä‘Æ¡n giáº£n.
-
-**BÆ°á»›c 4: Authentication Flow (GhÃ©p ná»‘i há»‡ thá»‘ng - 1 ngÃ y)**
-- **Tá»« khÃ³a cáº§n há»c:** JWT Lifecycle, Axios Interceptors, Zustand state management.
-- *Thá»±c hÃ nh:* Äá»c hiá»ƒu luá»“ng Ä‘Ã­nh kÃ¨m JWT vÃ o request Header táº¡i file cáº¥u hÃ¬nh Axios cá»§a frontend.
+### Frontend (`/frontend`) - Cấu trúc React Feature-based
+- `package.json`: Chứa script start (`npm run dev`) và thư viện.
+- `src/api/`: Nơi chứa cấu hình Axios (interceptors tự động gắn token vào header).
+- `src/components/ui/`: Thư mục chứa các component atomic của `shadcn`. (Không nên sửa logic ở đây, chỉ đổi style nếu cần).
+- `src/features/`: **Đây là nơi bạn sẽ code nhiều nhất.** Logic được gom theo tính năng (vd: `students`, `teachers`). Mỗi feature sẽ có `api.js` (gọi endpoint) và `hooks.js` (TanStack Query hooks).
+- `src/pages/`: Các View ghép các component lại với nhau để tạo thành giao diện nguyên trang.
 
 ---
 
-## 6. ÄÃ¡nh GiÃ¡ Há»‡ Thá»‘ng & Gá»£i Ã HÆ°á»›ng Äi Tiáº¿p Theo (Next Steps)
+## 5. Lộ Trình Học Cấp Tốc Cho Thành Viên Mới (Accelerated Learning Path)
+
+Để nhanh chóng nắm bắt hệ thống và commit code, bạn hãy theo sát lộ trình 4 bước sau:
+
+**Bước 1: Django ORM & DRF (Backend - 2 ngày)**
+- **Từ khóa cần học:** Django Models, QuerySet, ModelSerializer, ModelViewSet, DRF Permissions.
+- *Thực hành:* Đọc hiểu file `academics/models.py`. Thử tạo một API mới đơn giản (ví dụ API đếm số lượng lớp học).
+
+**Bước 2: React Core & Tailwind CSS (Frontend UI - 2 ngày)**
+- **Từ khóa cần học:** Functional Component, `useState`, `useEffect`, Utility Classes của Tailwind.
+- *Thực hành:* Tạo một Component tĩnh UI bằng Tailwind, thử sử dụng component Button, Input từ `shadcn/ui`.
+
+**Bước 3: TanStack Query & Quản lý Form (Frontend Logic - 2 ngày)**
+- **Từ khóa cần học:** `useQuery` (fetch data), `useMutation` (create/update data), React Hook Form, Zod schema validation.
+- *Thực hành:* Viết code gọi API từ Bước 1 vào Component Bước 2, đổ dữ liệu ra giao diện. Thêm tính năng Search đơn giản.
+
+**Bước 4: Authentication Flow (Ghép nối hệ thống - 1 ngày)**
+- **Từ khóa cần học:** JWT Lifecycle, Axios Interceptors, Zustand state management.
+- *Thực hành:* Đọc hiểu luồng đính kèm JWT vào request Header tại file cấu hình Axios của frontend.
+
+---
+
+## 6. Đánh Giá Hệ Thống & Gợi Ý Hướng Đi Tiếp Theo (Next Steps)
 
 > [!IMPORTANT]
-> **Nháº­n xÃ©t tá»•ng quan:** Dá»± Ã¡n Ä‘ang cÃ³ ná»n táº£ng kiáº¿n trÃºc ráº¥t tá»‘t, tá»• chá»©c codebase sáº¡ch sáº½ vÃ  sá»­ dá»¥ng cÃ¡c cÃ´ng nghá»‡ hiá»‡n Ä‘áº¡i báº¯t ká»‹p xu hÆ°á»›ng. CÃ³ test coverage cÆ¡ báº£n á»Ÿ Backend.
+> **Nhận xét tổng quan:** Dự án đang có nền tảng kiến trúc rất tốt, tổ chức codebase sạch sẽ và sử dụng các công nghệ hiện đại bắt kịp xu hướng. Có test coverage cơ bản ở Backend.
 
-### Ná»£ Ká»¹ Thuáº­t (Technical Debt) & Äiá»ƒm Cáº§n ChÃº Ã
-1. **Hiá»‡u suáº¥t Database (N+1 Query Problem):** Do sá»­ dá»¥ng ORM vÃ  DRF Serializer, náº¿u khÃ´ng cáº©n tháº­n khi query cÃ¡c báº£ng liÃªn káº¿t (vÃ­ dá»¥ get danh sÃ¡ch `Classroom` kÃ¨m thÃ´ng tin `Teacher`), API sáº½ báº¯n ra hÃ ng chá»¥c query nhá». Báº¡n cáº§n luÃ´n kiá»ƒm tra vÃ  sá»­ dá»¥ng `select_related` / `prefetch_related` trong queryset cá»§a ViewSet.
-2. **Authorization (PhÃ¢n quyá»n):** Cáº§n Ä‘áº£m báº£o cÃ¡c ViewSet á»Ÿ backend khÃ´ng chá»‰ cÃ³ `IsAuthenticated` mÃ  cáº§n custom permission classes (vd: Sinh viÃªn khÃ´ng Ä‘Æ°á»£c phÃ©p gá»i method `DELETE` lá»›p há»c).
-3. **MÃ´i trÆ°á»ng DB:** Äang dÃ¹ng SQLite cho Test vÃ  PostgreSQL cho Prod. Äiá»u nÃ y cÃ³ thá»ƒ gÃ¢y lá»—i tiá»m áº©n (OperationalError) liÃªn quan Ä‘áº¿n phÃ¢n biá»‡t chá»¯ hoa/thÆ°á»ng (Case-insensitive) hoáº·c date-time format.
+### Nợ Kỹ Thuật (Technical Debt) & Điểm Cần Chú Ý
+1. **Hiệu suất Database (N+1 Query Problem):** Do sử dụng ORM và DRF Serializer, nếu không cẩn thận khi query các bảng liên kết (ví dụ get danh sách `Classroom` kèm thông tin `Teacher`), API sẽ bắn ra hàng chục query nhỏ. Bạn cần luôn kiểm tra và sử dụng `select_related` / `prefetch_related` trong queryset của ViewSet.
+2. **Authorization (Phân quyền):** Cần đảm bảo các ViewSet ở backend không chỉ có `IsAuthenticated` mà cần custom permission classes (vd: Sinh viên không được phép gọi method `DELETE` lớp học).
+3. **Môi trường DB:** Đang dùng SQLite cho Test và PostgreSQL cho Prod. Điều này có thể gây lỗi tiềm ẩn (OperationalError) liên quan đến phân biệt chữ hoa/thường (Case-insensitive) hoặc date-time format.
 
-### Äá» Xuáº¥t Cáº£i Tiáº¿n (Recommendations cho Phase tá»›i)
-- **Tá»‘i Æ°u hÃ³a (Optimization):** Ãp dá»¥ng Redis Caching cho cÃ¡c API danh má»¥c (Khoa, KhÃ³a, MÃ´n há»c) vÃ¬ cÃ¡c dá»¯ liá»‡u nÃ y Ã­t thay Ä‘á»•i.
-- **Báº£o máº­t:** RÃ  soÃ¡t láº¡i viá»‡c xá»­ lÃ½ refresh token, cÃ¢n nháº¯c set `HttpOnly Cookies` thay vÃ¬ lÆ°u token trÃªn client (localStorage) Ä‘á»ƒ chá»‘ng táº¥n cÃ´ng XSS.
-- **Tá»± Ä‘á»™ng hÃ³a (DevOps):** Thiáº¿t láº­p GitHub Actions Pipeline. Tá»± Ä‘á»™ng cháº¡y `pytest` vÃ  Frontend Linter (`eslint`) má»—i khi cÃ³ Pull Request, ngÄƒn cháº·n lá»—i tá»« sá»›m.
-- **Nghiá»‡p vá»¥:** XÃ¢y dá»±ng UI Frontend cho module PhÃ¢n cÃ´ng giáº£ng dáº¡y (API Backend Ä‘Ã£ sáºµn sÃ ng). Trang bá»‹ tÃ­nh nÄƒng tÃ­nh Äiá»ƒm Trung BÃ¬nh (GPA) á»Ÿ module `ExamResult`.
+### Đề Xuất Cải Tiến (Recommendations cho Phase tới)
+- **Tối ưu hóa (Optimization):** Áp dụng Redis Caching cho các API danh mục (Khoa, Khóa, Môn học) vì các dữ liệu này ít thay đổi.
+- **Bảo mật:** Rà soát lại việc xử lý refresh token, cân nhắc set `HttpOnly Cookies` thay vì lưu token trên client (localStorage) để chống tấn công XSS.
+- **Tự động hóa (DevOps):** Thiết lập GitHub Actions Pipeline. Tự động chạy `pytest` và Frontend Linter (`eslint`) mỗi khi có Pull Request, ngăn chặn lỗi từ sớm.
+- **Nghiệp vụ:** Xây dựng UI Frontend cho module Phân công giảng dạy (API Backend đã sẵn sàng). Trang bị tính năng tính Điểm Trung Bình (GPA) ở module `ExamResult`.
 
 
 ---
 
 # PHẦN 3: NHẬT KÝ PHÁT TRIỂN (CHANGELOG)
 
-# BÃ¡o CÃ¡o Tá»•ng Há»£p XÃ¢y Dá»±ng QLSV-DJANGO (Fullstack Session)
+# Báo Cáo Tổng Hợp Xây Dựng QLSV-DJANGO (Fullstack Session)
 
-> TÃ i liá»‡u nÃ y tÃ³m táº¯t toÃ n bá»™ tiáº¿n Ä‘á»™, kiáº¿n trÃºc vÃ  cÃ¡c module Frontend/Backend Ä‘Ã£ Ä‘Æ°á»£c xÃ¢y dá»±ng vÃ  hoÃ n thiá»‡n trong quÃ¡ trÃ¬nh phÃ¡t triá»ƒn há»‡ thá»‘ng Quáº£n lÃ½ Sinh viÃªn (QLSV-DJANGO).
-
----
-
-## 1. Tá»”NG QUAN KIáº¾N TRÃšC
-
-Há»‡ thá»‘ng Ä‘Æ°á»£c thiáº¿t káº¿ theo mÃ´ hÃ¬nh **Client - Server (SPA)**:
-* **Backend**: Django REST Framework (DRF), quáº£n lÃ½ Database (PostgreSQL/Neon.tech), Auth JWT, cung cáº¥p RESTful APIs.
-* **Frontend**: React.js (Vite), dÃ¹ng Tailwind CSS & shadcn/ui cho giao diá»‡n. Quáº£n lÃ½ state báº±ng Zustand (Auth) vÃ  TanStack React Query (Server-state/Caching).
+> Tài liệu này tóm tắt toàn bộ tiến độ, kiến trúc và các module Frontend/Backend đã được xây dựng và hoàn thiện trong quá trình phát triển hệ thống Quản lý Sinh viên (QLSV-DJANGO).
 
 ---
 
-## 2. NHá»®NG THAY Äá»”I Vá»€ BACKEND (DRF)
+## 1. TỔNG QUAN KIẾN TRÚC
 
-Äá»ƒ Ä‘Ã¡p á»©ng giao diá»‡n Ä‘a tÃ­nh nÄƒng cá»§a Frontend, Backend Ä‘Ã£ Ä‘Æ°á»£c má»Ÿ rá»™ng thÃªm cÃ¡c Custom Endpoint vÃ  Serializer Ä‘áº·c thÃ¹ Ä‘á»ƒ tá»‘i Æ°u hiá»‡u suáº¥t (thay vÃ¬ chá»‰ dÃ¹ng CRUD máº·c Ä‘á»‹nh).
+Hệ thống được thiết kế theo mô hình **Client - Server (SPA)**:
+* **Backend**: Django REST Framework (DRF), quản lý Database (PostgreSQL/Neon.tech), Auth JWT, cung cấp RESTful APIs.
+* **Frontend**: React.js (Vite), dùng Tailwind CSS & shadcn/ui cho giao diện. Quản lý state bằng Zustand (Auth) và TanStack React Query (Server-state/Caching).
 
-### 2.1. API Quáº£n lÃ½ Ghi danh (Enrollment)
-* ThÃªm `ClassroomStudentSerializer` Ä‘á»ƒ map trá»±c tiáº¿p thÃ´ng tin SV (tÃªn, mssv, email) thÃ´ng qua báº£ng trung gian.
-* Táº¡o `ClassroomStudentViewSet` há»— trá»£ filter sinh viÃªn theo `classroom_id`.
+---
+
+## 2. NHỮNG THAY ĐỔI VỀ BACKEND (DRF)
+
+Để đáp ứng giao diện đa tính năng của Frontend, Backend đã được mở rộng thêm các Custom Endpoint và Serializer đặc thù để tối ưu hiệu suất (thay vì chỉ dùng CRUD mặc định).
+
+### 2.1. API Quản lý Ghi danh (Enrollment)
+* Thêm `ClassroomStudentSerializer` để map trực tiếp thông tin SV (tên, mssv, email) thông qua bảng trung gian.
+* Tạo `ClassroomStudentViewSet` hỗ trợ filter sinh viên theo `classroom_id`.
 * Route: `GET /POST /DELETE /api/academics/enrollments/`
 
-### 2.2. API Dashboard & Thá»‘ng kÃª
-* ThÃªm class `DashboardView` tá»•ng há»£p toÃ n bá»™ sá»‘ liá»‡u: Tá»•ng sá»‘ SV/GV, MÃ´n há»c, Tá»‰ lá»‡ Ä‘iá»ƒm danh 7 ngÃ y qua, Top lá»›p Ä‘Ã´ng sinh viÃªn.
+### 2.2. API Dashboard & Thống kê
+* Thêm class `DashboardView` tổng hợp toàn bộ số liệu: Tổng số SV/GV, Môn học, Tỉ lệ điểm danh 7 ngày qua, Top lớp đông sinh viên.
 * Route: `GET /api/academics/dashboard/`
 
-### 2.3. API Nháº­p Äiá»ƒm & Káº¿t Quáº£ Há»c Táº­p (Exam Results)
-* `GET /api/academics/exam-results/grade-sheet/`: Tráº£ vá» danh sÃ¡ch sinh viÃªn trong lá»›p kÃ¨m theo Ä‘iá»ƒm cÅ© (náº¿u cÃ³) táº¡o thÃ nh báº£ng Ä‘iá»ƒm trá»‘ng Ä‘á»ƒ GV nháº­p.
-* `POST /api/academics/exam-results/bulk-update/`: Cho phÃ©p lÆ°u hÃ ng loáº¡t báº£ng Ä‘iá»ƒm cá»§a cáº£ lá»›p chá»‰ trong 1 request.
-* `GET /api/academics/exam-results/student-gpa/`: TÃ­nh toÃ¡n TÃ­n chá»‰ tÃ­ch lÅ©y, GPA há»‡ 10 vÃ  GPA há»‡ 4 báº±ng Python (Backend).
+### 2.3. API Nhập Điểm & Kết Quả Học Tập (Exam Results)
+* `GET /api/academics/exam-results/grade-sheet/`: Trả về danh sách sinh viên trong lớp kèm theo điểm cũ (nếu có) tạo thành bảng điểm trống để GV nhập.
+* `POST /api/academics/exam-results/bulk-update/`: Cho phép lưu hàng loạt bảng điểm của cả lớp chỉ trong 1 request.
+* `GET /api/academics/exam-results/student-gpa/`: Tính toán Tín chỉ tích lũy, GPA hệ 10 và GPA hệ 4 bằng Python (Backend).
 
 ---
 
-## 3. NHá»®NG THAY Äá»”I Vá»€ FRONTEND (REACT)
+## 3. NHỮNG THAY ĐỔI VỀ FRONTEND (REACT)
 
-Frontend ban Ä‘áº§u chá»‰ cÃ³ mÃ n hÃ¬nh Login vÃ  2 danh sÃ¡ch Ä‘Æ¡n giáº£n. Hiá»‡n táº¡i Ä‘Ã£ hoÃ n thiá»‡n thÃ nh má»™t **Portal Quáº£n lÃ½ ÄÃ o táº¡o** Ä‘áº§y Ä‘á»§ vá»›i **10 modules lá»›n**.
+Frontend ban đầu chỉ có màn hình Login và 2 danh sách đơn giản. Hiện tại đã hoàn thiện thành một **Portal Quản lý Đào tạo** đầy đủ với **10 modules lớn**.
 
-### 3.1. CÃ¡c Module Quáº£n lÃ½ Dá»¯ liá»‡u (CRUD)
-Sá»­ dá»¥ng Dialog forms káº¿t há»£p `useMutation` Ä‘á»ƒ lÃ m ThÃªm/Sá»­a/XÃ³a mÆ°á»£t mÃ :
-* **Há»c pháº§n (Courses)**: Quáº£n lÃ½ mÃ´n, sá»‘ tÃ­n chá»‰.
-* **Lá»›p sinh hoáº¡t (Classrooms)**: Quáº£n lÃ½ lá»›p, khÃ³a, há»c ká»³, GV chá»§ nhiá»‡m.
-* **PhÃ¢n cÃ´ng giáº£ng dáº¡y (Assignments)**: Quáº£n lÃ½ GV nÃ o dáº¡y mÃ´n nÃ o, lá»›p nÃ o (cÃ³ validate chá»‘ng trÃ¹ng láº·p).
+### 3.1. Các Module Quản lý Dữ liệu (CRUD)
+Sử dụng Dialog forms kết hợp `useMutation` để làm Thêm/Sửa/Xóa mượt mà:
+* **Học phần (Courses)**: Quản lý môn, số tín chỉ.
+* **Lớp sinh hoạt (Classrooms)**: Quản lý lớp, khóa, học kỳ, GV chủ nhiệm.
+* **Phân công giảng dạy (Assignments)**: Quản lý GV nào dạy môn nào, lớp nào (có validate chống trùng lặp).
 
-### 3.2. Cáº¥u HÃ¬nh Há»‡ Thá»‘ng (Academics Config)
-* XÃ¢y dá»±ng **Trang cáº¥u hÃ¬nh gá»™p 3 Tabs**: Há»c ká»³, KhÃ³a há»c, Loáº¡i ká»³ thi.
-* Giao diá»‡n gá»n gÃ ng, giÃºp Admin thiáº¿t láº­p dá»¯ liá»‡u ná»n mÃ  khÃ´ng cáº§n vÃ o trang `/admin` gá»‘c cá»§a Django.
+### 3.2. Cấu Hình Hệ Thống (Academics Config)
+* Xây dựng **Trang cấu hình gộp 3 Tabs**: Học kỳ, Khóa học, Loại kỳ thi.
+* Giao diện gọn gàng, giúp Admin thiết lập dữ liệu nền mà không cần vào trang `/admin` gốc của Django.
 
-### 3.3. CÃ¡c TÃ­nh NÄƒng Nghiá»‡p Vá»¥ (Bulk Operations)
-* **SV trong Lá»›p (Enrollments)**: Giao diá»‡n Split-pane (trÃ¡i chá»n lá»›p, pháº£i hiá»‡n SV). CÃ³ tÃ­nh nÄƒng tÃ¬m kiáº¿m vÃ  thÃªm SV vÃ o lá»›p. Ãp dá»¥ng **Optimistic Updates** giÃºp thao tÃ¡c ThÃªm/XÃ³a SV diá»…n ra vá»›i Ä‘á»™ trá»… 0ms.
-* **Äiá»ƒm danh (Attendance)**: Nháº­p Ä‘iá»ƒm danh theo Lá»›p + NgÃ y. TÃ­ch há»£p radio buttons (CÃ³ máº·t/Muá»™n/Váº¯ng/PhÃ©p).
-* **Nháº­p Ä‘iá»ƒm (Enter Grades)**: Giao diá»‡n dáº¡ng Spreadsheet (báº£ng tÃ­nh). Chá»n filter (Há»c ká»³, Lá»›p, MÃ´n, Loáº¡i ká»³ thi) Ä‘á»ƒ bung ra báº£ng nháº­p Ä‘iá»ƒm cho toÃ n lá»›p.
+### 3.3. Các Tính Năng Nghiệp Vụ (Bulk Operations)
+* **SV trong Lớp (Enrollments)**: Giao diện Split-pane (trái chọn lớp, phải hiện SV). Có tính năng tìm kiếm và thêm SV vào lớp. Áp dụng **Optimistic Updates** giúp thao tác Thêm/Xóa SV diễn ra với độ trễ 0ms.
+* **Điểm danh (Attendance)**: Nhập điểm danh theo Lớp + Ngày. Tích hợp radio buttons (Có mặt/Muộn/Vắng/Phép).
+* **Nhập điểm (Enter Grades)**: Giao diện dạng Spreadsheet (bảng tính). Chọn filter (Học kỳ, Lớp, Môn, Loại kỳ thi) để bung ra bảng nhập điểm cho toàn lớp.
 
-### 3.4. Cá»•ng ThÃ´ng Tin Sinh ViÃªn (Student Portal)
-* **Káº¿t quáº£ há»c táº­p**: Hiá»ƒn thá»‹ 3 chá»‰ sá»‘ lá»›n (TÃ­n chá»‰, GPA 10, GPA 4) thÃ´ng qua Card UI, vÃ  báº£ng chi tiáº¿t Ä‘iá»ƒm tá»•ng káº¿t tá»«ng mÃ´n há»c.
+### 3.4. Cổng Thông Tin Sinh Viên (Student Portal)
+* **Kết quả học tập**: Hiển thị 3 chỉ số lớn (Tín chỉ, GPA 10, GPA 4) thông qua Card UI, và bảng chi tiết điểm tổng kết từng môn học.
 
-### 3.5. Dashboard & Sidebar PhÃ¢n Quyá»n
-* **Dashboard má»›i**: Hiá»ƒn thá»‹ Biá»ƒu Ä‘á»“ cá»™t Ä‘iá»ƒm danh 7 ngÃ y, Donut chart phÃ¢n bá»‘ Ä‘iá»ƒm danh, vÃ  Top lá»›p.
-* **Sidebar Layout**: Render linh hoáº¡t tÃ¹y vÃ o `user.role` (Admin tháº¥y toÃ n bá»™, Giáº£ng viÃªn tháº¥y lá»›p/nháº­p Ä‘iá»ƒm, Sinh viÃªn chá»‰ tháº¥y GPA).
-
----
-
-## 4. Tá»I Æ¯U HÃ“A & FIX BUG (HIGHLIGHTS)
-
-1. **Hiá»‡u suáº¥t & Caching**: Sá»­ dá»¥ng triá»‡t Ä‘á»ƒ cÆ¡ cháº¿ invalidation cá»§a `React Query`. VÃ­ dá»¥: Vá»«a thÃªm MÃ´n há»c â†’ tá»± Ä‘á»™ng load láº¡i API list.
-2. **Optimistic Updates (Giao diá»‡n tá»©c thÃ¬)**: Sá»­a váº¥n Ä‘á» máº¡ng cháº­m á»Ÿ trang *Sinh viÃªn trong lá»›p* báº±ng cÃ¡ch lá»«a UI cáº­p nháº­t trÆ°á»›c, gá»i API ngáº§m sau.
-3. **Sá»­a lá»—i cáº¥u trÃºc Dá»¯ liá»‡u**: Kháº¯c phá»¥c lá»—i nháº§m láº«n giá»¯a truyá»n Object vs ID khi POST payload lÃªn Django.
-4. **VÆ°á»£t rÃ o Cáº£n UI**: Tá»± code CSS flex/grid cÃ¡c biá»ƒu Ä‘á»“ cá»™t (Bar chart, Progress bar) trÃªn Dashboard mÃ  khÃ´ng cáº§n cÃ i thÃªm thÆ° viá»‡n Recharts hay Chart.js nháº±m giá»¯ project nháº¹.
+### 3.5. Dashboard & Sidebar Phân Quyền
+* **Dashboard mới**: Hiển thị Biểu đồ cột điểm danh 7 ngày, Donut chart phân bố điểm danh, và Top lớp.
+* **Sidebar Layout**: Render linh hoạt tùy vào `user.role` (Admin thấy toàn bộ, Giảng viên thấy lớp/nhập điểm, Sinh viên chỉ thấy GPA).
 
 ---
 
-## 5. Báº¢O Máº¬T & DEVOPS (Cáº¬P NHáº¬T Má»šI)
+## 4. TỐI ƯU HÓA & FIX BUG (HIGHLIGHTS)
 
-1. **Báº£o máº­t JWT Token**: Chuyá»ƒn Ä‘á»•i phÆ°Æ¡ng thá»©c lÆ°u trá»¯ `refresh_token` tá»« `localStorage` sang **HttpOnly Cookies**. TrÃ¬nh duyá»‡t sáº½ tá»± Ä‘á»™ng Ä‘Ã­nh kÃ¨m cookie nÃ y á»Ÿ má»—i request refresh token mÃ  khÃ´ng lÃ m lá»™ token ra Javascript, ngÄƒn cháº·n triá»‡t Ä‘á»ƒ táº¥n cÃ´ng XSS. Backend Ä‘Ã£ Ä‘Æ°á»£c custom láº¡i `CookieTokenRefreshView` vÃ  `LogoutView` Ä‘á»ƒ xá»­ lÃ½ cookie.
-2. **PhÃ¢n quyá»n tuá»³ chá»‰nh (Custom Permissions)**: XÃ¢y dá»±ng cÃ¡c rules phÃ¢n quyá»n dá»±a trÃªn `Role` cá»§a user (Admin, Teacher, Student) trong file `accounts/permissions.py`. VÃ­ dá»¥ `IsAdminOrReadOnly` cho cÃ¡c API quáº£n lÃ½ KhÃ³a/Lá»›p, vÃ  `IsAdminOrTeacher` cho cÃ¡c API nháº­p Ä‘iá»ƒm/Ä‘iá»ƒm danh.
-3. **Tá»‘i Æ°u Database**: ÄÃ£ rÃ  soÃ¡t cÃ¡c ViewSet trong module Academics Ä‘á»ƒ thiáº¿t láº­p `select_related` vÃ  `prefetch_related`, dá»n dáº¹p hoÃ n toÃ n váº¥n Ä‘á» N+1 query.
-4. **CI/CD Pipeline**: TÃ­ch há»£p GitHub Actions Workflow (`ci.yml`) Ä‘á»ƒ tá»± Ä‘á»™ng cháº¡y kiá»ƒm thá»­ cho Frontend (npm run lint) vÃ  Backend (pytest) má»—i khi cÃ³ Push hoáº·c Pull Request.
+1. **Hiệu suất & Caching**: Sử dụng triệt để cơ chế invalidation của `React Query`. Ví dụ: Vừa thêm Môn học → tự động load lại API list.
+2. **Optimistic Updates (Giao diện tức thì)**: Sửa vấn đề mạng chậm ở trang *Sinh viên trong lớp* bằng cách lừa UI cập nhật trước, gọi API ngầm sau.
+3. **Sửa lỗi cấu trúc Dữ liệu**: Khắc phục lỗi nhầm lẫn giữa truyền Object vs ID khi POST payload lên Django.
+4. **Vượt rào Cản UI**: Tự code CSS flex/grid các biểu đồ cột (Bar chart, Progress bar) trên Dashboard mà không cần cài thêm thư viện Recharts hay Chart.js nhằm giữ project nhẹ.
 
 ---
 
-## 6. HÆ¯á»šNG DáºªN DÃ€NH CHO NGÆ¯á»œI VÃ€O SAU
+## 5. BẢO MẬT & DEVOPS (CẬP NHẬT MỚI)
 
-### Khá»Ÿi cháº¡y dá»± Ã¡n
+1. **Bảo mật JWT Token**: Chuyển đổi phương thức lưu trữ `refresh_token` từ `localStorage` sang **HttpOnly Cookies**. Trình duyệt sẽ tự động đính kèm cookie này ở mỗi request refresh token mà không làm lộ token ra Javascript, ngăn chặn triệt để tấn công XSS. Backend đã được custom lại `CookieTokenRefreshView` và `LogoutView` để xử lý cookie.
+2. **Phân quyền tuỳ chỉnh (Custom Permissions)**: Xây dựng các rules phân quyền dựa trên `Role` của user (Admin, Teacher, Student) trong file `accounts/permissions.py`. Ví dụ `IsAdminOrReadOnly` cho các API quản lý Khóa/Lớp, và `IsAdminOrTeacher` cho các API nhập điểm/điểm danh.
+3. **Tối ưu Database**: Đã rà soát các ViewSet trong module Academics để thiết lập `select_related` và `prefetch_related`, dọn dẹp hoàn toàn vấn đề N+1 query.
+4. **CI/CD Pipeline**: Tích hợp GitHub Actions Workflow (`ci.yml`) để tự động chạy kiểm thử cho Frontend (npm run lint) và Backend (pytest) mỗi khi có Push hoặc Pull Request.
+
+---
+
+## 6. HƯỚNG DẪN DÀNH CHO NGƯỜI VÀO SAU
+
+### Khởi chạy dự án
 ```bash
 # Terminal 1: Backend
 cd backend
@@ -332,9 +332,8 @@ cd frontend
 npm run dev
 ```
 
-### CÃ¡ch tiáº¿p cáº­n Codebase
-* **Backend API**: Má»i logic phá»©c táº¡p Ä‘Æ°á»£c viáº¿t á»Ÿ `backend/academics/views.py` (sá»­ dá»¥ng `@action(detail=False)`).
-* **Frontend Hooks**: CÃ¡c lá»‡nh gá»i API Ä‘Æ°á»£c gom háº¿t vÃ o `frontend/src/features/academics/hooks.js`. Náº¿u cáº§n gá»i API má»›i, hÃ£y Ä‘á»‹nh nghÄ©a hÃ m á»Ÿ file `api.js` sau Ä‘Ã³ bá»c nÃ³ qua 1 custom hook `useQuery/useMutation` táº¡i file nÃ y.
+### Cách tiếp cận Codebase
+* **Backend API**: Mọi logic phức tạp được viết ở `backend/academics/views.py` (sử dụng `@action(detail=False)`).
+* **Frontend Hooks**: Các lệnh gọi API được gom hết vào `frontend/src/features/academics/hooks.js`. Nếu cần gọi API mới, hãy định nghĩa hàm ở file `api.js` sau đó bọc nó qua 1 custom hook `useQuery/useMutation` tại file này.
 
-> **Tráº¡ng thÃ¡i Database (Neon.tech)**: VÃ¬ dÃ¹ng gÃ³i Free Tier, náº¿u tháº¥y Backend quÄƒng lá»—i `psycopg2.OperationalError` khÃ´ng thá»ƒ resolve DNS, nguyÃªn nhÃ¢n lÃ  DB Ä‘Ã£ bá»‹ Pause do khÃ´ng ai dÃ¹ng trong 5 phÃºt. Giáº£i phÃ¡p: VÃ o console.neon.tech Ä‘á»ƒ áº¥n nÃºt Resume.
-
+> **Trạng thái Database (Neon.tech)**: Vì dùng gói Free Tier, nếu thấy Backend quăng lỗi `psycopg2.OperationalError` không thể resolve DNS, nguyên nhân là DB đã bị Pause do không ai dùng trong 5 phút. Giải pháp: Vào console.neon.tech để ấn nút Resume.
