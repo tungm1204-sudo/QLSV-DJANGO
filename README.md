@@ -23,13 +23,26 @@
 
 ---
 
-## 3. Nhật Ký Phát Triển (Tính năng nổi bật)
-- **Quản lý dữ liệu:** CRUD mượt mà cho Sinh viên, Giảng viên. Hỗ trợ Import/Export bằng Excel.
-- **Trải nghiệm người dùng (UX):** Áp dụng *Optimistic Updates* (cập nhật UI tức thì trước khi gọi API) ở các chức năng thêm/xóa sinh viên. Các danh sách hỗ trợ Filter nhanh gọn.
-- **Bảo mật & Hiệu năng:**
-  - Token Refresh được bảo mật tuyệt đối qua **HttpOnly Cookies** (Ngăn chặn XSS).
-  - Tối ưu truy vấn ORM bằng `select_related`/`prefetch_related` nhằm dọn dẹp lỗi N+1 Query.
-  - Role-based Access Control (RBAC): Chặn quyền tùy thuộc theo role (Admin, Teacher, Student).
+## 3. Nhật Ký Phát Triển (Changelog)
+
+Theo dõi tiến trình xây dựng dự án qua từng giai đoạn (Phase). Khi có Phase mới, các cập nhật sẽ được thêm nối tiếp vào đây.
+
+### Phase 1 & 2: Xây Dựng Nền Tảng & Các Module Cơ Bản
+- **Refactor Thuật Ngữ:** Chuẩn hóa toàn bộ hệ thống theo ngữ cảnh Đại học (Giảng viên, Lớp sinh hoạt, Học phần, Khóa).
+- **Hệ thống Sinh Viên & Giảng Viên:** Hoàn thiện toàn bộ API CRUD. Tích hợp tính năng **Import/Export Excel** cho danh sách sinh viên bằng `openpyxl`.
+- **Academics Foundation:** Xây dựng khung giao diện và API cơ bản cho các trang cấu hình (Khóa học, Học phần, Lớp sinh hoạt, Loại kỳ thi).
+
+### Phase 3: Hoàn Thiện Nghiệp Vụ Frontend (UX/UI)
+- **Ghi danh (Enrollment):** Áp dụng **Optimistic Updates** giúp thao tác thêm/xóa sinh viên khỏi lớp phản hồi ngay lập tức trên UI (độ trễ 0ms).
+- **Điểm danh (Attendance):** Cấu hình tính năng Bulk Update (lưu hàng loạt) cho danh sách điểm danh theo lớp và ngày.
+- **Phân công giảng dạy:** Tạo bảng danh sách phân công với tính năng Filter trực tiếp (chọn Lớp, Môn Học, Giảng Viên) gửi qua Query Params.
+- **Nhập điểm:** Cấu hình form nhập điểm hiển thị dạng Spreadsheet tiện lợi.
+
+### Phase 4: Nợ Kỹ Thuật (Nâng cấp Hệ Thống & Bảo Mật)
+- **Hiệu suất Database (N+1 Query):** Rà soát toàn bộ DRF ViewSet, bổ sung `select_related`/`prefetch_related` giúp dọn dẹp triệt để tình trạng query lặp.
+- **Bảo mật JWT Token:** Chuyển đổi phương thức lưu `refresh_token` từ `localStorage` sang **HttpOnly Cookies** để ngăn chặn tấn công XSS. Backend và Frontend đều được custom để gửi nhận cookie tự động.
+- **Phân quyền Custom (DRF Permissions):** Cấu trúc lại bảo mật ở backend bằng các class quyền (vd: `IsAdminOrReadOnly`, `IsAdminOrTeacher`) chặn đứng các thao tác trái phép theo Role (Admin, Giáo vụ, Giảng viên, Sinh viên).
+- **CI/CD Pipeline:** Triển khai GitHub Actions (`ci.yml`) để tự động kiểm thử code mỗi khi Push/Pull Request (chạy `pytest` cho Python và `eslint` cho React).
 
 ---
 
