@@ -41,3 +41,14 @@ class IsAdminOrTeacher(permissions.BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
         return request.user.role in ['admin', 'teacher']
+
+class IsAdminOrTeacherOrReadOnly(permissions.BasePermission):
+    """
+    Cho phép Admin hoặc Giảng viên tạo/sửa. Sinh viên chỉ được xem.
+    """
+    def has_permission(self, request, view):
+        if not request.user or not request.user.is_authenticated:
+            return False
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        return request.user.role in ['admin', 'teacher']
