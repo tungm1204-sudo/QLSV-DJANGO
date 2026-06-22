@@ -13,6 +13,7 @@ import StudentGradesPage from './pages/StudentGradesPage';
 import StudentSchedulePage from './pages/StudentSchedulePage';
 import AcademicsConfigPage from './pages/AcademicsConfigPage';
 import EnrollmentPage from './pages/EnrollmentPage';
+import TuitionPage from './pages/TuitionPage';
 
 const router = createBrowserRouter([
   {
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
       {
         path: 'enrollments',
         element: <EnrollmentPage />,
+      },
+      {
+        path: 'tuition',
+        element: <TuitionPage />,
       },
     ],
   },

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "students",
     "teachers",
     "academics",
+    "finance",
 ]
 
 # ─── Middleware ─────────────────────────────────────────────────────────────────

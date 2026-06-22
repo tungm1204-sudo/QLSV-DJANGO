@@ -57,6 +57,11 @@ Theo dõi tiến trình xây dựng dự án qua từng giai đoạn (Phase). Kh
 - **Module Hóa API & Hooks:** Phân rã `academics.js` và `hooks.js` (hơn 300 dòng) thành các file theo từng tính năng tương ứng với Backend (Core, Classrooms, Attendance, Exams).
 - **Barrel Export:** Giữ nguyên các đường dẫn import ở UI thông qua `index.js`, đảm bảo UI không đứt gãy.
 
+### Phase 6: Quản Lý Tài Chính & Học Phí (Tuition & Fees)
+- **Tự động hóa học phí:** Xây dựng module `finance` để tính toán học phí sinh viên cần đóng dựa trên tổng số tín chỉ đã đăng ký.
+- **Trang Quản lý Học phí:** Phát triển giao diện cho phép Kế toán/Admin xem danh sách, lọc theo trạng thái (Nợ/Đã nộp) và xác nhận thu tiền.
+- **Chi tiết môn học:** Tích hợp tính năng hiển thị chi tiết từng môn học (tên môn, số tín chỉ) đi kèm với mỗi khoản học phí để sinh viên tiện theo dõi.
+
 ---
 
 ## 4. Hướng Dẫn Cài Đặt (Local Setup)

@@ -17,6 +17,7 @@ urlpatterns = [
     path("api/students/", include("students.urls")),
     path("api/teachers/", include("teachers.urls")),
     path("api/academics/", include("academics.urls")),
+    path("api/finance/", include("finance.urls")),
 
     # API Documentation (drf-spectacular)
     # /api/schema/ — trả về file OpenAPI schema dạng YAML

@@ -10,7 +10,8 @@ import {
   LogOut,
   Menu,
   X,
-  Trophy
+  Trophy,
+  Wallet
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -30,11 +31,13 @@ const getMenuItems = (role) => {
     { name: 'Điểm danh', path: '/attendance', icon: CalendarDays },
     { name: 'Nhập điểm', path: '/enter-grades', icon: Trophy },
     { name: 'Cấu hình HT', path: '/config', icon: GraduationCap },
+    { name: 'Học phí', path: '/tuition', icon: Wallet },
   ];
 
   const studentItems = [
     { name: 'Kết quả học tập', path: '/grades', icon: BookOpen },
     { name: 'Thời khóa biểu', path: '/schedule', icon: CalendarDays },
+    { name: 'Học phí', path: '/tuition', icon: Wallet },
   ];
 
   if (role === 'admin' || role === 'academic_staff') return [...common, ...adminItems];
