@@ -20,7 +20,7 @@ export const useBulkUpdateAttendance = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data) => academicsApi.bulkUpdateAttendance(data),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["attendanceSheet"] });
     },
   });

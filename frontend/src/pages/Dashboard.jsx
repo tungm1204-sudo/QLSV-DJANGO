@@ -8,11 +8,11 @@ import {
 } from "lucide-react";
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
-function StatCard({ title, value, icon: Icon, color, href }) {
+function StatCard({ title, value, icon: IconComponent, color, href }) {
   const content = (
     <div className={`bg-white rounded-xl border shadow-sm p-6 flex items-center gap-4 hover:shadow-md transition-shadow ${href ? "cursor-pointer group" : ""}`}>
       <div className={`p-3 rounded-xl ${color}`}>
-        <Icon className="h-6 w-6 text-white" />
+        <IconComponent className="h-6 w-6 text-white" />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm text-muted-foreground font-medium">{title}</p>

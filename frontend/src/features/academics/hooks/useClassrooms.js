@@ -76,7 +76,7 @@ export const useAddEnrollment = () => {
 export const useRemoveEnrollment = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, classroomId }) => academicsApi.removeEnrollment(id),
+    mutationFn: ({ id }) => academicsApi.removeEnrollment(id),
     onMutate: async ({ id, classroomId }) => {
       const queryKey = ["enrollments", String(classroomId)];
       await queryClient.cancelQueries({ queryKey });

@@ -20,7 +20,7 @@ export default function LoginPage() {
     try {
       await login(username, password);
       navigate('/');
-    } catch (err) {
+    } catch (_err) {
       setError('Đăng nhập thất bại. Kiểm tra lại thông tin.');
     } finally {
       setIsLoading(false);

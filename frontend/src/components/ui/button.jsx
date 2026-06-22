@@ -1,11 +1,6 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
-import { clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-export function cn(...inputs) {
-  return twMerge(clsx(inputs))
-}
+import { cn } from "@/lib/utils"
 
 const Button = React.forwardRef(({ className, variant = "default", size = "default", asChild = false, ...props }, ref) => {
   const Comp = asChild ? Slot : "button"

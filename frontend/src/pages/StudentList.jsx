@@ -15,7 +15,7 @@ export default function StudentList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const { data, isLoading, isError } = useStudents({ search: searchQuery });
+  const { data, isLoading } = useStudents({ search: searchQuery });
   const deleteMutation = useDeleteStudent();
   const exportMutation = useExportStudents();
   const importMutation = useImportStudents();
