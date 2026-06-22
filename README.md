@@ -79,7 +79,7 @@ npm install
 npm run dev
 ```
 
-**Tài khoản Test:** `admin` / `password123`
+**Tài khoản Test:** `admin` / `123456`
 **URL Đăng nhập:** `http://localhost:5173/login`
 
 > **Lưu ý Database (Neon.tech):** Nếu hệ thống báo lỗi `psycopg2.OperationalError`, nguyên nhân là do DB gói Free Tier tự động bị ngủ đông (Pause) sau 5 phút. Giải pháp: Đăng nhập vào console.neon.tech để ấn "Resume".
