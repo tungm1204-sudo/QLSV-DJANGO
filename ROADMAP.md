@@ -4,7 +4,7 @@ Tài liệu này quy hoạch các tính năng sẽ được phát triển tiếp
 
 ---
 
-## Ngày 2 (Phase 6): Quản Lý Tài Chính & Học Phí (Tuition & Fees)
+## ✅ Ngày 2 (Phase 6): Quản Lý Tài Chính & Học Phí (Đã hoàn thành)
 **Mục tiêu:** Hệ thống tự động tính toán học phí dựa trên số tín chỉ môn học mà sinh viên đã ghi danh.
 
 ### Backend (Python/Django)

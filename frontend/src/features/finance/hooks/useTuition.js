@@ -4,7 +4,7 @@ import { tuitionApi } from '../api/tuition';
 export const useTuitionFees = () => {
   return useQuery({
     queryKey: ['tuitionFees'],
-    queryFn: () => tuitionApi.getTuitionFees().then(res => res.data),
+    queryFn: () => tuitionApi.getTuitionFees().then(res => res.data.results || res.data),
   });
 };
 

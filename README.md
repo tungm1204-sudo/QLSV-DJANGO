@@ -28,9 +28,10 @@
 Theo dõi tiến trình xây dựng dự án qua từng giai đoạn (Phase). Khi có Phase mới, các cập nhật sẽ được thêm nối tiếp vào đây.
 
 ### Phase 1 & 2: Xây Dựng Nền Tảng & Các Module Cơ Bản
-- **Refactor Thuật Ngữ:** Chuẩn hóa toàn bộ hệ thống theo ngữ cảnh Đại học (Giảng viên, Lớp sinh hoạt, Học phần, Khóa).
-- **Hệ thống Sinh Viên & Giảng Viên:** Hoàn thiện toàn bộ API CRUD. Tích hợp tính năng **Import/Export Excel** cho danh sách sinh viên bằng `openpyxl`.
-- **Academics Foundation:** Xây dựng khung giao diện và API cơ bản cho các trang cấu hình (Khóa học, Học phần, Lớp sinh hoạt, Loại kỳ thi).
+- **Authentication & Security:** Sử dụng JWT cho xác thực, phân quyền mạnh mẽ giữa Sinh viên, Giảng viên, và Admin.
+- **Backend API:** Hệ thống RESTful API được xây dựng bằng Django REST Framework.
+- **Seed Data:** Cung cấp script tự động tạo dữ liệu mẫu (`seed_data.py`) cho hệ thống.
+- **Testing:** Đã được kiểm thử tự động toàn diện qua các vòng đời nghiệp vụ từ Auth, Academics đến Finance.
 
 ### Phase 3: Hoàn Thiện Nghiệp Vụ Frontend (UX/UI)
 - **Ghi danh (Enrollment):** Áp dụng **Optimistic Updates** giúp thao tác thêm/xóa sinh viên khỏi lớp phản hồi ngay lập tức trên UI (độ trễ 0ms).
