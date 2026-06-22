@@ -5,6 +5,7 @@ openpyxl
 django-cors-headers
 python-dotenv
 pytest-django
+pytest-cov
 model-bakery
 psycopg2-binary
 django-environ
