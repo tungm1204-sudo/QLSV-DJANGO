@@ -1,0 +1,2662 @@
+{
+  "Module System": [
+    {
+      " ": "Phiên bản hoàn chỉnh — 10 module, 35 chức năng",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "STT",
+      "Unnamed: 1": "Chức năng",
+      "Unnamed: 2": "Nội dung chi tiết"
+    },
+    {
+      " ": "MODULE 1: Hệ thống & Bảo mật",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "2026-01-01 00:00:00",
+      "Unnamed: 1": "Quản lý người dùng",
+      "Unnamed: 2": "Tạo, sửa, khóa tài khoản; gán vai trò (Admin, Giáo vụ, Giảng viên, Sinh viên, Kế toán...)"
+    },
+    {
+      " ": "2026-02-01 00:00:00",
+      "Unnamed: 1": "Phân quyền & Vai trò",
+      "Unnamed: 2": "Định nghĩa vai trò, phân quyền đến từng menu, chức năng và quyền CRUD"
+    },
+    {
+      " ": "2026-03-01 00:00:00",
+      "Unnamed: 1": "Nhật ký hệ thống (Audit Log)",
+      "Unnamed: 2": "Ghi nhận thao tác người dùng, thời gian, địa chỉ IP, hành động thực hiện"
+    },
+    {
+      " ": "2026-04-01 00:00:00",
+      "Unnamed: 1": "Cấu hình hệ thống",
+      "Unnamed: 2": "Cấu hình email, SMS, thông tin trường, thời gian khóa nhập điểm"
+    },
+    {
+      " ": "2026-05-01 00:00:00",
+      "Unnamed: 1": "Sao lưu & Phục hồi",
+      "Unnamed: 2": "Sao lưu dữ liệu tự động, phục hồi khi có sự cố"
+    },
+    {
+      " ": "2026-06-01 00:00:00",
+      "Unnamed: 1": "Xác thực & Bảo mật",
+      "Unnamed: 2": "Quản lý phiên đăng nhập, OTP, khóa tài khoản sau nhiều lần đăng nhập sai, chính sách mật khẩu"
+    },
+    {
+      " ": "2026-07-01 00:00:00",
+      "Unnamed: 1": "Hệ thống Thông báo nội bộ",
+      "Unnamed: 2": "Tạo & Gửi thông báo thủ công, Tự động hóa thông báo (System Triggers), Quản lý trạng thái người dùng (State), Phân loại & Bộ lọc (Categorization)"
+    },
+    {
+      " ": "MODULE 2: QUẢN LÝ DANH MỤC GỐC",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "2026-01-02 00:00:00",
+      "Unnamed: 1": "Danh mục đơn vị đào tạo",
+      "Unnamed: 2": "Quản lý Khoa, Bộ môn, Trung tâm"
+    },
+    {
+      " ": "2026-02-02 00:00:00",
+      "Unnamed: 1": "Danh mục ngành / chuyên ngành",
+      "Unnamed: 2": "Quản lý ngành đào tạo, chuyên ngành, hệ đào tạo"
+    },
+    {
+      " ": "2026-03-02 00:00:00",
+      "Unnamed: 1": "Danh mục khóa học & học kỳ",
+      "Unnamed: 2": "Quản lý khóa tuyển sinh, năm học, học kỳ"
+    },
+    {
+      " ": "2026-04-02 00:00:00",
+      "Unnamed: 1": "Danh mục chương trình đào tạo",
+      "Unnamed: 2": "Khung chương trình, môn tiên quyết, học phần thay thế"
+    },
+    {
+      " ": "2026-05-02 00:00:00",
+      "Unnamed: 1": "Danh mục môn học / học phần",
+      "Unnamed: 2": "Mã môn, tên môn, số tín chỉ, loại học phần"
+    },
+    {
+      " ": "2026-06-02 00:00:00",
+      "Unnamed: 1": "Danh mục phòng học",
+      "Unnamed: 2": "Phòng lý thuyết, phòng thực hành, sức chứa"
+    },
+    {
+      " ": "2026-07-02 00:00:00",
+      "Unnamed: 1": "Danh mục hình thức thi",
+      "Unnamed: 2": "Thi viết, trắc nghiệm, đồ án, thang điểm"
+    },
+    {
+      " ": "2026-08-02 00:00:00",
+      "Unnamed: 1": "Danh mục đối tượng ưu tiên",
+      "Unnamed: 2": "Chính sách miễn giảm học phí, ưu tiên khu vực"
+    },
+    {
+      " ": "2026-09-02 00:00:00",
+      "Unnamed: 1": "Danh mục khen thưởng / kỷ luật",
+      "Unnamed: 2": "Các loại khen thưởng, kỷ luật, điểm cộng/trừ rèn luyện"
+    },
+    {
+      " ": "MODULE 3: QUẢN LÝ NHÂN SỰ",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "2026-01-03 00:00:00",
+      "Unnamed: 1": "Quản lý Sinh viên",
+      "Unnamed: 2": "Hồ sơ sinh viên, trạng thái học tập( có thể đang bảo lưu,chuyển nghành), lịch sử lớp học"
+    },
+    {
+      " ": "2026-02-03 00:00:00",
+      "Unnamed: 1": "Quản lý Giảng viên",
+      "Unnamed: 2": "Hồ sơ giảng viên, học vị, chuyên môn, phân công giảng dạy"
+    },
+    {
+      " ": "2026-03-03 00:00:00",
+      "Unnamed: 1": "Quản lý Cán bộ - Nhân viên",
+      "Unnamed: 2": "Hồ sơ giáo vụ, kế toán, thư viện, nhân viên hành chính"
+    },
+    {
+      " ": "2026-04-03 00:00:00",
+      "Unnamed: 1": "Phân công giảng dạy",
+      "Unnamed: 2": "Phân công giảng viên cho từng lớp học phần"
+    },
+    {
+      " ": "MODULE 4: KẾ HOẠCH & ĐĂNG KÝ HỌC PHẦN",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "2026-01-04 00:00:00",
+      "Unnamed: 1": "Kế hoạch đào tạo năm học",
+      "Unnamed: 2": "Lập kế hoạch mở môn học theo từng học kỳ"
+    },
+    {
+      " ": "2026-02-04 00:00:00",
+      "Unnamed: 1": "Xây dựng thời khóa biểu",
+      "Unnamed: 2": "Xếp lịch học, lịch thi sơ bộ"
+    },
+    {
+      " ": "2026-03-04 00:00:00",
+      "Unnamed: 1": "Mở lớp học phần",
+      "Unnamed: 2": "Tạo lớp học phần, giới hạn sĩ số, điều kiện đăng ký"
+    },
+    {
+      " ": "2026-04-04 00:00:00",
+      "Unnamed: 1": "Đăng ký học phần",
+      "Unnamed: 2": "Sinh viên đăng ký học phần, kiểm tra điều kiện và xung đột lịch"
+    },
+    {
+      " ": "2026-05-04 00:00:00",
+      "Unnamed: 1": "Đăng ký ngoài kế hoạch",
+      "Unnamed: 2": "Học lại, học cải thiện, học vượt"
+    },
+    {
+      " ": "2026-06-04 00:00:00",
+      "Unnamed: 1": "Danh sách lớp chính thức",
+      "Unnamed: 2": "Chốt danh sách sau đăng ký, tích hợp điểm danh"
+    },
+    {
+      " ": "2026-07-04 00:00:00",
+      "Unnamed: 1": "Điều chỉnh đăng ký",
+      "Unnamed: 2": "Hủy hoặc đổi lớp trong thời gian quy định"
+    },
+    {
+      " ": "MODULE 5: KHẢO THÍ & QUẢN LÝ ĐIỂM",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "2026-01-05 00:00:00",
+      "Unnamed: 1": "Lập lịch thi",
+      "Unnamed: 2": "Xếp lịch thi, phòng thi, giám thị, hình thức thi, gán cán bộ coi thi"
+    },
+    {
+      " ": "2026-02-05 00:00:00",
+      "Unnamed: 1": "Nhập điểm thành phần",
+      "Unnamed: 2": "Điểm chuyên cần, giữa kỳ, thực hành"
+    },
+    {
+      " ": "2026-03-05 00:00:00",
+      "Unnamed: 1": "Nhập điểm cuối kỳ",
+      "Unnamed: 2": "Nhập và khóa điểm"
+    },
+    {
+      " ": "2026-04-05 00:00:00",
+      "Unnamed: 1": "Tính điểm tổng kết",
+      "Unnamed: 2": "Quy đổi điểm hệ 10, hệ 4 và điểm chữ"
+    },
+    {
+      " ": "2026-05-05 00:00:00",
+      "Unnamed: 1": "Phúc khảo",
+      "Unnamed: 2": "Tiếp nhận và xử lý đơn phúc khảo"
+    },
+    {
+      " ": "2026-06-05 00:00:00",
+      "Unnamed: 1": "Bảng điểm",
+      "Unnamed: 2": "Tra cứu điểm từng học kỳ và tích lũy"
+    },
+    {
+      " ": "2026-07-05 00:00:00",
+      "Unnamed: 1": "Cảnh báo học vụ",
+      "Unnamed: 2": "Cảnh báo sinh viên có kết quả học tập yếu"
+    },
+    {
+      " ": "MODULE 6: CÔNG TÁC SINH VIÊN & RÈN LUYỆN",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "2026-01-06 00:00:00",
+      "Unnamed: 1": "Điểm rèn luyện",
+      "Unnamed: 2": "Chấm điểm và xếp loại rèn luyện"
+    },
+    {
+      " ": "2026-02-06 00:00:00",
+      "Unnamed: 1": "Khen thưởng - Kỷ luật",
+      "Unnamed: 2": "Quản lý quyết định khen thưởng, kỷ luật"
+    },
+    {
+      " ": "2026-03-06 00:00:00",
+      "Unnamed: 1": "Học bổng",
+      "Unnamed: 2": "Xét học bổng và danh sách nhận học bổng"
+    },
+    {
+      " ": "2026-04-06 00:00:00",
+      "Unnamed: 1": "Cố vấn học tập",
+      "Unnamed: 2": "Phân công cố vấn, ghi nhận tư vấn"
+    },
+    {
+      " ": "2026-05-06 00:00:00",
+      "Unnamed: 1": "Khảo sát sinh viên",
+      "Unnamed: 2": "Đánh giá môn học, giảng viên"
+    },
+    {
+      " ": "2026-06-06 00:00:00",
+      "Unnamed: 1": "Bảo hiểm y tế",
+      "Unnamed: 2": "Quản lý tham gia BHYT"
+    },
+    {
+      " ": "MODULE 7: TÀI CHÍNH & HỌC PHÍ",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "2026-01-07 00:00:00",
+      "Unnamed: 1": "Thiết lập học phí",
+      "Unnamed: 2": "Cấu hình mức học phí theo tín chỉ"
+    },
+    {
+      " ": "2026-02-07 00:00:00",
+      "Unnamed: 1": "Tính công nợ",
+      "Unnamed: 2": "Tự động sinh công nợ học phí, theo dõi và thông báo công nợ"
+    },
+    {
+      " ": "2026-03-07 00:00:00",
+      "Unnamed: 1": "Quản lý phiếu thu",
+      "Unnamed: 2": "Thu học phí và in biên lai"
+    },
+    {
+      " ": "2026-04-07 00:00:00",
+      "Unnamed: 1": "Miễn giảm & Gia hạn",
+      "Unnamed: 2": "Quản lý miễn giảm học phí và gia hạn"
+    },
+    {
+      " ": "2026-05-07 00:00:00",
+      "Unnamed: 1": "Tài khoản ngân hàng",
+      "Unnamed: 2": "Kết nối cổng thanh toán"
+    },
+    {
+      " ": "MODULE 8: THẨM ĐỊNH & XÉT TỐT NGHIỆP",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "2026-01-08 00:00:00",
+      "Unnamed: 1": "Điều kiện tốt nghiệp",
+      "Unnamed: 2": "Thiết lập điều kiện xét tốt nghiệp"
+    },
+    {
+      " ": "2026-02-08 00:00:00",
+      "Unnamed: 1": "Kiểm tra điều kiện",
+      "Unnamed: 2": "Đối chiếu điều kiện từng sinh viên"
+    },
+    {
+      " ": "2026-03-08 00:00:00",
+      "Unnamed: 1": "Danh sách xét tốt nghiệp",
+      "Unnamed: 2": "Lập danh sách sinh viên đủ điều kiện"
+    },
+    {
+      " ": "2026-04-08 00:00:00",
+      "Unnamed: 1": "Quản lý phôi bằng",
+      "Unnamed: 2": "In bằng, bảng điểm"
+    },
+    {
+      " ": "2026-05-08 00:00:00",
+      "Unnamed: 1": "Hồ sơ tốt nghiệp",
+      "Unnamed: 2": "Theo dõi nhận bằng"
+    },
+    {
+      " ": "2026-06-08 00:00:00",
+      "Unnamed: 1": "Xét tốt nghiệp sớm / muộn",
+      "Unnamed: 2": "Xử lý các trường hợp đặc biệt: sinh viên chuyển trường, chương trình đào tạo thay đổi, sinh viên bị kỷ luật (đình chỉ)"
+    },
+    {
+      " ": "2026-07-08 00:00:00",
+      "Unnamed: 1": "Quản lý Đồ án & Thẩm định Tốt nghiệp",
+      "Unnamed: 2": "Đăng ký đề tài Đồ án/Khóa luận, Phân công Giảng viên hướng dẫn & Phản biện, Thành lập Hội đồng Bảo vệ, Chấm điểm Khóa luận"
+    },
+    {
+      " ": "MODULE 9: THỐNG KÊ & BÁO CÁO",
+      "Unnamed: 1": "",
+      "Unnamed: 2": ""
+    },
+    {
+      " ": "2026-01-09 00:00:00",
+      "Unnamed: 1": "Dashboard",
+      "Unnamed: 2": "Biểu đồ tổng quan về sinh viên, học phí, đào tạo"
+    },
+    {
+      " ": "2026-02-09 00:00:00",
+      "Unnamed: 1": "Báo cáo đào tạo",
+      "Unnamed: 2": "Thống kê theo khoa, ngành, khóa"
+    },
+    {
+      " ": "2026-03-09 00:00:00",
+      "Unnamed: 1": "Báo cáo học tập",
+      "Unnamed: 2": "Thống kê học lực, tỷ lệ đạt/trượt"
+    },
+    {
+      " ": "2026-04-09 00:00:00",
+      "Unnamed: 1": "Báo cáo tài chính",
+      "Unnamed: 2": "Tổng hợp thu học phí và công nợ"
+    },
+    {
+      " ": "2026-05-09 00:00:00",
+      "Unnamed: 1": "Báo cáo nhân sự",
+      "Unnamed: 2": "Thống kê giảng viên và giờ giảng"
+    },
+    {
+      " ": "2026-06-09 00:00:00",
+      "Unnamed: 1": "Báo cáo khảo thí",
+      "Unnamed: 2": "Thống kê lịch thi và kết quả"
+    },
+    {
+      " ": "2026-07-09 00:00:00",
+      "Unnamed: 1": "Báo cáo tùy chỉnh",
+      "Unnamed: 2": "Xuất Excel, PDF theo tiêu chí"
+    },
+    {
+      " ": "2026-08-09 00:00:00",
+      "Unnamed: 1": "Xuất dữ liệu",
+      "Unnamed: 2": "Xuất dữ liệu theo mẫu Bộ GD&ĐT"
+    }
+  ],
+  "Sub-feature": [
+    {
+      "STT": "1.0",
+      "Module": "MODULE 1: Hệ thống & Bảo mật",
+      "Chức năng": "Quản lý người dùng",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tạo tài khoản mới (thủ công / import hàng loạt từ Excel)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Sửa thông tin tài khoản (email, SĐT, trạng thái)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Khóa / mở khóa tài khoản",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Gán vai trò cho tài khoản (Admin, Giáo vụ, Giảng viên, Sinh viên, Kế toán...)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Reset mật khẩu (do admin hoặc tự reset qua email/OTP)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "6",
+      "Sub-feature (chức năng con)": "Tìm kiếm, lọc danh sách tài khoản theo vai trò/trạng thái",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "7",
+      "Sub-feature (chức năng con)": "Xem lịch sử đăng nhập của từng tài khoản",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "2.0",
+      "Module": "",
+      "Chức năng": "Phân quyền & Vai trò",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tạo / sửa / xóa vai trò (role)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Gán quyền truy cập theo menu (ẩn/hiện menu theo vai trò)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Gán quyền CRUD chi tiết theo từng chức năng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Gán nhiều vai trò cho 1 tài khoản (nếu cần)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Ma trận phân quyền (role-permission matrix) để xem tổng quan",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "6",
+      "Sub-feature (chức năng con)": "Sao chép cấu hình quyền từ vai trò có sẵn",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "3.0",
+      "Module": "",
+      "Chức năng": "Nhật ký hệ thống (Audit Log)",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Ghi log thao tác (tạo/sửa/xóa) kèm người thực hiện",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Ghi nhận thời gian, địa chỉ IP, thiết bị truy cập",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Tra cứu log theo người dùng, theo module, theo khoảng thời gian",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Xuất log ra Excel/PDF phục vụ kiểm tra",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Cảnh báo hành vi bất thường (đăng nhập nhiều lần sai, sửa dữ liệu hàng loạt)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL."
+    },
+    {
+      "STT": "4.0",
+      "Module": "",
+      "Chức năng": "Cấu hình hệ thống",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Cấu hình thông tin trường (tên, logo, địa chỉ, mã trường)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Cấu hình SMTP gửi email",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Cấu hình gateway gửi SMS",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Cấu hình thời gian khóa/mở nhập điểm theo học kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Cấu hình tham số chung (năm học hiện hành, học kỳ hiện hành)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "5.0",
+      "Module": "",
+      "Chức năng": "Sao lưu & Phục hồi",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Sao lưu dữ liệu tự động theo lịch (hằng ngày/tuần)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Sao lưu thủ công theo yêu cầu admin",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Phục hồi dữ liệu từ bản sao lưu",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Quản lý danh sách các bản sao lưu (xem, tải về, xóa)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Thông báo kết quả sao lưu (thành công/thất bại)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "6.0",
+      "Module": "",
+      "Chức năng": "Xác thực & Bảo mật",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Đăng nhập bằng tài khoản/mật khẩu",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Xác thực OTP qua email/SMS (2FA)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Khóa tài khoản tạm thời sau N lần đăng nhập sai",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Quản lý phiên đăng nhập (session) — cho phép đăng xuất từ xa",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Chính sách mật khẩu (độ dài tối thiểu, ký tự đặc biệt, bắt buộc đổi định kỳ)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "6",
+      "Sub-feature (chức năng con)": "Quản lý thiết bị đã đăng nhập",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "7.0",
+      "Module": "",
+      "Chức năng": "Hệ thống Thông báo nội bộ",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tạo và gửi thông báo thủ công (chọn người nhận theo vai trò/lớp/cá nhân)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Tự động hóa thông báo theo sự kiện hệ thống (System Triggers)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Kỹ thuật: Dùng cơ chế Event/Signals trong framework backend để trigger hành động gửi mà không làm nghẽn luồng xử lý chính."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Quản lý trạng thái thông báo (đã đọc/chưa đọc/đã xử lý)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Phân loại thông báo và bộ lọc tìm kiếm",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Lịch sử thông báo đã gửi/nhận",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "8.0",
+      "Module": "MODULE 2: Quản lý danh mục gốc",
+      "Chức năng": "Danh mục đơn vị đào tạo",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thêm/sửa/xóa Khoa, Bộ môn, Trung tâm",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Quản lý cấu trúc phân cấp (Khoa → Bộ môn)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Gán trưởng/phó đơn vị",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Trạng thái hoạt động/ngừng hoạt động của đơn vị",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "9.0",
+      "Module": "",
+      "Chức năng": "Danh mục ngành / chuyên ngành",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thêm/sửa/xóa ngành đào tạo",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Quản lý chuyên ngành trực thuộc ngành",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Quản lý hệ đào tạo (Chính quy, Liên thông, Vừa làm vừa học...)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Gán ngành thuộc đơn vị (Khoa) quản lý",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "10.0",
+      "Module": "",
+      "Chức năng": "Danh mục khóa học & học kỳ",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Quản lý khóa tuyển sinh (VD: Khóa 2024-2028)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Quản lý năm học",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Quản lý học kỳ (HK1, HK2, Hè) gắn với năm học",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Thiết lập ngày bắt đầu/kết thúc học kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "11.0",
+      "Module": "",
+      "Chức năng": "Danh mục chương trình đào tạo",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Xây dựng khung chương trình đào tạo theo ngành/khóa",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thiết lập môn tiên quyết (prerequisite)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Thiết lập học phần thay thế/tương đương",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Quản lý số tín chỉ tối thiểu để tốt nghiệp",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Sao chép chương trình đào tạo từ khóa trước",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "12.0",
+      "Module": "",
+      "Chức năng": "Danh mục môn học / học phần",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thêm/sửa/xóa môn học (mã môn, tên môn)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thiết lập số tín chỉ (lý thuyết, thực hành)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Phân loại học phần (bắt buộc, tự chọn, đại cương, chuyên ngành)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Quản lý đề cương môn học (tài liệu đính kèm)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "13.0",
+      "Module": "",
+      "Chức năng": "Danh mục phòng học",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thêm/sửa/xóa phòng học",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Phân loại phòng (lý thuyết, thực hành, hội trường)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Thiết lập sức chứa từng phòng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Trạng thái sử dụng (đang dùng, bảo trì)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "14.0",
+      "Module": "",
+      "Chức năng": "Danh mục hình thức thi",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thêm/sửa các hình thức thi (viết, trắc nghiệm, vấn đáp, đồ án)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thiết lập thang điểm tương ứng từng hình thức",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Gán hình thức thi mặc định theo loại học phần",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "15.0",
+      "Module": "",
+      "Chức năng": "Danh mục đối tượng ưu tiên",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thêm/sửa danh mục đối tượng ưu tiên (khu vực, chính sách, dân tộc...)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thiết lập tỷ lệ/mức miễn giảm học phí tương ứng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Thiết lập điểm cộng ưu tiên (nếu áp dụng xét tuyển/học bổng)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "16.0",
+      "Module": "",
+      "Chức năng": "Danh mục khen thưởng / kỷ luật",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thêm/sửa các loại hình khen thưởng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thêm/sửa các loại hình kỷ luật",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Thiết lập điểm cộng/trừ rèn luyện tương ứng từng loại",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Thiết lập mức độ kỷ luật (khiển trách, cảnh cáo, đình chỉ, buộc thôi học)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "17.0",
+      "Module": "",
+      "Chức năng": "Quản lý Sinh viên",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tạo hồ sơ sinh viên (thông tin cá nhân, liên hệ, gia đình)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "MODULE 3: Quản lý nhân sự",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Import danh sách sinh viên hàng loạt từ Excel",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Cập nhật trạng thái học tập (đang học, bảo lưu, chuyển ngành, thôi học, tốt nghiệp)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Quản lý lịch sử lớp học theo từng học kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Tra cứu/tìm kiếm sinh viên theo nhiều tiêu chí",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "6",
+      "Sub-feature (chức năng con)": "Quản lý ảnh đại diện và giấy tờ đính kèm (CCCD, học bạ...)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "7",
+      "Sub-feature (chức năng con)": "In thẻ sinh viên/giấy xác nhận",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "18.0",
+      "Module": "",
+      "Chức năng": "Quản lý Giảng viên",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tạo hồ sơ giảng viên (thông tin cá nhân, học vị, học hàm)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Quản lý chuyên môn/lĩnh vực giảng dạy",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Quản lý lịch sử phân công giảng dạy",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Quản lý hợp đồng/biên chế (cơ hữu, thỉnh giảng)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Tra cứu giảng viên theo khoa/bộ môn/chuyên môn",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "19.0",
+      "Module": "",
+      "Chức năng": "Quản lý Cán bộ - Nhân viên",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tạo hồ sơ nhân viên (giáo vụ, kế toán, thư viện, hành chính)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Phân loại theo bộ phận/phòng ban",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Quản lý chức vụ, nhiệm vụ phụ trách",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Tra cứu/tìm kiếm nhân viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "20.0",
+      "Module": "",
+      "Chức năng": "Phân công giảng dạy",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Gán giảng viên phụ trách cho từng lớp học phần",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Kiểm tra trùng lịch giảng dạy của giảng viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Thống kê khối lượng giờ giảng theo giảng viên/học kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Điều chỉnh/thay đổi giảng viên phụ trách giữa kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "21.0",
+      "Module": "",
+      "Chức năng": "Kế hoạch đào tạo năm học",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Lập kế hoạch mở môn học theo từng học kỳ/năm học",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "MODULE 4: Kế hoạch & Đăng ký học phần",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Dự kiến số lớp, sĩ số mỗi môn",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency)."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Phê duyệt kế hoạch đào tạo (workflow duyệt)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Sao chép kế hoạch từ học kỳ trước để điều chỉnh",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "22.0",
+      "Module": "",
+      "Chức năng": "Xây dựng thời khóa biểu",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Xếp lịch học theo phòng/giảng viên/thời gian",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Kiểm tra trùng lịch (phòng, giảng viên, lớp)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Xếp lịch thi sơ bộ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Xuất thời khóa biểu theo lớp/giảng viên/phòng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Điều chỉnh thời khóa biểu khi có thay đổi",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "23.0",
+      "Module": "",
+      "Chức năng": "Mở lớp học phần",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tạo lớp học phần từ học phần trong chương trình đào tạo",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thiết lập giới hạn sĩ số tối đa/tối thiểu",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency)."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Thiết lập điều kiện đăng ký (đã học môn tiên quyết...)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Đóng/hủy lớp học phần nếu không đủ sĩ số",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency)."
+    },
+    {
+      "STT": "24.0",
+      "Module": "",
+      "Chức năng": "Đăng ký học phần",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Sinh viên xem danh sách lớp học phần mở trong kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Đăng ký học phần online",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Hệ thống tự kiểm tra điều kiện (môn tiên quyết, số tín chỉ tối đa)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Hệ thống tự kiểm tra xung đột lịch học",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Xác nhận đăng ký thành công, xem phiếu đăng ký",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "25.0",
+      "Module": "",
+      "Chức năng": "Đăng ký ngoài kế hoạch",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Đăng ký học lại (môn không đạt)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Đăng ký học cải thiện điểm",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Đăng ký học vượt (vượt tiến độ)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Phê duyệt các trường hợp đăng ký đặc biệt",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "26.0",
+      "Module": "",
+      "Chức năng": "Danh sách lớp chính thức",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Chốt danh sách sinh viên sau thời gian đăng ký/điều chỉnh",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Đồng bộ danh sách sang module điểm danh",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Xuất danh sách lớp (file Excel/PDF) cho giảng viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Khóa danh sách, không cho chỉnh sửa sau khi chốt",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL."
+    },
+    {
+      "STT": "27.0",
+      "Module": "",
+      "Chức năng": "Điều chỉnh đăng ký",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Hủy đăng ký học phần trong thời gian quy định",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Đổi lớp học phần (chuyển từ lớp này sang lớp khác)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Giới hạn thời gian được phép điều chỉnh",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Lưu lịch sử các lần điều chỉnh",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "28.0",
+      "Module": "",
+      "Chức năng": "Lập lịch thi",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Xếp lịch thi theo môn/lớp học phần",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "MODULE 5: Khảo thí & Quản lý điểm",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Xếp phòng thi, gán số lượng sinh viên/phòng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Gán cán bộ coi thi (giám thị)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Thiết lập hình thức thi cho từng kỳ thi",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Xuất lịch thi cho sinh viên/giảng viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "29.0",
+      "Module": "",
+      "Chức năng": "Nhập điểm thành phần",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Nhập điểm chuyên cần",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Nhập điểm giữa kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Nhập điểm thực hành/bài tập",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Thiết lập trọng số (%) từng thành phần",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Import điểm hàng loạt từ Excel",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "30.0",
+      "Module": "",
+      "Chức năng": "Nhập điểm cuối kỳ",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Nhập điểm thi cuối kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Khóa điểm sau thời hạn quy định (không cho sửa)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Giảng viên gửi yêu cầu mở khóa điểm khi cần chỉnh sửa",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Lịch sử thay đổi điểm (ai sửa, khi nào)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL."
+    },
+    {
+      "STT": "31.0",
+      "Module": "",
+      "Chức năng": "Tính điểm tổng kết",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tự động tính điểm tổng kết học phần theo trọng số",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Quy đổi điểm hệ 10 sang hệ 4 và điểm chữ (A, B, C...)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Nghiệp vụ: Áp dụng công thức (Tổng điểm * Số tín chỉ)/Tổng tín chỉ. Cần chạy background task hoặc tính lại mỗi khi điểm thay đổi."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Tính điểm trung bình học kỳ (GPA kỳ)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Tính điểm trung bình tích lũy (CPA)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Xếp loại học lực theo điểm trung bình",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "32.0",
+      "Module": "",
+      "Chức năng": "Phúc khảo",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Sinh viên gửi đơn phúc khảo online",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Giáo vụ tiếp nhận, phân công chấm phúc khảo",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Cập nhật kết quả phúc khảo (giữ nguyên/thay đổi điểm)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Thông báo kết quả phúc khảo cho sinh viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "33.0",
+      "Module": "",
+      "Chức năng": "Bảng điểm",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tra cứu điểm theo từng học kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Tra cứu điểm tích lũy toàn khóa",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Xuất bảng điểm (PDF) có xác nhận của trường",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "In bảng điểm tạm thời/chính thức",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "34.0",
+      "Module": "",
+      "Chức năng": "Cảnh báo học vụ",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tự động phát hiện sinh viên có GPA dưới ngưỡng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Phát hiện sinh viên nợ môn vượt mức quy định",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Gửi thông báo cảnh báo học vụ tới sinh viên/cố vấn",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Theo dõi danh sách sinh viên bị cảnh báo qua các kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "35.0",
+      "Module": "",
+      "Chức năng": "Điểm rèn luyện",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Sinh viên tự đánh giá điểm rèn luyện (nếu áp dụng)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "MODULE 6: Công tác sinh viên & Rèn luyện",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Lớp/cố vấn xét duyệt điểm rèn luyện",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Tính điểm và xếp loại rèn luyện theo kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Tra cứu lịch sử điểm rèn luyện qua các kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "36.0",
+      "Module": "",
+      "Chức năng": "Khen thưởng - Kỷ luật",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Lập và quản lý quyết định khen thưởng (theo danh mục)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Lập và quản lý quyết định kỷ luật",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Đính kèm văn bản quyết định",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Tra cứu lịch sử khen thưởng/kỷ luật theo sinh viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "37.0",
+      "Module": "",
+      "Chức năng": "Học bổng",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thiết lập tiêu chí xét học bổng (theo GPA, rèn luyện, hoàn cảnh)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Lập danh sách sinh viên đủ điều kiện xét",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Phê duyệt danh sách nhận học bổng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Thông báo kết quả học bổng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "38.0",
+      "Module": "",
+      "Chức năng": "Cố vấn học tập",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Phân công cố vấn học tập cho từng lớp/sinh viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Ghi nhận nội dung tư vấn, buổi gặp",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Cố vấn xem được tình hình học tập của sinh viên phụ trách",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Lịch sử các lần tư vấn",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "39.0",
+      "Module": "",
+      "Chức năng": "Khảo sát sinh viên",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tạo phiếu khảo sát (đánh giá môn học, giảng viên)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Sinh viên thực hiện khảo sát online",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Tổng hợp kết quả khảo sát theo môn/giảng viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Xuất báo cáo khảo sát",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "40.0",
+      "Module": "",
+      "Chức năng": "Bảo hiểm y tế",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Quản lý danh sách sinh viên tham gia BHYT",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Theo dõi thời hạn tham gia/hết hạn",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Ghi nhận thanh toán phí BHYT",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Xuất danh sách báo cáo BHYT theo lớp/khóa",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "41.0",
+      "Module": "",
+      "Chức năng": "Thiết lập học phí",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Cấu hình đơn giá học phí theo tín chỉ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "MODULE 7: Tài chính & Học phí",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thiết lập mức học phí riêng theo ngành/hệ đào tạo (nếu khác nhau)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Cập nhật đơn giá theo từng năm học",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL."
+    },
+    {
+      "STT": "42.0",
+      "Module": "",
+      "Chức năng": "Tính công nợ",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tự động sinh công nợ học phí dựa trên đăng ký học phần",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Nghiệp vụ: Tự động chốt công nợ vào đầu kỳ. Kỹ thuật: Cần có liên kết (ForeignKey) chuẩn xác tới bảng Đăng ký học phần để đếm số tín chỉ."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Theo dõi tình trạng công nợ (đã đóng, còn nợ, quá hạn)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Gửi thông báo nhắc nợ tự động",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Kỹ thuật: Dùng cơ chế Event/Signals trong framework backend để trigger hành động gửi mà không làm nghẽn luồng xử lý chính."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Tự động hoàn trả học phí/công nợ cho sinh viên khi lớp học phần bị hủy",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Tổng hợp công nợ theo lớp/khóa/sinh viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "43.0",
+      "Module": "",
+      "Chức năng": "Quản lý phiếu thu",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Lập phiếu thu học phí",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "In biên lai thu tiền",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Ghi nhận hình thức thanh toán (tiền mặt, chuyển khoản, online)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Tra cứu lịch sử thanh toán theo sinh viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "44.0",
+      "Module": "",
+      "Chức năng": "Miễn giảm & Gia hạn",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Lập hồ sơ xét miễn giảm học phí (theo đối tượng ưu tiên)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Phê duyệt miễn giảm",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Gia hạn thời gian đóng học phí",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Theo dõi danh sách sinh viên được miễn giảm/gia hạn",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "45.0",
+      "Module": "",
+      "Chức năng": "Tài khoản ngân hàng",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Kết nối cổng thanh toán trực tuyến (VNPay, Momo, ngân hàng...)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Đối soát giao dịch thanh toán tự động",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency)."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Xử lý giao dịch lỗi/hoàn tiền",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency)."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Lịch sử giao dịch qua cổng thanh toán",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency)."
+    },
+    {
+      "STT": "46.0",
+      "Module": "",
+      "Chức năng": "Quản lý hoàn trả / Giảm trừ",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tự động hoàn trả/giảm trừ công nợ khi lớp học phần bị hủy.",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Logic sẽ kích hoạt (Trigger) ngay khi trạng thái lớp ở Module 4 chuyển thành \"Hủy\". Hệ thống bắt buộc phải sử dụng Transaction trong Database để đảm bảo tiền/tín chỉ được hoàn về tài khoản sinh viên đồng bộ với việc xóa tên khỏi danh sách lớp, tránh thất thoát dữ liệu."
+    },
+    {
+      "STT": "47.0",
+      "Module": "MODULE 8: Thẩm định & Xét tốt nghiệp",
+      "Chức năng": "Điều kiện tốt nghiệp",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thiết lập điều kiện tốt nghiệp theo ngành (tín chỉ, GPA, chứng chỉ, rèn luyện...)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Cấu hình điều kiện theo từng khóa (có thể khác nhau)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "48.0",
+      "Module": "",
+      "Chức năng": "Kiểm tra điều kiện",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Đối chiếu tự động điều kiện tốt nghiệp với hồ sơ từng sinh viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Hiển thị danh sách điều kiện còn thiếu (nếu có)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Sinh viên tự tra cứu tiến độ đủ điều kiện tốt nghiệp",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination)."
+    },
+    {
+      "STT": "49.0",
+      "Module": "",
+      "Chức năng": "Danh sách xét tốt nghiệp",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Lập danh sách sinh viên đủ điều kiện theo đợt xét",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Trình hội đồng phê duyệt danh sách",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Công bố danh sách chính thức được công nhận tốt nghiệp",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "50.0",
+      "Module": "",
+      "Chức năng": "Quản lý phôi bằng",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Quản lý số lượng phôi bằng tồn/đã sử dụng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "In bằng tốt nghiệp",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "In bảng điểm toàn khóa kèm theo bằng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Quản lý số hiệu, số vào sổ cấp bằng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "51.0",
+      "Module": "",
+      "Chức năng": "Hồ sơ tốt nghiệp",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Theo dõi tình trạng nhận bằng của từng sinh viên",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Ghi nhận ngày nhận bằng, người nhận thay (nếu có ủy quyền)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Lưu trữ hồ sơ tốt nghiệp điện tử",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "52.0",
+      "Module": "",
+      "Chức năng": "Xét tốt nghiệp sớm / muộn",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Xử lý trường hợp sinh viên chuyển trường",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Xử lý trường hợp chương trình đào tạo thay đổi giữa khóa học",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Xử lý trường hợp sinh viên bị kỷ luật/đình chỉ ảnh hưởng tốt nghiệp",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Xét đặc cách/đặc biệt theo quy định riêng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "53.0",
+      "Module": "",
+      "Chức năng": "Quản lý Đồ án & Thẩm định Tốt nghiệp",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Đăng ký đề tài đồ án/khóa luận tốt nghiệp",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Phân công giảng viên hướng dẫn",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Phân công giảng viên phản biện",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Thành lập hội đồng bảo vệ (thành viên, chủ tịch, thư ký)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "5",
+      "Sub-feature (chức năng con)": "Lên lịch bảo vệ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "6",
+      "Sub-feature (chức năng con)": "Chấm điểm khóa luận/đồ án (điểm hướng dẫn, phản biện, hội đồng)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "7",
+      "Sub-feature (chức năng con)": "Tổng hợp kết quả bảo vệ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "54.0",
+      "Module": "",
+      "Chức năng": "Chuyển đổi tín chỉ & Học phần tương đương",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thiết lập bộ quy tắc môn học tương đương (Mapping Rules) giữa các ngành.",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Ánh xạ (Map) kết quả học tập từ khung chương trình cũ sang khung mới. Clone bản ghi điểm để bảo toàn lịch sử thay vì sửa trực tiếp.",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Tự động loại bỏ các môn không tương đương (chuyển thành môn ngoài khung), tách chúng khỏi thuật toán tính GPA của ngành mới.",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "55.0",
+      "Module": "MODULE 9: Thống kê & Báo cáo",
+      "Chức năng": "Dashboard",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Biểu đồ tổng quan số lượng sinh viên (theo khóa/ngành/trạng thái)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Biểu đồ tổng quan tình hình học phí (đã thu/còn nợ)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Biểu đồ tổng quan đào tạo (số lớp, số môn mở trong kỳ)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Tùy chỉnh widget hiển thị theo vai trò người dùng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "56.0",
+      "Module": "",
+      "Chức năng": "Báo cáo đào tạo",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thống kê số lượng sinh viên theo khoa/ngành/khóa",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thống kê số lớp học phần mở theo học kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Xuất báo cáo theo nhiều định dạng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "57.0",
+      "Module": "",
+      "Chức năng": "Báo cáo học tập",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thống kê học lực sinh viên (giỏi, khá, trung bình, yếu)",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thống kê tỷ lệ đạt/trượt theo môn học",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Thống kê theo lớp/khóa/ngành",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại."
+    },
+    {
+      "STT": "58.0",
+      "Module": "",
+      "Chức năng": "Báo cáo tài chính",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Tổng hợp số liệu thu học phí theo kỳ/năm",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Tổng hợp công nợ còn tồn đọng",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Báo cáo doanh thu theo khoa/ngành",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "59.0",
+      "Module": "",
+      "Chức năng": "Báo cáo nhân sự",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thống kê số lượng giảng viên theo khoa/bộ môn",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thống kê giờ giảng theo giảng viên/học kỳ",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Báo cáo khối lượng công tác",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "60.0",
+      "Module": "",
+      "Chức năng": "Báo cáo khảo thí",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Thống kê lịch thi đã tổ chức",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Thống kê kết quả thi theo môn/lớp",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Báo cáo tỷ lệ phúc khảo và kết quả phúc khảo",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "61.0",
+      "Module": "",
+      "Chức năng": "Báo cáo tùy chỉnh",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Cho phép người dùng tự chọn tiêu chí, cột dữ liệu để xuất báo cáo",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Xuất báo cáo ra Excel",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Xuất báo cáo ra PDF",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "4",
+      "Sub-feature (chức năng con)": "Lưu mẫu báo cáo đã tùy chỉnh để dùng lại",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": ""
+    },
+    {
+      "STT": "62.0",
+      "Module": "",
+      "Chức năng": "Xuất dữ liệu",
+      "STT con": "1",
+      "Sub-feature (chức năng con)": "Xuất dữ liệu sinh viên/điểm/tốt nghiệp theo mẫu chuẩn của Bộ GD&ĐT",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "2",
+      "Sub-feature (chức năng con)": "Kiểm tra tính hợp lệ dữ liệu trước khi xuất",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    },
+    {
+      "STT": "",
+      "Module": "",
+      "Chức năng": "",
+      "STT con": "3",
+      "Sub-feature (chức năng con)": "Lưu lịch sử các lần xuất dữ liệu",
+      "Ghi chú / Ưu tiên": "",
+      "Mô tả Nghiệp vụ & Kỹ thuật (Tích hợp)": "Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB."
+    }
+  ],
+  "API": []
+}

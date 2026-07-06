@@ -1,0 +1,573 @@
+/*
+==========================================================================
+  HỆ THỐNG: Web Quản Lý Sinh Viên Đại Học
+  PHIÊN BẢN DBML: 2.0 (Bản hoàn thiện nghiệp vụ)
+  MÔ TẢ: Cơ sở dữ liệu quản lý toàn diện thông tin sinh viên, chương trình đào tạo, đăng ký học phần, điểm số, học phí, khen thưởng/kỷ luật và xét tốt nghiệp trong môi trường đại học.
+  BẢNG CHÍNH: accounts, students, courses, course_offerings, enrollments, invoices
+==========================================================================
+*/
+
+// ============================================================
+// STUDENT MANAGEMENT SYSTEM - IMPROVED DBML
+// Dựa trên bản gốc, bổ sung bảng/cột còn thiếu theo phân tích nghiệp vụ
+// Chạy được trực tiếp trên dbdiagram.io
+// ============================================================
+
+// ================= ENUMS =================
+// Ý nghĩa: Định nghĩa các tập giá trị cố định giúp chuẩn hóa dữ liệu, tránh sai sót khi nhập liệu.
+
+Enum status_active {
+  active // Đang hoạt động
+  inactive // Ngừng hoạt động
+  locked // Bị khóa (do vi phạm hoặc sai mật khẩu nhiều lần)
+}
+
+Enum status_student {
+  studying // Đang học
+  reserved // Bảo lưu kết quả
+  dropped // Bỏ học/Buộc thôi học
+  graduated // Đã tốt nghiệp
+}
+
+Enum status_course {
+  open // Đang mở cho sinh viên đăng ký
+  closed // Đã đóng đăng ký / Đang giảng dạy
+  cancelled // Đã hủy (ví dụ: do không đủ sĩ số)
+}
+
+Enum status_invoice {
+  unpaid // Chưa thanh toán
+  partial // Đã thanh toán một phần
+  paid // Đã thanh toán đủ
+  refunded // Đã hoàn tiền (khi hủy lớp)
+}
+
+Enum course_type {
+  mandatory // Môn học bắt buộc
+  elective // Môn học tự chọn
+}
+
+Enum gender_type {
+  male // Nam
+  female // Nữ
+  other // Khác
+}
+
+// MỚI: chuẩn hóa xếp loại rèn luyện thay vì varchar tự do
+Enum training_rank {
+  excellent // Xuất sắc
+  good // Tốt
+  fair // Khá
+  average // Trung bình
+  weak // Yếu/Kém
+}
+
+// MỚI: trạng thái phúc khảo
+Enum review_status {
+  pending // Đang chờ xử lý
+  approved // Đã chấp thuận (có thay đổi điểm)
+  rejected // Đã từ chối (giữ nguyên điểm)
+}
+
+// MỚI: loại khen thưởng/kỷ luật
+Enum discipline_type {
+  reward // Khen thưởng
+  discipline // Kỷ luật
+}
+
+// ================= SYSTEM & AUTH =================
+
+// === BẢNG TÀI KHOẢN (ACCOUNTS) ===
+// Mục đích: Quản lý thông tin xác thực và trạng thái truy cập của tất cả người dùng (Admin, GV, SV)
+// Chức năng liên quan: Đăng nhập, đăng xuất, khôi phục mật khẩu, phân quyền
+// Lưu ý: Tách biệt với hồ sơ cá nhân để tăng tính bảo mật và tối ưu query xác thực
+Table accounts {
+  id uuid [pk] // Khóa chính dạng UUID giúp chống đoán ID và tối ưu cho hệ thống phân tán
+  username varchar [unique, not null] // Tên đăng nhập (VD: mã SV, mã GV), duy nhất, bắt buộc
+  password varchar [not null] // Mật khẩu (đã băm/hashed), bắt buộc
+  email varchar [unique] // MỚI: Email dùng để khôi phục mật khẩu, duy nhất
+  phone varchar // MỚI: Số điện thoại liên hệ hệ thống
+  status status_active [default: 'active'] // Trạng thái tài khoản, mặc định là đang hoạt động
+  last_login_at timestamp // MỚI: Thời điểm đăng nhập cuối cùng
+  created_at timestamp [default: `now()`] // Thời điểm tạo tài khoản, tự động lấy giờ hệ thống
+  updated_at timestamp // Thời điểm cập nhật thông tin tài khoản gần nhất
+}
+
+// === BẢNG VAI TRÒ (ROLES) ===
+// Mục đích: Định nghĩa các nhóm quyền (VD: Sinh viên, Giảng viên, Quản trị viên)
+// Chức năng liên quan: Hệ thống phân quyền RBAC (Role-Based Access Control)
+Table roles {
+  id uuid [pk] // Khóa chính UUID
+  code varchar [unique, not null] // Mã vai trò (VD: 'ROLE_ADMIN', 'ROLE_STUDENT'), duy nhất
+  name varchar // Tên hiển thị của vai trò (VD: 'Quản trị viên hệ thống')
+}
+
+// === BẢNG QUYỀN HẠN (PERMISSIONS) ===
+// Mục đích: Định nghĩa các hành động cụ thể trong hệ thống (VD: 'VIEW_SCORE', 'EDIT_SCORE')
+// Chức năng liên quan: Hệ thống phân quyền RBAC
+Table permissions {
+  id uuid [pk] // Khóa chính UUID
+  code varchar [unique, not null] // Mã quyền hạn (VD: 'USER_CREATE'), duy nhất
+  module_name varchar // Tên phân hệ chứa quyền này (VD: 'Quản lý điểm')
+}
+
+// === BẢNG TÀI KHOẢN - VAI TRÒ (ACCOUNT_ROLES) ===
+// Mục đích: Bảng trung gian giải quyết quan hệ n-n giữa tài khoản và vai trò
+// Chức năng liên quan: Gán một hoặc nhiều vai trò cho người dùng
+Table account_roles {
+  id uuid [pk] // Khóa chính UUID
+  account_id uuid [ref: > accounts.id] // CASCADE // Khóa ngoại trỏ về accounts
+  role_id uuid [ref: > roles.id] // CASCADE // Khóa ngoại trỏ về roles
+  Indexes {
+    (account_id, role_id) [unique] // Ràng buộc duy nhất: Một user không thể được gán cùng một role 2 lần
+  }
+}
+
+// === BẢNG VAI TRÒ - QUYỀN HẠN (ROLE_PERMISSIONS) ===
+// Mục đích: Bảng trung gian gán các quyền hạn cụ thể cho từng vai trò
+Table role_permissions {
+  id uuid [pk] // Khóa chính UUID
+  role_id uuid [ref: > roles.id] // CASCADE // Khóa ngoại trỏ về roles
+  permission_id uuid [ref: > permissions.id] // CASCADE // Khóa ngoại trỏ về permissions
+  Indexes {
+    (role_id, permission_id) [unique] // Ràng buộc duy nhất: Một role không lặp lại một permission
+  }
+}
+
+// === BẢNG NHẬT KÝ HỆ THỐNG (AUDIT_LOGS) ===
+// Mục đích: Lưu vết mọi thao tác quan trọng để truy cứu trách nhiệm khi có sự cố dữ liệu
+// Chức năng liên quan: Theo dõi bảo mật, báo cáo thao tác
+Table audit_logs {
+  id uuid [pk] // Khóa chính UUID
+  account_id uuid [ref: > accounts.id] // SET NULL // Ai thực hiện? SET NULL để giữ log ngay cả khi user bị xóa
+  action varchar [not null] // Hành động gì? (VD: 'UPDATE_GRADE', 'DELETE_INVOICE')
+  table_name varchar // Tác động lên bảng nào?
+  ip_address varchar // Từ địa chỉ IP nào?
+  created_at timestamp [default: `now()`] // Thời gian thực hiện
+
+  Indexes {
+    account_id // Tối ưu truy vấn tìm log theo người dùng
+    created_at // MỚI: audit_logs sẽ rất lớn theo thời gian, cần index truy vấn theo thời gian
+  }
+}
+
+// ================= MASTER DATA =================
+
+// === BẢNG NĂM HỌC (ACADEMIC_YEARS) ===
+// Mục đích: Quản lý các năm học của trường
+Table academic_years {
+  id uuid [pk] // Khóa chính UUID
+  code varchar [unique, not null] // Mã năm học (VD: '2023-2024')
+  start_date date // MỚI: Ngày bắt đầu năm học
+  end_date date // MỚI: Ngày kết thúc năm học
+}
+
+// === BẢNG HỌC KỲ (SEMESTERS) ===
+// Mục đích: Quản lý các học kỳ, làm cơ sở để mở môn, đăng ký học, thu học phí
+Table semesters {
+  id uuid [pk] // Khóa chính UUID
+  academic_year_id uuid [ref: > academic_years.id] // RESTRICT // Thuộc năm học nào. RESTRICT: Không xóa năm học nếu còn học kỳ
+  code varchar [unique, not null] // Mã học kỳ (VD: 'HK1_2324')
+  start_date date // Ngày bắt đầu học kỳ
+  end_date date // Ngày kết thúc học kỳ
+  registration_start_date timestamp // MỚI: kiểm soát thời gian mở đăng ký học phần
+  registration_end_date timestamp // MỚI: thời hạn đóng đăng ký học phần
+}
+
+// === BẢNG KHOA (FACULTIES) ===
+// Mục đích: Quản lý các đơn vị cấp Khoa/Viện
+Table faculties {
+  id uuid [pk] // Khóa chính UUID
+  code varchar [unique, not null] // Mã khoa (VD: 'CNTT', 'KT')
+  name varchar // Tên khoa (VD: 'Khoa Công nghệ thông tin')
+}
+
+// === BẢNG BỘ MÔN (DEPARTMENTS) ===
+// Mục đích: Quản lý các đơn vị cấp Bộ môn trực thuộc Khoa
+Table departments {
+  id uuid [pk] // Khóa chính UUID
+  faculty_id uuid [ref: > faculties.id] // RESTRICT // Thuộc khoa nào. RESTRICT: Không xóa khoa nếu còn bộ môn
+  code varchar [unique, not null] // Mã bộ môn (VD: 'HTTT')
+  name varchar // Tên bộ môn (VD: 'Hệ thống thông tin')
+}
+
+// === BẢNG NGÀNH HỌC (MAJORS) ===
+// Mục đích: Quản lý các ngành đào tạo sinh viên
+// SỬA: majors nên trực thuộc departments (Khoa -> Bộ môn -> Ngành)
+Table majors {
+  id uuid [pk] // Khóa chính UUID
+  department_id uuid [ref: > departments.id] // RESTRICT, SỬA từ faculty_id // Thuộc bộ môn nào
+  code varchar [unique, not null] // Mã ngành (VD: '7480104')
+  name varchar // Tên ngành đào tạo
+  total_credits int // Tổng số tín chỉ yêu cầu để tốt nghiệp ngành này
+}
+
+// === BẢNG LỚP HÀNH CHÍNH (CLASSES) ===
+// Mục đích: Quản lý sinh viên theo niên chế (lớp sinh hoạt), phục vụ cố vấn học tập, điểm rèn luyện
+// MỚI: lớp hành chính (niên chế), tách biệt với course_offerings (lớp học phần)
+Table classes {
+  id uuid [pk] // Khóa chính UUID
+  major_id uuid [ref: > majors.id] // RESTRICT // Lớp thuộc ngành nào
+  code varchar [unique, not null] // Mã lớp (VD: 'K61-CNTT1')
+  admission_year int [not null] // Khóa tuyển sinh (VD: 2023)
+  homeroom_lecturer_id uuid // Khóa ngoại trỏ tới giảng viên chủ nhiệm
+}
+// Quan hệ 1-n: Giảng viên chủ nhiệm lớp. Nếu GV nghỉ việc, cập nhật NULL (SET NULL)
+Ref: classes.homeroom_lecturer_id > lecturers.id [delete: set null]
+
+// === BẢNG PHÒNG HỌC (ROOMS) ===
+// Mục đích: Quản lý cơ sở vật chất, phục vụ xếp thời khóa biểu và lịch thi
+Table rooms {
+  id uuid [pk] // Khóa chính UUID
+  code varchar [unique, not null] // Mã phòng (VD: 'D9-501')
+  building varchar // MỚI: Tòa nhà (VD: 'Tòa D9')
+  floor int // MỚI: Tầng số mấy
+  capacity int // Sức chứa tối đa (số sinh viên)
+  type varchar // Loại phòng (VD: 'Lý thuyết', 'Thực hành', 'Lab')
+}
+
+// === BẢNG TIẾT HỌC/CA HỌC (PERIODS) ===
+// Mục đích: Quản lý chuẩn khung thời gian học trong ngày
+// MỚI: lookup ca học/tiết học thay vì số nguyên rời rạc
+Table periods {
+  id uuid [pk] // Khóa chính UUID
+  code varchar [unique, not null] // Tên ca học (VD: "Tiết 1-3", "Ca Sáng")
+  start_time time [not null] // Giờ bắt đầu (VD: 07:00)
+  end_time time [not null] // Giờ kết thúc (VD: 09:15)
+}
+
+// ================= HR (USERS) =================
+
+// === BẢNG SINH VIÊN (STUDENTS) ===
+// Mục đích: Lưu trữ hồ sơ thông tin cá nhân và học vụ của sinh viên
+Table students {
+  id uuid [pk] // Khóa chính UUID
+  account_id uuid [unique] // Liên kết 1-1 với tài khoản đăng nhập
+  major_id uuid [ref: > majors.id] // RESTRICT // Sinh viên học ngành nào
+  class_id uuid [ref: > classes.id] // MỚI: SET NULL // Sinh viên thuộc lớp hành chính nào
+  student_code varchar [unique, not null] // Mã sinh viên (VD: '20231234')
+  full_name varchar [not null] // Họ và tên đầy đủ
+  gender gender_type // MỚI: Giới tính (Enum)
+  dob date // Ngày tháng năm sinh
+  place_of_birth varchar // MỚI: Nơi sinh
+  id_card_number varchar [unique] // MỚI: CCCD/CMND
+  nationality varchar [default: 'Việt Nam'] // MỚI: Quốc tịch
+  ethnicity varchar // MỚI: Dân tộc
+  email varchar // MỚI: Email cá nhân (ngoài email trường cung cấp ở account)
+  phone varchar // MỚI: Số điện thoại cá nhân
+  permanent_address varchar // MỚI: Địa chỉ thường trú
+  current_address varchar // MỚI: Nơi ở hiện tại
+  father_name varchar // MỚI: Họ tên cha
+  mother_name varchar // MỚI: Họ tên mẹ
+  guardian_phone varchar // MỚI: Số điện thoại người thân (liên hệ khẩn cấp)
+  admission_year int // MỚI: Năm nhập học
+  avatar_url varchar // MỚI: Link ảnh đại diện
+  status status_student [default: 'studying'] // Trạng thái học tập
+  created_at timestamp [default: `now()`] // Ngày lập hồ sơ
+  updated_at timestamp // Ngày cập nhật hồ sơ
+}
+// Quan hệ 1-1: Mỗi sinh viên có 1 tài khoản đăng nhập. RESTRICT: Không xóa account nếu còn hồ sơ SV
+Ref: students.account_id - accounts.id [delete: restrict]
+
+// === BẢNG GIẢNG VIÊN (LECTURERS) ===
+// Mục đích: Lưu trữ hồ sơ giảng viên
+Table lecturers {
+  id uuid [pk] // Khóa chính UUID
+  account_id uuid [unique] // Liên kết 1-1 với tài khoản đăng nhập
+  department_id uuid [ref: > departments.id] // RESTRICT // Thuộc bộ môn nào
+  lecturer_code varchar [unique, not null] // Mã cán bộ / giảng viên (VD: 'GV001')
+  full_name varchar [not null] // Họ và tên
+  gender gender_type // MỚI: Giới tính
+  email varchar // MỚI: Email liên hệ
+  phone varchar // MỚI: SĐT liên hệ
+  degree varchar // Trình độ chuyên môn (VD: 'Cử nhân', 'Kỹ sư')
+  academic_title varchar // MỚI: Học hàm, học vị (ThS/TS/PGS/GS)
+  specialization varchar // MỚI: Chuyên ngành giảng dạy
+  hire_date date // MỚI: Ngày ký hợp đồng/Bắt đầu làm việc
+}
+// Quan hệ 1-1: Mỗi giảng viên có 1 tài khoản đăng nhập. RESTRICT
+Ref: lecturers.account_id - accounts.id [delete: restrict]
+
+// === BẢNG CỐ VẤN HỌC TẬP (ADVISORS) ===
+// Mục đích: Phân công giảng viên làm cố vấn học tập cho sinh viên theo từng học kỳ
+Table advisors {
+  id uuid [pk] // Khóa chính UUID
+  lecturer_id uuid [ref: > lecturers.id] // RESTRICT // Giảng viên được phân công
+  student_id uuid [ref: > students.id] // RESTRICT // Sinh viên được nhận cố vấn
+  semester_id uuid [ref: > semesters.id] // RESTRICT // Trong học kỳ nào
+  Indexes {
+    (lecturer_id, student_id, semester_id) [unique] // Ràng buộc: Trong 1 kỳ, 1 SV chỉ do 1 GV cụ thể làm cố vấn (tránh gán trùng)
+  }
+}
+
+// ================= CURRICULUM & COURSES =================
+
+// === BẢNG MÔN HỌC (COURSES) ===
+// Mục đích: Lưu trữ danh mục các môn học của nhà trường (thư viện môn học gốc)
+Table courses {
+  id uuid [pk] // Khóa chính UUID
+  course_code varchar [unique, not null] // Mã môn học (VD: 'IT1110')
+  name varchar [not null] // Tên môn học (VD: 'Tin học đại cương')
+  credits int [not null] // Tổng số tín chỉ của môn học
+  theory_hours int // MỚI: Số tiết lý thuyết
+  practice_hours int // MỚI: Số tiết thực hành/bài tập
+  description text // MỚI: Mô tả môn học (dùng text vì nội dung dài)
+  is_active boolean [default: true] // MỚI: Môn học còn được giảng dạy không? (Soft delete)
+}
+
+// === BẢNG KHUNG CHƯƠNG TRÌNH (CURRICULUMS) ===
+// Mục đích: Định nghĩa ngành học nào phải học những môn học nào
+Table curriculums {
+  id uuid [pk] // Khóa chính UUID
+  major_id uuid [ref: > majors.id] // CASCADE // Khóa ngoại trỏ về ngành
+  course_id uuid [ref: > courses.id] // CASCADE // Khóa ngoại trỏ về môn học
+  course_type course_type [default: 'mandatory'] // Bắt buộc hay tự chọn
+  suggested_semester int // Khuyến cáo sinh viên học môn này vào kỳ thứ mấy (VD: 1, 2, 3...)
+  Indexes {
+    (major_id, course_id) [unique] // Ràng buộc: Một môn chỉ khai báo 1 lần trong 1 ngành
+  }
+}
+
+// === BẢNG MÔN TIÊN QUYẾT (COURSE_PREREQUISITES) ===
+// Mục đích: Ràng buộc điều kiện đăng ký môn (phải qua môn A mới được học môn B)
+Table course_prerequisites {
+  id uuid [pk] // Khóa chính UUID
+  course_id uuid [ref: > courses.id] // CASCADE // Môn học muốn đăng ký
+  prerequisite_id uuid [ref: > courses.id] // CASCADE // Môn học điều kiện phải hoàn thành trước
+  Indexes {
+    (course_id, prerequisite_id) [unique] // Tránh gán trùng môn tiên quyết
+  }
+}
+
+// === BẢNG MÔN THAY THẾ (COURSE_REPLACEMENTS) ===
+// Mục đích: Xử lý trường hợp môn học cũ bị bỏ, quy định môn mới nào được phép học thay thế để tính điểm
+Table course_replacements {
+  id uuid [pk] // Khóa chính UUID
+  course_id uuid [ref: > courses.id] // CASCADE // Môn học cũ (đã ngừng dạy)
+  replacement_id uuid [ref: > courses.id] // CASCADE // Môn học mới (học để thay thế môn cũ)
+  Indexes {
+    (course_id, replacement_id) [unique] // Tránh gán trùng môn thay thế
+  }
+}
+
+// ================= OPERATION & ENROLLMENT =================
+
+// === BẢNG LỚP HỌC PHẦN (COURSE_OFFERINGS) ===
+// Mục đích: Lớp thực tế mở ra trong một học kỳ để sinh viên đăng ký (phiên bản chạy thực tế của Courses)
+// Chức năng liên quan: Đăng ký học phần, điểm danh, nhập điểm
+Table course_offerings {
+  id uuid [pk] // Khóa chính UUID
+  course_id uuid [ref: > courses.id] // RESTRICT // Lớp này dạy môn gì
+  semester_id uuid [ref: > semesters.id] // RESTRICT // Mở vào học kỳ nào
+  lecturer_id uuid [ref: > lecturers.id] // RESTRICT // Do ai giảng dạy
+  class_code varchar [unique, not null] // Mã lớp học phần (VD: 'IT1110-123456')
+  max_capacity int [not null] // Sĩ số tối đa
+  current_enrollment int [default: 0] // Số sinh viên đã đăng ký hiện tại (dùng để chặn khi đầy)
+  status status_course [default: 'open'] // Trạng thái lớp (Mở đăng ký/Đã chốt/Đã hủy)
+
+  Indexes {
+    semester_id // MỚI: Tối ưu query vì truy vấn lớp theo học kỳ rất thường xuyên khi đăng ký tín chỉ
+  }
+}
+
+// === BẢNG THỜI KHÓA BIỂU LỚP HỌC PHẦN (SCHEDULES) ===
+// Mục đích: Quản lý lịch học chi tiết của lớp học phần (1 lớp có thể học nhiều buổi 1 tuần)
+Table schedules {
+  id uuid [pk] // Khóa chính UUID
+  course_offering_id uuid [ref: > course_offerings.id] // CASCADE // Xóa lớp thì xóa luôn lịch học
+  room_id uuid [ref: > rooms.id] // RESTRICT // Học ở phòng nào
+  period_id uuid [ref: > periods.id] // MỚI, SỬA từ "shift int" // Học ca nào/tiết nào
+  day_of_week int [note: 'CHECK 1-7'] // Thứ mấy trong tuần (1=CN, 2=Thứ 2... 7=Thứ 7)
+}
+
+// === BẢNG ĐĂNG KÝ HỌC & KẾT QUẢ HỌC TẬP (ENROLLMENTS) ===
+// Mục đích: Bảng trung gian n-n cực kỳ quan trọng ghi nhận sinh viên đăng ký vào lớp học phần và lưu điểm số
+// Chức năng liên quan: Xử lý đăng ký môn, xét môn điều kiện, tính GPA, quản lý bảng điểm
+Table enrollments {
+  id uuid [pk] // Khóa chính UUID
+  student_id uuid [ref: > students.id] // RESTRICT // Ai học?
+  course_offering_id uuid [ref: > course_offerings.id] // RESTRICT // Học lớp nào?
+  attendance_score decimal(4,2) // SỬA: precision 4,2 (tối đa 10.00). Điểm chuyên cần
+  midterm_score decimal(4,2) // Điểm giữa kỳ
+  final_score decimal(4,2) // Điểm thi cuối kỳ
+  total_score decimal(4,2) // Điểm tổng kết hệ 10
+  gpa_score decimal(3,2) // MỚI: Điểm quy đổi hệ 4 (VD: 4.0, 3.5) để tính GPA tích lũy
+  letter_grade varchar(2) // Điểm chữ (VD: 'A', 'B+', 'C')
+  is_locked boolean [default: false] // Cờ khóa điểm: Nếu True, giảng viên không được phép sửa điểm nữa
+  is_transferred boolean [default: false] // Cờ báo hiệu điểm này được bảo lưu/chuyển đổi từ ngành khác qua
+  created_at timestamp [default: `now()`] // Thời điểm bấm nút đăng ký thành công
+
+  Indexes {
+    (student_id, course_offering_id) [unique] // Ràng buộc: Một SV chỉ được đăng ký 1 lớp học phần 1 lần
+    student_id // MỚI: Tối ưu khi truy vấn lấy bảng điểm của 1 sinh viên cụ thể
+  }
+}
+
+// ================= EXAM & REVIEWS =================
+
+// === BẢNG LỊCH THI (EXAM_SCHEDULES) ===
+// Mục đích: Phân bổ phòng thi, ngày thi cho các lớp học phần
+Table exam_schedules {
+  id uuid [pk] // Khóa chính UUID
+  course_offering_id uuid [ref: > course_offerings.id] // CASCADE // Lịch thi của lớp nào
+  room_id uuid [ref: > rooms.id] // RESTRICT // Thi ở phòng nào
+  period_id uuid [ref: > periods.id] // MỚI, SỬA từ "exam_shift int" // Thi vào ca/tiết nào
+  exam_date date // Ngày tổ chức thi
+}
+
+// === BẢNG PHÚC KHẢO ĐIỂM (GRADE_REVIEWS) ===
+// Mục đích: Xử lý quy trình sinh viên khiếu nại điểm thi
+// SỬA: bỏ unique để cho phép phúc khảo nhiều lần / nhiều lần thi lại
+Table grade_reviews {
+  id uuid [pk] // Khóa chính UUID
+  enrollment_id uuid [ref: > enrollments.id] // RESTRICT, SỬA từ quan hệ 1-1 // Xin phúc khảo môn nào của sinh viên nào
+  old_score decimal(4,2) // Điểm cũ trước khi chấm lại
+  new_score decimal(4,2) // Điểm mới sau khi hội đồng chấm lại
+  reason text // MỚI: Lý do xin phúc khảo của sinh viên
+  status review_status [default: 'pending'] // SỬA: Trạng thái đơn (Đang chờ, Chấp nhận, Từ chối)
+  reviewed_by uuid [ref: > lecturers.id] // MỚI: Giảng viên/Cán bộ nào chịu trách nhiệm duyệt/chấm lại. SET NULL
+  created_at timestamp [default: `now()`] // MỚI: Ngày nộp đơn
+}
+
+// ================= FINANCE =================
+
+// === BẢNG QUY ĐỊNH HỌC PHÍ (TUITION_RULES) ===
+// Mục đích: Định mức giá tiền của 1 tín chỉ theo từng năm học
+Table tuition_rules {
+  id uuid [pk] // Khóa chính UUID
+  academic_year_id uuid [ref: > academic_years.id] // RESTRICT // Năm học áp dụng
+  credit_price decimal(12,2) [not null] // Đơn giá 1 tín chỉ (Decimal 12,2 cho tiền tệ VNĐ)
+}
+
+// === BẢNG MIỄN GIẢM HỌC PHÍ (TUITION_EXEMPTIONS) ===
+// Mục đích: Quản lý các đối tượng chính sách được giảm học phí
+// SỬA: thêm phạm vi áp dụng theo kỳ để hỗ trợ miễn giảm thay đổi theo thời gian
+Table tuition_exemptions {
+  id uuid [pk] // Khóa chính UUID
+  student_id uuid [ref: > students.id] // RESTRICT // Sinh viên được miễn giảm
+  semester_id uuid [ref: > semesters.id] // MỚI, RESTRICT // Áp dụng trong học kỳ nào
+  discount_percentage int [note: 'CHECK 0-100'] // Phần trăm giảm (VD: 50%)
+  reason varchar // Lý do (VD: 'Con thương binh', 'Hộ nghèo')
+  decision_date date // MỚI: Ngày ra quyết định miễn giảm
+}
+
+// === BẢNG HỌC BỔNG (SCHOLARSHIPS) ===
+// Mục đích: Quản lý học bổng cấp cho sinh viên (khác miễn giảm vì đây là khoản tiền được nhận)
+// MỚI: học bổng - khác bản chất với miễn giảm (theo thành tích, có nguồn cấp)
+Table scholarships {
+  id uuid [pk] // Khóa chính UUID
+  student_id uuid [ref: > students.id] // RESTRICT // Sinh viên nhận học bổng
+  semester_id uuid [ref: > semesters.id] // RESTRICT // Được cấp trong kỳ nào
+  name varchar [not null] // Tên loại học bổng (VD: 'Học bổng Xuất sắc')
+  source varchar // Nguồn tài trợ (VD: 'Ngân sách nhà trường', 'Doanh nghiệp A')
+  amount decimal(12,2) [not null] // Số tiền học bổng (VNĐ)
+  decision_date date // Ngày quyết định cấp
+}
+
+// === BẢNG HÓA ĐƠN CÔNG NỢ (INVOICES) ===
+// Mục đích: Chốt công nợ học phí của một sinh viên trong một học kỳ cụ thể
+// Lưu ý: Cột total_amount lưu cứng để không làm sai lệch báo cáo kế toán nếu sau này đơn giá tín chỉ thay đổi
+Table invoices {
+  id uuid [pk] // Khóa chính UUID
+  student_id uuid [ref: > students.id] // RESTRICT // Hóa đơn của sinh viên nào
+  semester_id uuid [ref: > semesters.id] // RESTRICT // Thuộc học kỳ nào
+  total_amount decimal(12,2) [not null] // Denormalized for history integrity // Tổng tiền phải nộp
+  paid_amount decimal(12,2) [default: 0] // Số tiền đã thanh toán
+  due_date date // MỚI: Hạn chót thanh toán
+  status status_invoice [default: 'unpaid'] // Trạng thái thanh toán (Chưa nộp, Nộp 1 phần, Đã nộp)
+  created_at timestamp [default: `now()`] // Ngày sinh hóa đơn
+  Indexes {
+    (student_id, semester_id) [unique] // Mỗi SV chỉ có 1 phiếu công nợ tổng cho 1 học kỳ
+  }
+}
+
+// === BẢNG CHI TIẾT HÓA ĐƠN (INVOICE_ITEMS) ===
+// Mục đích: Diễn giải chi tiết các khoản thu cấu thành nên hóa đơn (VD: Học phí môn A, Phí bảo hiểm...)
+// MỚI: chi tiết khoản thu trong hóa đơn, tách khỏi total_amount gộp
+Table invoice_items {
+  id uuid [pk] // Khóa chính UUID
+  invoice_id uuid [ref: > invoices.id] // CASCADE // Thuộc hóa đơn nào (xóa hóa đơn xóa luôn chi tiết)
+  item_name varchar [not null] // VD: "Học phí lớp IT1110", "Lệ phí thi lại"
+  amount decimal(12,2) [not null] // Số tiền của khoản này
+}
+
+// === BẢNG GIAO DỊCH / PHIẾU THU (TRANSACTIONS) ===
+// Mục đích: Ghi nhận từng lần nộp tiền của sinh viên (sinh viên có thể nộp thành nhiều đợt cho 1 hóa đơn)
+Table transactions {
+  id uuid [pk] // Khóa chính UUID
+  invoice_id uuid [ref: > invoices.id] // RESTRICT // Nộp tiền cho hóa đơn nào
+  amount decimal(12,2) [not null] // Số tiền thực nộp lần này
+  transaction_date timestamp [default: `now()`] // Thời gian giao dịch
+  payment_method varchar // Phương thức thanh toán (VD: 'Chuyển khoản', 'Tiền mặt', 'Momo')
+}
+
+// ================= STUDENT AFFAIRS & GRADUATION =================
+
+// === BẢNG ĐIỂM RÈN LUYỆN (TRAINING_POINTS) ===
+// Mục đích: Quản lý điểm rèn luyện sinh viên theo học kỳ (cơ sở để xét học bổng)
+Table training_points {
+  id uuid [pk] // Khóa chính UUID
+  student_id uuid [ref: > students.id] // RESTRICT // Của sinh viên nào
+  semester_id uuid [ref: > semesters.id] // RESTRICT // Ở học kỳ nào
+  total_point int // Điểm tổng cộng (hệ 100)
+  rank training_rank // SỬA: dùng enum thay vì varchar tự do // Xếp loại (Xuất sắc, Tốt, Khá...)
+  Indexes {
+    (student_id, semester_id) [unique] // Một SV chỉ có 1 điểm rèn luyện trong 1 học kỳ
+  }
+}
+
+// === BẢNG KHEN THƯỞNG KỶ LUẬT (DISCIPLINE_REWARDS) ===
+// Mục đích: Ghi nhận các quyết định khen thưởng hoặc kỷ luật đối với sinh viên
+Table discipline_rewards {
+  id uuid [pk] // Khóa chính UUID
+  student_id uuid [ref: > students.id] // RESTRICT // Áp dụng cho sinh viên nào
+  semester_id uuid [ref: > semesters.id] // RESTRICT // Phát sinh trong học kỳ nào
+  type discipline_type [not null] // SỬA: dùng enum thay vì comment mô tả // Loại: Khen thưởng hay Kỷ luật
+  reason text // Lý do cụ thể
+  decision_date date // Ngày ký quyết định
+}
+
+// === BẢNG KHÓA LUẬN / ĐỒ ÁN (THESES) ===
+// Mục đích: Quản lý quá trình làm đồ án tốt nghiệp của sinh viên năm cuối
+// MỚI: khóa luận/đồ án tốt nghiệp - điều kiện xét tốt nghiệp
+Table theses {
+  id uuid [pk] // Khóa chính UUID
+  student_id uuid [unique] // RESTRICT // Khóa luận của sinh viên nào (Unique vì 1 SV chỉ làm 1 đồ án TN)
+  advisor_id uuid [ref: > lecturers.id] // RESTRICT // Giảng viên nào hướng dẫn
+  title varchar [not null] // Tên đề tài đồ án
+  score decimal(4,2) // Điểm bảo vệ hội đồng
+  defense_date date // Ngày bảo vệ
+  status varchar // Trạng thái: in_progress (Đang làm) / passed (Qua) / failed (Trượt)
+}
+// Quan hệ 1-1: Mỗi sinh viên có tối đa 1 đồ án tốt nghiệp. RESTRICT
+Ref: theses.student_id - students.id [delete: restrict]
+
+// === BẢNG BẰNG TỐT NGHIỆP (DEGREES) ===
+// Mục đích: Quản lý danh sách phôi bằng và thông tin tốt nghiệp của sinh viên
+Table degrees {
+  id uuid [pk] // Khóa chính UUID
+  student_id uuid [unique] // RESTRICT // Bằng của sinh viên nào
+  degree_number varchar [unique, not null] // Số hiệu phôi bằng (duy nhất cấp quốc gia)
+  decision_number varchar // MỚI: số quyết định // Số quyết định công nhận tốt nghiệp
+  issue_date date // Ngày cấp bằng
+  classification varchar // Xếp loại tốt nghiệp (VD: 'Xuất sắc', 'Giỏi')
+  gpa_at_graduation decimal(3,2) // MỚI: Điểm trung bình chung tích lũy lúc ra trường
+}
+// Quan hệ 1-1: Mỗi sinh viên khi ra trường được cấp 1 bằng tốt nghiệp chính quy. RESTRICT
+Ref: degrees.student_id - students.id [delete: restrict]
+
+// === BẢNG THÔNG BÁO (NOTIFICATIONS) ===
+// Mục đích: Hệ thống gửi thông báo cá nhân hóa (nhắc lịch thi, báo học phí) tới người dùng
+// MỚI: thông báo hệ thống
+Table notifications {
+  id uuid [pk] // Khóa chính UUID
+  account_id uuid [ref: > accounts.id] // CASCADE // Gửi cho tài khoản nào (Xóa TK thì xóa luôn hộp thư)
+  title varchar [not null] // Tiêu đề thông báo
+  content text // Nội dung thông báo
+  is_read boolean [default: false] // Trạng thái đã xem hay chưa
+  created_at timestamp [default: `now()`] // Thời gian hệ thống gửi
+
+  Indexes {
+    account_id // Tối ưu để load danh sách thông báo nhanh trên giao diện web/app
+  }
+}
