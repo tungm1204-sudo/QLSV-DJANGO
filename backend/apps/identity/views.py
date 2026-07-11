@@ -1,8 +1,12 @@
 import random
-from rest_framework import viewsets, permissions, status
+from openpyxl import load_workbook, Workbook
+from django.http import HttpResponse
+from rest_framework import viewsets, permissions, status, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from .models import LoginHistory, Role, SystemConfig, OTPToken, AuditLog, Notification
@@ -81,6 +85,9 @@ class RoleViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['status', 'is_active', 'role']
+    search_fields = ['email', 'full_name']
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
@@ -106,6 +113,31 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = LoginHistorySerializer(histories, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['post'])
+    def import_excel(self, request):
+        if 'file' not in request.FILES:
+            return Response({'error': 'No file uploaded'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        file = request.FILES['file']
+        try:
+            wb = load_workbook(filename=file, read_only=True)
+            ws = wb.active
+            
+            users_created = 0
+            for row in ws.iter_rows(min_row=2, values_only=True):
+                email = row[0]
+                full_name = row[1]
+                password = row[2]
+                if email and full_name and password:
+                    if not User.objects.filter(email=email).exists():
+                        user = User.objects.create_user(email=email, password=password, full_name=full_name)
+                        users_created += 1
+            
+            log_audit(request.user, 'IMPORT_EXCEL', 'Users', {'count': users_created}, request)
+            return Response({'message': f'Successfully imported {users_created} users'})
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 class SystemConfigViewSet(viewsets.ModelViewSet):
     queryset = SystemConfig.objects.all()
     serializer_class = SystemConfigSerializer
@@ -122,6 +154,8 @@ class SystemConfigViewSet(viewsets.ModelViewSet):
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['is_read', 'type']
 
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user)
@@ -137,6 +171,29 @@ class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = AuditLog.objects.all()
     serializer_class = AuditLogSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['user', 'module']
+    search_fields = ['action', 'payload']
+
+    @action(detail=False, methods=['get'])
+    def export_excel(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Audit Logs"
+        ws.append(['ID', 'User', 'Action', 'Module', 'IP Address', 'Created At'])
+        
+        for log in queryset:
+            user_email = log.user.email if log.user else 'System/Guest'
+            ws.append([str(log.id), user_email, log.action, log.module, log.ip_address, log.created_at.strftime("%Y-%m-%d %H:%M:%S")])
+            
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=audit_logs.xlsx'
+        wb.save(response)
+        
+        log_audit(request.user, 'EXPORT_EXCEL', 'AuditLogs', None, request)
+        return response
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -196,3 +253,48 @@ def verify_otp(request):
         return Response({'message': 'OTP verified successfully'})
     except User.DoesNotExist:
         return Response({'error': 'Invalid or expired OTP'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def logout(request):
+    try:
+        refresh_token = request.data.get("refresh")
+        if not refresh_token:
+            return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+        token = RefreshToken(refresh_token)
+        token.blacklist()
+        return Response({'message': 'Logged out successfully'}, status=status.HTTP_205_RESET_CONTENT)
+    except Exception as e:
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def reset_password(request):
+    email = request.data.get('email')
+    code = request.data.get('code')
+    new_password = request.data.get('new_password')
+    
+    if not email or not code or not new_password:
+        return Response({'error': 'Email, code and new_password are required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    try:
+        user = User.objects.get(email=email)
+        # Should ideally use a separate token type for PASSWORD_RESET, 
+        # but for simplicity we reuse the token logic here and assume OTP was sent as PASSWORD_RESET
+        token = OTPToken.objects.filter(user=user, code=code, type=OTPToken.TypeChoices.PASSWORD_RESET, is_used=False).order_by('-created_at').first()
+        
+        if not token or not token.is_valid():
+            return Response({'error': 'Invalid or expired OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        user.set_password(new_password)
+        user.failed_login_attempts = 0
+        user.locked_until = None
+        user.save()
+        
+        token.is_used = True
+        token.save()
+        
+        log_audit(user, 'RESET_PASSWORD', 'Auth', {'email': email}, request)
+        return Response({'message': 'Password reset successfully'})
+    except User.DoesNotExist:
+        return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)

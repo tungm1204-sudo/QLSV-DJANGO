@@ -6,35 +6,35 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 ## MODULE 1: Hệ thống & Bảo mật
 
 ### Quản lý người dùng
-- [ ] **Tạo tài khoản mới (thủ công / import hàng loạt từ Excel)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Sửa thông tin tài khoản (email, SĐT, trạng thái)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
-- [ ] **Khóa / mở khóa tài khoản** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Gán vai trò cho tài khoản (Admin, Giáo vụ, Giảng viên, Sinh viên, Kế toán...)**
-- [ ] **Reset mật khẩu (do admin hoặc tự reset qua email/OTP)**
-- [ ] **Tìm kiếm, lọc danh sách tài khoản theo vai trò/trạng thái** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
-- [ ] **Xem lịch sử đăng nhập của từng tài khoản**
+- [x] **Tạo tài khoản mới (thủ công / import hàng loạt từ Excel)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Sửa thông tin tài khoản (email, SĐT, trạng thái)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
+- [x] **Khóa / mở khóa tài khoản** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Gán vai trò cho tài khoản (Admin, Giáo vụ, Giảng viên, Sinh viên, Kế toán...)**
+- [x] **Reset mật khẩu (do admin hoặc tự reset qua email/OTP)**
+- [x] **Tìm kiếm, lọc danh sách tài khoản theo vai trò/trạng thái** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Xem lịch sử đăng nhập của từng tài khoản**
 
 ### Phân quyền & Vai trò
-- [ ] **Tạo / sửa / xóa vai trò (role)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Gán quyền truy cập theo menu (ẩn/hiện menu theo vai trò)**
-- [ ] **Gán quyền CRUD chi tiết theo từng chức năng**
-- [ ] **Gán nhiều vai trò cho 1 tài khoản (nếu cần)**
-- [ ] **Ma trận phân quyền (role-permission matrix) để xem tổng quan**
-- [ ] **Sao chép cấu hình quyền từ vai trò có sẵn**
+- [x] **Tạo / sửa / xóa vai trò (role)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Gán quyền truy cập theo menu (ẩn/hiện menu theo vai trò)**
+- [x] **Gán quyền CRUD chi tiết theo từng chức năng**
+- [x] **Gán nhiều vai trò cho 1 tài khoản (nếu cần)**
+- [x] **Ma trận phân quyền (role-permission matrix) để xem tổng quan**
+- [x] **Sao chép cấu hình quyền từ vai trò có sẵn**
 
 ### Nhật ký hệ thống (Audit Log)
-- [ ] **Ghi log thao tác (tạo/sửa/xóa) kèm người thực hiện** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Ghi nhận thời gian, địa chỉ IP, thiết bị truy cập**
-- [ ] **Tra cứu log theo người dùng, theo module, theo khoảng thời gian** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
-- [ ] **Xuất log ra Excel/PDF phục vụ kiểm tra** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [ ] **Cảnh báo hành vi bất thường (đăng nhập nhiều lần sai, sửa dữ liệu hàng loạt)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
+- [x] **Ghi log thao tác (tạo/sửa/xóa) kèm người thực hiện** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Ghi nhận thời gian, địa chỉ IP, thiết bị truy cập**
+- [x] **Tra cứu log theo người dùng, theo module, theo khoảng thời gian** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Xuất log ra Excel/PDF phục vụ kiểm tra** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Cảnh báo hành vi bất thường (đăng nhập nhiều lần sai, sửa dữ liệu hàng loạt)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
 
 ### Cấu hình hệ thống
-- [ ] **Cấu hình thông tin trường (tên, logo, địa chỉ, mã trường)**
-- [ ] **Cấu hình SMTP gửi email**
-- [ ] **Cấu hình gateway gửi SMS**
-- [ ] **Cấu hình thời gian khóa/mở nhập điểm theo học kỳ** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Cấu hình tham số chung (năm học hiện hành, học kỳ hiện hành)**
+- [x] **Cấu hình thông tin trường (tên, logo, địa chỉ, mã trường)**
+- [x] **Cấu hình SMTP gửi email**
+- [x] **Cấu hình gateway gửi SMS**
+- [x] **Cấu hình thời gian khóa/mở nhập điểm theo học kỳ** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Cấu hình tham số chung (năm học hiện hành, học kỳ hiện hành)**
 
 ### Sao lưu & Phục hồi
 - [ ] **Sao lưu dữ liệu tự động theo lịch (hằng ngày/tuần)**
@@ -44,19 +44,19 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 - [ ] **Thông báo kết quả sao lưu (thành công/thất bại)**
 
 ### Xác thực & Bảo mật
-- [ ] **Đăng nhập bằng tài khoản/mật khẩu**
-- [ ] **Xác thực OTP qua email/SMS (2FA)**
-- [ ] **Khóa tài khoản tạm thời sau N lần đăng nhập sai** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Quản lý phiên đăng nhập (session) — cho phép đăng xuất từ xa** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [ ] **Chính sách mật khẩu (độ dài tối thiểu, ký tự đặc biệt, bắt buộc đổi định kỳ)**
-- [ ] **Quản lý thiết bị đã đăng nhập**
+- [x] **Đăng nhập bằng tài khoản/mật khẩu**
+- [x] **Xác thực OTP qua email/SMS (2FA)**
+- [x] **Khóa tài khoản tạm thời sau N lần đăng nhập sai** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Quản lý phiên đăng nhập (session) — cho phép đăng xuất từ xa** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Chính sách mật khẩu (độ dài tối thiểu, ký tự đặc biệt, bắt buộc đổi định kỳ)**
+- [x] **Quản lý thiết bị đã đăng nhập**
 
 ### Hệ thống Thông báo nội bộ
-- [ ] **Tạo và gửi thông báo thủ công (chọn người nhận theo vai trò/lớp/cá nhân)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Tự động hóa thông báo theo sự kiện hệ thống (System Triggers)** - *Kỹ thuật: Dùng cơ chế Event/Signals trong framework backend để trigger hành động gửi mà không làm nghẽn luồng xử lý chính.*
-- [ ] **Quản lý trạng thái thông báo (đã đọc/chưa đọc/đã xử lý)**
-- [ ] **Phân loại thông báo và bộ lọc tìm kiếm** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
-- [ ] **Lịch sử thông báo đã gửi/nhận**
+- [x] **Tạo và gửi thông báo thủ công (chọn người nhận theo vai trò/lớp/cá nhân)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Tự động hóa thông báo theo sự kiện hệ thống (System Triggers)** - *Kỹ thuật: Dùng cơ chế Event/Signals trong framework backend để trigger hành động gửi mà không làm nghẽn luồng xử lý chính.*
+- [x] **Quản lý trạng thái thông báo (đã đọc/chưa đọc/đã xử lý)**
+- [x] **Phân loại thông báo và bộ lọc tìm kiếm** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Lịch sử thông báo đã gửi/nhận**
 
 ## MODULE 2: Quản lý danh mục gốc
 
