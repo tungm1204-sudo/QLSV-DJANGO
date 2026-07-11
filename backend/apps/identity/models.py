@@ -26,6 +26,20 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+class Role(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100, unique=True)
+    description = models.CharField(max_length=255, null=True, blank=True)
+    permissions = models.JSONField(default=list, blank=True) # list of string permissions
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'identity_roles'
+
+    def __str__(self):
+        return self.name
+
 class User(AbstractBaseUser, PermissionsMixin):
     class StatusChoices(models.TextChoices):
         ACTIVE = 'ACTIVE', 'Active'
@@ -38,6 +52,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     avatar = models.URLField(max_length=1000, blank=True, null=True)
     
     status = models.CharField(max_length=20, choices=StatusChoices.choices, default=StatusChoices.ACTIVE)
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
+    
+    # Account lockout logic
+    failed_login_attempts = models.IntegerField(default=0)
+    locked_until = models.DateTimeField(null=True, blank=True)
     
     # Required fields for Django admin and authentication
     is_staff = models.BooleanField(default=False)
@@ -75,3 +94,68 @@ class LoginHistory(models.Model):
 
     def __str__(self):
         return f"{self.user.email} - {self.created_at}"
+
+class SystemConfig(models.Model):
+    key = models.CharField(max_length=100, unique=True, primary_key=True)
+    value = models.JSONField()
+    description = models.TextField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'identity_system_configs'
+
+    def __str__(self):
+        return self.key
+
+class OTPToken(models.Model):
+    class TypeChoices(models.TextChoices):
+        LOGIN = 'LOGIN', 'Login'
+        PASSWORD_RESET = 'PASSWORD_RESET', 'Password Reset'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otp_tokens')
+    code = models.CharField(max_length=10)
+    type = models.CharField(max_length=20, choices=TypeChoices.choices, default=TypeChoices.LOGIN)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'identity_otp_tokens'
+
+    def is_valid(self):
+        return not self.is_used and timezone.now() <= self.expires_at
+
+class AuditLog(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    action = models.CharField(max_length=50) # CREATE, UPDATE, DELETE, LOGIN
+    module = models.CharField(max_length=100) # e.g. Users, Roles
+    payload = models.JSONField(null=True, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'identity_audit_logs'
+        ordering = ['-created_at']
+
+class Notification(models.Model):
+    class TypeChoices(models.TextChoices):
+        INFO = 'INFO', 'Info'
+        WARNING = 'WARNING', 'Warning'
+        SUCCESS = 'SUCCESS', 'Success'
+        ERROR = 'ERROR', 'Error'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='notifications') # null means broadcast
+    title = models.CharField(max_length=255)
+    message = models.TextField()
+    type = models.CharField(max_length=20, choices=TypeChoices.choices, default=TypeChoices.INFO)
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'identity_notifications'
+        ordering = ['-created_at']
+

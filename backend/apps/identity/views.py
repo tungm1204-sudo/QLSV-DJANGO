@@ -1,17 +1,39 @@
+import random
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from .models import LoginHistory
+from .models import LoginHistory, Role, SystemConfig, OTPToken, AuditLog, Notification
 from .serializers import (
     UserSerializer, 
     UserCreateUpdateSerializer, 
     CustomTokenObtainPairSerializer,
-    LoginHistorySerializer
+    LoginHistorySerializer,
+    RoleSerializer,
+    SystemConfigSerializer,
+    NotificationSerializer,
+    AuditLogSerializer
 )
 
 User = get_user_model()
+
+def log_audit(user, action_name, module, payload=None, request=None):
+    ip_address = None
+    user_agent = None
+    if request:
+        ip_address = request.META.get('REMOTE_ADDR')
+        user_agent = request.META.get('HTTP_USER_AGENT')
+        
+    AuditLog.objects.create(
+        user=user if user and user.is_authenticated else None,
+        action=action_name,
+        module=module,
+        payload=payload,
+        ip_address=ip_address,
+        user_agent=user_agent
+    )
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -19,7 +41,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == status.HTTP_200_OK:
-            # Get user from email
             email = request.data.get('email')
             if email:
                 try:
@@ -27,22 +48,38 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                     user.last_login = timezone.now()
                     user.save(update_fields=['last_login'])
                     
-                    # Record Login History
                     ip_address = request.META.get('REMOTE_ADDR')
                     user_agent = request.META.get('HTTP_USER_AGENT')
                     LoginHistory.objects.create(
                         user=user,
                         ip_address=ip_address,
                         user_agent=user_agent,
-                        device_info="Unknown" # Can be enhanced later
+                        device_info="Unknown"
                     )
+                    log_audit(user, 'LOGIN', 'Auth', {'email': email}, request)
                 except User.DoesNotExist:
                     pass
         return response
 
+class RoleViewSet(viewsets.ModelViewSet):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        log_audit(self.request.user, 'CREATE', 'Roles', {'id': str(instance.id), 'name': instance.name}, self.request)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        log_audit(self.request.user, 'UPDATE', 'Roles', {'id': str(instance.id), 'name': instance.name}, self.request)
+
+    def perform_destroy(self, instance):
+        log_audit(self.request.user, 'DELETE', 'Roles', {'id': str(instance.id), 'name': instance.name}, self.request)
+        instance.delete()
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    # For now, require auth, but not checking specific roles yet
     permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer_class(self):
@@ -50,11 +87,112 @@ class UserViewSet(viewsets.ModelViewSet):
             return UserCreateUpdateSerializer
         return UserSerializer
 
-    # Optional: custom endpoint to get login history for a specific user
-    from rest_framework.decorators import action
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        log_audit(self.request.user, 'CREATE', 'Users', {'id': str(instance.id), 'email': instance.email}, self.request)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        log_audit(self.request.user, 'UPDATE', 'Users', {'id': str(instance.id), 'email': instance.email}, self.request)
+
+    def perform_destroy(self, instance):
+        log_audit(self.request.user, 'DELETE', 'Users', {'id': str(instance.id), 'email': instance.email}, self.request)
+        instance.delete()
+
     @action(detail=True, methods=['get'])
     def login_history(self, request, pk=None):
         user = self.get_object()
-        histories = user.login_histories.all()[:50] # Get last 50
+        histories = user.login_histories.all()[:50]
         serializer = LoginHistorySerializer(histories, many=True)
         return Response(serializer.data)
+
+class SystemConfigViewSet(viewsets.ModelViewSet):
+    queryset = SystemConfig.objects.all()
+    serializer_class = SystemConfigSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        log_audit(self.request.user, 'CREATE', 'SystemConfig', {'key': instance.key}, self.request)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        log_audit(self.request.user, 'UPDATE', 'SystemConfig', {'key': instance.key}, self.request)
+
+class NotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = NotificationSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user)
+
+    @action(detail=True, methods=['post'])
+    def mark_as_read(self, request, pk=None):
+        notification = self.get_object()
+        notification.is_read = True
+        notification.save()
+        return Response({'status': 'marked as read'})
+
+class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = AuditLog.objects.all()
+    serializer_class = AuditLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def request_otp(request):
+    email = request.data.get('email')
+    if not email:
+        return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        user = User.objects.get(email=email)
+        code = str(random.randint(100000, 999999))
+        
+        OTPToken.objects.create(
+            user=user,
+            code=code,
+            type=OTPToken.TypeChoices.LOGIN,
+            expires_at=timezone.now() + timezone.timedelta(minutes=5)
+        )
+        
+        # In a real app, send email or SMS here
+        # send_mail('Your OTP', code, 'from@example.com', [email])
+        
+        log_audit(user, 'REQUEST_OTP', 'Auth', {'email': email}, request)
+        
+        # For testing, we return the code. REMOVE IN PROD.
+        return Response({'message': 'OTP sent successfully', 'code_for_testing': code})
+    except User.DoesNotExist:
+        # Return success anyway to prevent email enumeration
+        return Response({'message': 'OTP sent successfully'})
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def verify_otp(request):
+    email = request.data.get('email')
+    code = request.data.get('code')
+    
+    if not email or not code:
+        return Response({'error': 'Email and code are required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    try:
+        user = User.objects.get(email=email)
+        token = OTPToken.objects.filter(user=user, code=code, is_used=False).order_by('-created_at').first()
+        
+        if not token or not token.is_valid():
+            return Response({'error': 'Invalid or expired OTP'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        token.is_used = True
+        token.save()
+        
+        # Clear lockout if successful OTP
+        user.failed_login_attempts = 0
+        user.locked_until = None
+        user.save(update_fields=['failed_login_attempts', 'locked_until'])
+        
+        log_audit(user, 'VERIFY_OTP', 'Auth', {'email': email}, request)
+        
+        return Response({'message': 'OTP verified successfully'})
+    except User.DoesNotExist:
+        return Response({'error': 'Invalid or expired OTP'}, status=status.HTTP_400_BAD_REQUEST)
