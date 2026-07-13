@@ -3,6 +3,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from .models import LoginSession, Role, SystemConfig, OTPToken, AuditLog, Notification
+from .services import AuthService
 
 User = get_user_model()
 
@@ -29,66 +30,29 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'email', 'password', 'full_name', 'avatar', 'status', 'is_active', 'role']
 
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        user = User.objects.create(**validated_data)
-        if password:
-            user.set_password(password)
-            user.save()
-        return user
-        
-    def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        if password:
-            instance.set_password(password)
-        instance.save()
-        return instance
-
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
-        # We need to manually check if user exists and is locked before attempting auth
         email = attrs.get('email')
-        try:
-            user = User.objects.get(email=email)
-            if user.locked_until and user.locked_until > timezone.now():
-                raise serializers.ValidationError({
-                    "detail": f"Account is locked until {user.locked_until.strftime('%Y-%m-%d %H:%M:%S')} UTC.",
-                    "code": "account_locked"
-                })
-        except User.DoesNotExist:
-            pass # Super will handle invalid credentials
+        
+        # Check lockout before attempting auth
+        is_locked, lock_reason = AuthService.check_lockout(email)
+        if is_locked:
+            raise serializers.ValidationError({
+                "detail": lock_reason,
+                "code": "account_locked"
+            })
 
         try:
             data = super().validate(attrs)
         except Exception as e:
             # Login failed
             if email:
-                try:
-                    user = User.objects.get(email=email)
-                    user.failed_login_attempts += 1
-                    
-                    # Hardcoded logic, should get from SystemConfig, but for safety keep hardcoded fallback
-                    max_attempts = 5
-                    try:
-                        config = SystemConfig.objects.get(key='MAX_LOGIN_ATTEMPTS')
-                        max_attempts = int(config.value)
-                    except (SystemConfig.DoesNotExist, ValueError):
-                        pass
-
-                    if user.failed_login_attempts >= max_attempts:
-                        user.locked_until = timezone.now() + timezone.timedelta(minutes=15)
-                    user.save(update_fields=['failed_login_attempts', 'locked_until'])
-                except User.DoesNotExist:
-                    pass
+                AuthService.handle_failed_login(email)
             raise e
 
         # Login success
         user = self.user
-        user.failed_login_attempts = 0
-        user.locked_until = None
-        user.save(update_fields=['failed_login_attempts', 'locked_until'])
+        AuthService.clear_lockout(user)
 
         data['user'] = {
             'id': str(user.id),

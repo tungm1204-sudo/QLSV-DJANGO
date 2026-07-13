@@ -1,19 +1,14 @@
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from .models import AuditLog, OTPToken, LoginSession, SystemConfig
+from django.db import transaction
+from .models import AuditLog, OTPToken, LoginSession, SystemConfig, Role, Notification
 import random
 
 User = get_user_model()
 
-def log_audit(user, action_name, module, payload=None, request=None, record_id=None):
-    ip_address = None
-    user_agent = None
-    if request:
-        ip_address = request.META.get('REMOTE_ADDR')
-        user_agent = request.META.get('HTTP_USER_AGENT')
-        
+def log_audit(user_id, action_name, module, payload=None, ip_address=None, user_agent=None, record_id=None):
     AuditLog.objects.create(
-        user=user if user and user.is_authenticated else None,
+        user_id=user_id,
         action=action_name,
         module=module,
         payload=payload,
@@ -22,7 +17,65 @@ def log_audit(user, action_name, module, payload=None, request=None, record_id=N
         user_agent=user_agent
     )
 
+class RoleService:
+    @staticmethod
+    def create_role(validated_data, actor_id, ip_address=None, user_agent=None):
+        role = Role.objects.create(**validated_data)
+        log_audit(actor_id, 'CREATE', 'Roles', {'id': str(role.id), 'name': role.name}, ip_address, user_agent)
+        return role
+
+    @staticmethod
+    def update_role(role, validated_data, actor_id, ip_address=None, user_agent=None):
+        for key, value in validated_data.items():
+            setattr(role, key, value)
+        role.save()
+        log_audit(actor_id, 'UPDATE', 'Roles', {'id': str(role.id), 'name': role.name}, ip_address, user_agent)
+        return role
+
+    @staticmethod
+    def delete_role(role, actor_id, ip_address=None, user_agent=None):
+        role_info = {'id': str(role.id), 'name': role.name}
+        role.delete()
+        log_audit(actor_id, 'DELETE', 'Roles', role_info, ip_address, user_agent)
+
+class SystemConfigService:
+    @staticmethod
+    def create_config(validated_data, actor_id, ip_address=None, user_agent=None):
+        config = SystemConfig.objects.create(**validated_data)
+        log_audit(actor_id, 'CREATE', 'SystemConfig', {'key': config.key}, ip_address, user_agent)
+        return config
+
+    @staticmethod
+    def update_config(config, validated_data, actor_id, ip_address=None, user_agent=None):
+        for key, value in validated_data.items():
+            setattr(config, key, value)
+        config.save()
+        log_audit(actor_id, 'UPDATE', 'SystemConfig', {'key': config.key}, ip_address, user_agent)
+        return config
+
+class NotificationService:
+    @staticmethod
+    def mark_as_read(notification):
+        notification.is_read = True
+        notification.save(update_fields=['is_read'])
+
 class AuthService:
+    @staticmethod
+    def check_lockout(email):
+        try:
+            user = User.objects.get(email=email)
+            if user.locked_until and user.locked_until > timezone.now():
+                return True, f"Account is locked until {user.locked_until.strftime('%Y-%m-%d %H:%M:%S')} UTC."
+            return False, None
+        except User.DoesNotExist:
+            return False, None
+
+    @staticmethod
+    def clear_lockout(user):
+        user.failed_login_attempts = 0
+        user.locked_until = None
+        user.save(update_fields=['failed_login_attempts', 'locked_until'])
+
     @staticmethod
     def generate_otp(email, otp_type=OTPToken.TypeChoices.LOGIN):
         try:
@@ -40,16 +93,19 @@ class AuthService:
             return None, None
 
     @staticmethod
+    @transaction.atomic
     def verify_otp(email, code):
         try:
             user = User.objects.get(email=email)
-            token = OTPToken.objects.filter(user=user, code=code, is_used=False).order_by('-created_at').first()
+            token = OTPToken.objects.select_for_update().filter(
+                user=user, code=code, is_used=False
+            ).order_by('-created_at').first()
             
             if not token or not token.is_valid():
                 return None, "Invalid or expired OTP"
                 
             token.is_used = True
-            token.save()
+            token.save(update_fields=['is_used'])
             
             # Clear lockout if successful OTP
             user.failed_login_attempts = 0
@@ -61,18 +117,17 @@ class AuthService:
             return None, "Invalid or expired OTP"
             
     @staticmethod
+    @transaction.atomic
     def reset_password(user, new_password):
         user.set_password(new_password)
         user.save()
         return True
 
     @staticmethod
-    def record_login(user, request):
+    def record_login(user, ip_address=None, user_agent=None):
         user.last_login = timezone.now()
         user.save(update_fields=['last_login'])
         
-        ip_address = request.META.get('REMOTE_ADDR')
-        user_agent = request.META.get('HTTP_USER_AGENT')
         LoginSession.objects.create(
             user=user,
             ip_address=ip_address,
@@ -102,7 +157,35 @@ class AuthService:
 
 class UserService:
     @staticmethod
-    def import_users_from_excel(file_obj, request):
+    def create_user(validated_data, actor_id, ip_address=None, user_agent=None):
+        password = validated_data.pop('password', None)
+        user = User.objects.create(**validated_data)
+        if password:
+            user.set_password(password)
+            user.save()
+        log_audit(actor_id, 'CREATE', 'Users', {'id': str(user.id), 'email': user.email}, ip_address, user_agent)
+        return user
+
+    @staticmethod
+    def update_user(user, validated_data, actor_id, ip_address=None, user_agent=None):
+        password = validated_data.pop('password', None)
+        for key, value in validated_data.items():
+            setattr(user, key, value)
+        if password:
+            user.set_password(password)
+        user.save()
+        log_audit(actor_id, 'UPDATE', 'Users', {'id': str(user.id), 'email': user.email}, ip_address, user_agent)
+        return user
+
+    @staticmethod
+    def delete_user(user, actor_id, ip_address=None, user_agent=None):
+        user_info = {'id': str(user.id), 'email': user.email}
+        user.delete()
+        log_audit(actor_id, 'DELETE', 'Users', user_info, ip_address, user_agent)
+
+    @staticmethod
+    @transaction.atomic
+    def import_users_from_excel(file_obj, actor_id, ip_address=None, user_agent=None):
         try:
             import openpyxl
         except ImportError:
@@ -117,8 +200,32 @@ class UserService:
                     continue
                 email, full_name, password = row[0], row[1], row[2]
                 if not User.objects.filter(email=email).exists():
-                    user = User.objects.create_user(email=email, full_name=full_name, password=password)
+                    User.objects.create_user(email=email, full_name=full_name, password=password)
                     created_count += 1
+                    
+            if created_count > 0:
+                log_audit(actor_id, 'IMPORT_EXCEL', 'Users', {'count': created_count}, ip_address, user_agent)
             return created_count, None
         except Exception as e:
             return 0, str(e)
+
+class AuditLogService:
+    @staticmethod
+    def export_to_excel(queryset):
+        try:
+            import openpyxl
+        except ImportError:
+            return None, "openpyxl is not installed"
+            
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Audit Logs"
+        
+        headers = ["ID", "User", "Action", "Module", "IP Address", "Created At"]
+        ws.append(headers)
+        
+        for log in queryset:
+            user_str = log.user.email if log.user else "System"
+            ws.append([str(log.id), user_str, log.action, log.module, log.ip_address, str(log.created_at)])
+            
+        return wb, None
