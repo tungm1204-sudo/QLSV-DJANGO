@@ -58,27 +58,38 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         ip = get_client_ip(request)
         ua = get_user_agent(request)
 
-        # Kiểm tra lockout trước khi xác thực
-        is_locked, lock_reason = AuthService.check_lockout(email)
-        if is_locked:
-            return Response(
-                {'detail': lock_reason, 'code': 'account_locked'},
-                status=status.HTTP_403_FORBIDDEN
-            )
+        if email:
+            # 1. Gọi Service để kiểm tra tài khoản có đang bị khóa hay không.
+            # Lý do: View siêu mỏng, đẩy logic lockout sang AuthService xử lý để dễ tái sử dụng và dễ viết Unit Test.
+            is_locked, lock_reason = AuthService.check_lockout(email)
+            if is_locked:
+                return Response(
+                    {'detail': lock_reason, 'code': 'account_locked'},
+                    status=status.HTTP_403_FORBIDDEN
+                )
 
         serializer = self.get_serializer(data=request.data)
         try:
+            # 2. Xử lý đăng nhập thông thường bằng hàm gốc của SimpleJWT.
+            # Lý do: Tận dụng luồng xác thực email/password có sẵn của Django và tạo JWT Token.
             serializer.is_valid(raise_exception=True)
         except Exception:
-            # Đăng nhập thất bại → tăng failed_login_attempts
+            # Đăng nhập thất bại (sai email hoặc mật khẩu).
+            # Lý do: Đẩy logic đếm số lần sai và khóa tài khoản sang Service để quản lý tập trung.
             if email:
                 AuthService.handle_failed_login(email)
             raise
 
-        # Đăng nhập thành công
+        # 3. Đăng nhập thành công.
         user = serializer.user
+        
+        # Reset trạng thái khóa và số lần nhập sai.
         AuthService.clear_lockout(user)
+        
+        # Ghi nhận session đăng nhập để user có thể kiểm tra (và quản lý) các thiết bị đang đăng nhập.
         AuthService.record_login(user, ip, ua)
+        
+        # Lưu vết (Audit Log) để đảm bảo bảo mật.
         log_audit(user.id, 'LOGIN', 'Auth', {'email': email}, ip, ua)
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
@@ -90,14 +101,20 @@ class RoleViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
+        # 1. Hứng Request: Dùng Serializer để validate dữ liệu đầu vào.
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
+        # 2. Gọi Service: Tuyệt đối không gọi Role.objects.create() ở đây.
+        # Lý do: Chuyển dữ liệu đã validate sang tầng Service xử lý. Tầng Service sẽ chịu trách nhiệm ghi DB và AuditLog.
         role = RoleService.create_role(
             serializer.validated_data,
             request.user.id,
             get_client_ip(request),
             get_user_agent(request)
         )
+        
+        # 3. Trả Response.
         return Response(RoleSerializer(role).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):

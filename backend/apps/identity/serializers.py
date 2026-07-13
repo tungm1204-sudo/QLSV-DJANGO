@@ -19,7 +19,12 @@ class RoleSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    # Dùng RoleSerializer để hiện full thông tin Role (tên, danh sách quyền) khi trả về Response (GET).
     role = RoleSerializer(read_only=True)
+    
+    # Chỉ dùng role_id để hứng ID từ Frontend gửi lên khi tạo/sửa User (POST/PUT/PATCH).
+    # source='role' sẽ map dữ liệu ID này vào cột 'role' trong Database.
+    # Lý do tách biệt: Frontend chỉ gửi gửi ID cho nhẹ, nhưng cần nhận về nguyên cả Object Role để hiển thị giao diện.
     role_id = serializers.PrimaryKeyRelatedField(
         queryset=Role.objects.all(), source='role', write_only=True, required=False, allow_null=True
     )
@@ -35,6 +40,8 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
     Fix #4: Serializer chỉ khai báo field và validate format dữ liệu.
     Tuyệt đối không có create/update method — logic đó thuộc về UserService.
     """
+    # Gắn cờ write_only=True cho password.
+    # Lý do: Đảm bảo bảo mật. Password chỉ được nhận từ Request, nhưng tuyệt đối không bao giờ xuất hiện trong Response.
     password = serializers.CharField(write_only=True, required=False)
 
     class Meta:
@@ -48,9 +55,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     Logic lockout được xử lý hoàn toàn trong View (CustomTokenObtainPairView).
     """
     def validate(self, attrs):
+        # Gọi validate() của thư viện gốc để kiểm tra email/pass và sinh ra token (access, refresh).
         data = super().validate(attrs)
 
         user = self.user
+        
+        # Bổ sung thêm thông tin user profile vào chung Response.
+        # Lý do: Giúp Frontend tiết kiệm được 1 lần gọi API /me. Vừa login xong là có luôn thông tin để vẽ giao diện (avatar, phân quyền).
         data['user'] = {
             'id': str(user.id),
             'email': user.email,

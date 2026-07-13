@@ -84,9 +84,16 @@ class SystemConfigService:
 
 
 class NotificationService:
+    """
+    Xử lý logic liên quan đến Thông báo.
+    """
     @staticmethod
     def mark_as_read(notification):
+        # Đánh dấu trạng thái đã đọc cho đối tượng notification.
         notification.is_read = True
+        
+        # Gọi hàm save nhưng chỉ chỉ định trường update_fields=['is_read'].
+        # Lý do: Tối ưu hoá câu lệnh SQL UPDATE, chỉ cập nhật 1 cột duy nhất thay vì toàn bộ các cột, giúp DB chạy nhanh hơn.
         notification.save(update_fields=['is_read'])
 
 
@@ -116,15 +123,23 @@ class AuthService:
 
     @staticmethod
     def clear_lockout(user):
+        # Reset số lần nhập sai về 0 và xóa trạng thái khóa.
         user.failed_login_attempts = 0
         user.locked_until = None
+        
+        # Chỉ lưu 2 cột bị thay đổi xuống DB.
         user.save(update_fields=['failed_login_attempts', 'locked_until'])
 
     @staticmethod
     def generate_otp(email, otp_type=OTPToken.TypeChoices.LOGIN):
         try:
             user = User.objects.get(email=email)
+            
+            # Sinh ra chuỗi 6 số ngẫu nhiên làm mã OTP.
             code = str(random.randint(100000, 999999))
+            
+            # Lưu mã OTP vào database, thiết lập loại OTP (Login/ResetPass).
+            # Lý do thiết lập thời hạn 5 phút: Ngăn chặn hacker có thời gian rảnh rỗi để vét cạn (brute-force) mã OTP.
             OTPToken.objects.create(
                 user=user,
                 code=code,
@@ -133,6 +148,8 @@ class AuthService:
             )
             return user, code
         except User.DoesNotExist:
+            # Ngụy trang bằng cách trả về None nếu email không tồn tại.
+            # Lý do: Không trả về lỗi "Email not found" để tránh bị hacker dùng bot quét thu thập danh sách email của người dùng (Email Enumeration).
             return None, None
 
     @staticmethod
