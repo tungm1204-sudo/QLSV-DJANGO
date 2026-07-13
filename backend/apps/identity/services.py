@@ -1,10 +1,13 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.db import transaction
 from .models import AuditLog, OTPToken, LoginSession, SystemConfig, Role, Notification
 import random
 
 User = get_user_model()
+
 
 def log_audit(user_id, action_name, module, payload=None, ip_address=None, user_agent=None, record_id=None):
     AuditLog.objects.create(
@@ -16,6 +19,7 @@ def log_audit(user_id, action_name, module, payload=None, ip_address=None, user_
         ip_address=ip_address,
         user_agent=user_agent
     )
+
 
 class RoleService:
     @staticmethod
@@ -38,6 +42,7 @@ class RoleService:
         role.delete()
         log_audit(actor_id, 'DELETE', 'Roles', role_info, ip_address, user_agent)
 
+
 class SystemConfigService:
     @staticmethod
     def create_config(validated_data, actor_id, ip_address=None, user_agent=None):
@@ -53,11 +58,13 @@ class SystemConfigService:
         log_audit(actor_id, 'UPDATE', 'SystemConfig', {'key': config.key}, ip_address, user_agent)
         return config
 
+
 class NotificationService:
     @staticmethod
     def mark_as_read(notification):
         notification.is_read = True
         notification.save(update_fields=['is_read'])
+
 
 class AuthService:
     @staticmethod
@@ -81,7 +88,6 @@ class AuthService:
         try:
             user = User.objects.get(email=email)
             code = str(random.randint(100000, 999999))
-            
             OTPToken.objects.create(
                 user=user,
                 code=code,
@@ -94,28 +100,30 @@ class AuthService:
 
     @staticmethod
     @transaction.atomic
-    def verify_otp(email, code):
+    def verify_otp(email, code, otp_type=OTPToken.TypeChoices.LOGIN):
+        """
+        Fix #10: Lọc theo otp_type để OTP đăng nhập không dùng được cho reset password.
+        """
         try:
             user = User.objects.get(email=email)
             token = OTPToken.objects.select_for_update().filter(
-                user=user, code=code, is_used=False
+                user=user, code=code, type=otp_type, is_used=False
             ).order_by('-created_at').first()
-            
+
             if not token or not token.is_valid():
                 return None, "Invalid or expired OTP"
-                
+
             token.is_used = True
             token.save(update_fields=['is_used'])
-            
-            # Clear lockout if successful OTP
+
             user.failed_login_attempts = 0
             user.locked_until = None
             user.save(update_fields=['failed_login_attempts', 'locked_until'])
-            
+
             return user, None
         except User.DoesNotExist:
             return None, "Invalid or expired OTP"
-            
+
     @staticmethod
     @transaction.atomic
     def reset_password(user, new_password):
@@ -124,10 +132,14 @@ class AuthService:
         return True
 
     @staticmethod
+    @transaction.atomic
     def record_login(user, ip_address=None, user_agent=None):
+        """
+        Fix #5: Bọc trong @transaction.atomic — ghi user.last_login và tạo LoginSession là 1 đơn vị.
+        """
         user.last_login = timezone.now()
         user.save(update_fields=['last_login'])
-        
+
         LoginSession.objects.create(
             user=user,
             ip_address=ip_address,
@@ -141,7 +153,7 @@ class AuthService:
         try:
             user = User.objects.get(email=email)
             user.failed_login_attempts += 1
-            
+
             max_attempts = 5
             try:
                 config = SystemConfig.objects.get(key='MAX_LOGIN_ATTEMPTS')
@@ -155,14 +167,31 @@ class AuthService:
         except User.DoesNotExist:
             pass
 
+
 class UserService:
     @staticmethod
+    @transaction.atomic
     def create_user(validated_data, actor_id, ip_address=None, user_agent=None):
+        """
+        Fix #6: Bọc trong @transaction.atomic — tạo user và set_password là 1 đơn vị nguyên tử.
+        Fix #14: Validate password bằng Django validators.
+        """
         password = validated_data.pop('password', None)
-        user = User.objects.create(**validated_data)
+
+        # Validate password strength trước khi tạo user
+        if password:
+            try:
+                validate_password(password)
+            except ValidationError as e:
+                raise ValidationError({'password': list(e.messages)})
+
+        user = User(**validated_data)
         if password:
             user.set_password(password)
-            user.save()
+        else:
+            user.set_unusable_password()
+        user.save()
+
         log_audit(actor_id, 'CREATE', 'Users', {'id': str(user.id), 'email': user.email}, ip_address, user_agent)
         return user
 
@@ -172,6 +201,10 @@ class UserService:
         for key, value in validated_data.items():
             setattr(user, key, value)
         if password:
+            try:
+                validate_password(password, user=user)
+            except ValidationError as e:
+                raise ValidationError({'password': list(e.messages)})
             user.set_password(password)
         user.save()
         log_audit(actor_id, 'UPDATE', 'Users', {'id': str(user.id), 'email': user.email}, ip_address, user_agent)
@@ -190,7 +223,7 @@ class UserService:
             import openpyxl
         except ImportError:
             return 0, "openpyxl is not installed"
-            
+
         try:
             wb = openpyxl.load_workbook(file_obj)
             sheet = wb.active
@@ -202,12 +235,13 @@ class UserService:
                 if not User.objects.filter(email=email).exists():
                     User.objects.create_user(email=email, full_name=full_name, password=password)
                     created_count += 1
-                    
+
             if created_count > 0:
                 log_audit(actor_id, 'IMPORT_EXCEL', 'Users', {'count': created_count}, ip_address, user_agent)
             return created_count, None
         except Exception as e:
             return 0, str(e)
+
 
 class AuditLogService:
     @staticmethod
@@ -216,16 +250,16 @@ class AuditLogService:
             import openpyxl
         except ImportError:
             return None, "openpyxl is not installed"
-            
+
         wb = openpyxl.Workbook()
         ws = wb.active
         ws.title = "Audit Logs"
-        
+
         headers = ["ID", "User", "Action", "Module", "IP Address", "Created At"]
         ws.append(headers)
-        
+
         for log in queryset:
             user_str = log.user.email if log.user else "System"
             ws.append([str(log.id), user_str, log.action, log.module, log.ip_address, str(log.created_at)])
-            
+
         return wb, None

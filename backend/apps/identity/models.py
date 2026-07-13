@@ -100,7 +100,9 @@ class LoginSession(models.Model):
         return f"{self.user.email} - {self.created_at}"
 
 class SystemConfig(models.Model):
-    key = models.CharField(max_length=100, unique=True, primary_key=True)
+    # Fix #12: UUID PK thay vì CharField PK theo rules.md
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    key = models.CharField(max_length=100, unique=True)
     value = models.JSONField()
     description = models.TextField(null=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -132,7 +134,8 @@ class OTPToken(models.Model):
 
 class AuditLog(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    # Fix #13: Thêm related_name theo rules.md
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='audit_logs')
     action = models.CharField(max_length=50) # CREATE, UPDATE, DELETE, LOGIN
     module = models.CharField(max_length=100) # e.g. Users, Roles
     record_id = models.CharField(max_length=255, null=True, blank=True)
