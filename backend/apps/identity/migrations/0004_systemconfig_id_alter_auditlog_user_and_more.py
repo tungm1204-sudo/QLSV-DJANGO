@@ -13,6 +13,11 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterField(
+            model_name='systemconfig',
+            name='key',
+            field=models.CharField(max_length=100, unique=True),
+        ),
         migrations.AddField(
             model_name='systemconfig',
             name='id',
@@ -22,10 +27,5 @@ class Migration(migrations.Migration):
             model_name='auditlog',
             name='user',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='audit_logs', to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AlterField(
-            model_name='systemconfig',
-            name='key',
-            field=models.CharField(max_length=100, unique=True),
         ),
     ]
