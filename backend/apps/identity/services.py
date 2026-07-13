@@ -1,3 +1,9 @@
+"""
+Module Identity Services
+Chứa toàn bộ logic nghiệp vụ (Business Logic) cốt lõi của phân hệ Identity.
+Lý do: Giữ cho View luôn mỏng, dễ dàng viết unit test, và đảm bảo mọi thao tác ghi dữ liệu phức tạp đều được xử lý tập trung (như ghi AuditLog sau mỗi action).
+"""
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -9,7 +15,11 @@ import random
 User = get_user_model()
 
 
-def log_audit(user_id, action_name, module, payload=None, ip_address=None, user_agent=None, record_id=None):
+def log_audit(user_id, action_name: str, module: str, payload: dict = None, ip_address: str = None, user_agent: str = None, record_id: str = None):
+    """
+    Hàm tiện ích ghi lại vết hệ thống (Audit Log).
+    Lý do: Đảm bảo tuân thủ bảo mật, mọi thao tác thay đổi dữ liệu nhạy cảm đều phải gọi hàm này.
+    """
     AuditLog.objects.create(
         user_id=user_id,
         action=action_name,
@@ -22,6 +32,10 @@ def log_audit(user_id, action_name, module, payload=None, ip_address=None, user_
 
 
 class RoleService:
+    """
+    Xử lý logic nghiệp vụ cho Role (Tạo, Sửa, Xóa).
+    Luôn đi kèm với thao tác ghi AuditLog để theo dõi Admin nào thay đổi quyền hạn.
+    """
     @staticmethod
     def create_role(validated_data, actor_id, ip_address=None, user_agent=None):
         role = Role.objects.create(**validated_data)
@@ -44,6 +58,10 @@ class RoleService:
 
 
 class SystemConfigService:
+    """
+    Xử lý tạo, cập nhật cấu hình hệ thống.
+    Bắt buộc phải ghi log để audit do cấu hình ảnh hưởng trực tiếp đến hệ thống.
+    """
     @staticmethod
     def create_config(validated_data, actor_id, ip_address=None, user_agent=None):
         config = SystemConfig.objects.create(**validated_data)
@@ -67,8 +85,12 @@ class NotificationService:
 
 
 class AuthService:
+    """
+    Xử lý logic xác thực, khóa tài khoản (Lockout), tạo mã OTP.
+    Lý do: Tách biệt logic kiểm tra security (login fail, expired OTP) ra khỏi serializer.
+    """
     @staticmethod
-    def check_lockout(email):
+    def check_lockout(email: str) -> tuple[bool, str]:
         try:
             user = User.objects.get(email=email)
             if user.locked_until and user.locked_until > timezone.now():

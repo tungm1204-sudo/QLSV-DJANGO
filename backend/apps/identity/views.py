@@ -1,3 +1,9 @@
+"""
+Module Identity Views
+Nơi tiếp nhận Request từ Frontend và trả về Response.
+Lý do: View phải được thiết kế "siêu mỏng" (Thin Views). Nó chỉ làm 3 việc: Nhận data -> Gọi Service/Selector -> Trả kết quả. Tuyệt đối KHÔNG chứa query DB phức tạp hay logic nghiệp vụ ở đây.
+"""
+
 from rest_framework import viewsets, permissions, status, serializers as drf_serializers
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view, permission_classes

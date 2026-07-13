@@ -1,3 +1,9 @@
+"""
+Module Identity Selectors
+Chuyên đảm nhận các tác vụ truy vấn dữ liệu (Query/Read) phức tạp từ Database.
+Lý do: Tách biệt logic đọc (Selector) và ghi (Service). Đặc biệt ở đây bắt buộc sử dụng select_related/prefetch_related để chặn đứng lỗi N+1 Query.
+"""
+
 from django.contrib.auth import get_user_model
 from .models import LoginSession, Notification, AuditLog
 

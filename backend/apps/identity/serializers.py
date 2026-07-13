@@ -1,3 +1,9 @@
+"""
+Module Identity Serializers
+Định nghĩa quy tắc chuyển đổi dữ liệu (từ Object sang JSON và ngược lại) cho phân hệ Identity.
+Lý do: Đảm bảo dữ liệu đầu vào (Input) được validate đúng format trước khi chuyển cho Service xử lý, và dữ liệu đầu ra (Output) không bị rò rỉ các trường nhạy cảm (như mật khẩu). Tuyệt đối KHÔNG chứa business logic ở đây.
+"""
+
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
