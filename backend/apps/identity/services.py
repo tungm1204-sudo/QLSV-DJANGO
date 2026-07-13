@@ -38,8 +38,14 @@ class RoleService:
     """
     @staticmethod
     def create_role(validated_data, actor_id, ip_address=None, user_agent=None):
+        # Tạo mới Role trong Database bằng cách unpack (**) dictionary validated_data.
+        # Lý do: Dữ liệu này đã được kiểm tra tính hợp lệ (validate) ở tầng Serializer, nên đảm bảo an toàn để lưu thẳng vào DB.
         role = Role.objects.create(**validated_data)
+        
+        # Ghi vết hành động (Audit Log) lại để lưu lại vết Admin nào (actor_id) đã thao tác tạo Role này.
+        # Kèm theo payload chứa ID và tên Role để sau này hệ thống dễ dàng truy vết (traceability).
         log_audit(actor_id, 'CREATE', 'Roles', {'id': str(role.id), 'name': role.name}, ip_address, user_agent)
+        
         return role
 
     @staticmethod
@@ -92,11 +98,20 @@ class AuthService:
     @staticmethod
     def check_lockout(email: str) -> tuple[bool, str]:
         try:
+            # Query tìm User trong bảng identity_users dựa vào email truyền vào.
             user = User.objects.get(email=email)
+            
+            # Kiểm tra xem tài khoản có đang bị khóa (cột locked_until có giá trị) 
+            # VÀ thời gian khóa vẫn lớn hơn thời gian thực tại server (timezone.now()) hay không.
+            # Lý do: Nếu đã qua mốc thời gian khóa, hệ thống sẽ bỏ qua logic này và tự động cho phép login tiếp.
             if user.locked_until and user.locked_until > timezone.now():
                 return True, f"Account is locked until {user.locked_until.strftime('%Y-%m-%d %H:%M:%S')} UTC."
+            
+            # Không bị khóa hoặc đã hết hạn khóa -> Trả về False (cho phép đi tiếp)
             return False, None
         except User.DoesNotExist:
+            # Bắt lỗi Exception nếu email truyền vào không tồn tại trong hệ thống.
+            # Vẫn trả về False để không làm rò rỉ (leak) thông tin là email có tồn tại hay không cho hacker biết.
             return False, None
 
     @staticmethod
