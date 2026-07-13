@@ -1,12 +1,20 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
+"""
+manage.py
+Công cụ dòng lệnh của Django để chạy server, migrate DB, tạo migration, v.v.
+Lý do: Mặc định sẽ dùng settings Development khi chạy trên máy local.
+Muốn dùng production settings thì đặt biến môi trường DJANGO_SETTINGS_MODULE trong .env.
+"""
 import os
 import sys
 
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
+    # Mặc định dùng settings development khi chạy lệnh manage.py trên máy local.
+    # Lý do: Tránh vô tình chạy với production settings (DEBUG=False) trên máy dev.
+    # Biến DJANGO_SETTINGS_MODULE trong .env sẽ ghi đè giá trị này nếu cần.
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.development')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
