@@ -1,0 +1,299 @@
+Project QLSV_DJANGO {
+  database_type: 'PostgreSQL'
+  Note: 'Hệ thống Quản lý Sinh viên - SIS'
+}
+
+// -------------------------------------------------------------
+// MODULE 1: IDENTITY & SECURITY
+// -------------------------------------------------------------
+
+Table identity_roles {
+  id uuid [pk]
+  name varchar [unique, note: 'Admin, Giáo vụ, Giảng viên, Sinh viên...']
+  description varchar
+  permissions jsonb
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table identity_users {
+  id uuid [pk]
+  email varchar [unique]
+  full_name varchar
+  avatar varchar
+  status varchar [note: 'ACTIVE, INACTIVE, LOCKED']
+  role_id uuid [ref: > identity_roles.id]
+  failed_login_attempts int
+  locked_until timestamp
+  is_staff boolean
+  is_active boolean
+  last_login timestamp
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table identity_login_sessions {
+  id uuid [pk]
+  user_id uuid [ref: > identity_users.id]
+  token_jti varchar [unique, note: 'Refresh Token ID để phục vụ Blacklist']
+  ip_address varchar
+  user_agent varchar
+  device_info varchar
+  is_active boolean [default: true]
+  created_at timestamp
+}
+
+Table identity_otp_tokens {
+  id uuid [pk]
+  user_id uuid [ref: > identity_users.id]
+  code varchar
+  type varchar [note: 'LOGIN, PASSWORD_RESET']
+  expires_at timestamp
+  is_used boolean [default: false]
+  created_at timestamp
+}
+
+Table identity_audit_logs {
+  id uuid [pk]
+  user_id uuid [ref: > identity_users.id]
+  action varchar [note: 'CREATE, UPDATE, DELETE, LOGIN']
+  module varchar
+  record_id varchar [note: 'ID của bản ghi bị tác động']
+  payload jsonb
+  ip_address varchar
+  user_agent varchar
+  created_at timestamp
+}
+
+Table identity_notifications {
+  id uuid [pk]
+  user_id uuid [ref: > identity_users.id, note: 'null = broadcast']
+  title varchar
+  message text
+  type varchar [note: 'INFO, WARNING, SUCCESS, ERROR, SYSTEM, GRADE, TUITION']
+  content_type_id int [note: 'Dùng GenericForeignKey để định tuyến']
+  object_id varchar [note: 'ID của record liên quan (VD: ID hóa đơn, ID môn học)']
+  is_read boolean
+  created_at timestamp
+}
+
+Table identity_system_configs {
+  key varchar [pk]
+  value jsonb
+  description text
+  updated_at timestamp
+}
+
+// -------------------------------------------------------------
+// MODULE 3: CÁN BỘ - NHÂN VIÊN (STAFF & LECTURERS)
+// -------------------------------------------------------------
+
+Table staff {
+  id uuid [pk]
+  user_id uuid [ref: - identity_users.id]
+  staff_code varchar [unique]
+  department_id uuid [note: 'Khoa/Phòng ban']
+  position varchar [note: 'Giáo vụ, Kế toán, Chuyên viên...']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table lecturers {
+  id uuid [pk]
+  user_id uuid [ref: - identity_users.id]
+  lecturer_code varchar [unique]
+  department_id uuid
+  academic_title varchar [note: 'Thạc sĩ, Tiến sĩ, PGS, GS...']
+  created_at timestamp
+  updated_at timestamp
+}
+
+// -------------------------------------------------------------
+// MODULE 2: DANH MỤC & SINH VIÊN
+// -------------------------------------------------------------
+
+Table students {
+  id uuid [pk]
+  user_id uuid [ref: - identity_users.id]
+  student_code varchar [unique]
+  major_id uuid
+  class_id uuid
+  status varchar [note: 'Đang học, Bảo lưu, Đã Tốt nghiệp, Buộc thôi học']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table majors {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  department_id uuid
+}
+
+Table priority_categories {
+  id uuid [pk]
+  name varchar [note: 'Con thương binh, Dân tộc thiểu số...']
+  discount_percentage decimal [note: 'Mức giảm học phí mặc định (%)']
+}
+
+// -------------------------------------------------------------
+// MODULE 4: QUẢN LÝ ĐÀO TẠO & HỌC PHẦN
+// -------------------------------------------------------------
+
+Table courses {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  credits int
+  major_id uuid [ref: > majors.id]
+}
+
+Table course_offerings {
+  id uuid [pk]
+  course_id uuid [ref: > courses.id]
+  semester_id uuid
+  lecturer_id uuid [ref: > lecturers.id]
+  min_capacity int [note: 'Sĩ số tối thiểu để mở lớp']
+  max_capacity int
+  current_enrollment int
+  registration_deadline timestamp
+  
+  // Trọng số điểm thành phần
+  attendance_weight decimal [note: 'Ví dụ: 0.1 cho 10%']
+  midterm_weight decimal [note: 'Ví dụ: 0.3 cho 30%']
+  final_weight decimal [note: 'Ví dụ: 0.6 cho 60%']
+  
+  status varchar [note: 'OPEN, CLOSED, CANCELLED']
+}
+
+Table schedules {
+  id uuid [pk]
+  course_offering_id uuid [ref: > course_offerings.id]
+  day_of_week varchar [note: 'MONDAY, TUESDAY, WEDNESDAY...']
+  start_period int
+  end_period int
+  room varchar
+}
+
+// -------------------------------------------------------------
+// MODULE 5: ĐĂNG KÝ HỌC PHẦN & ĐIỂM SỐ
+// -------------------------------------------------------------
+
+Table enrollments {
+  id uuid [pk]
+  student_id uuid [ref: > students.id]
+  course_offering_id uuid [ref: > course_offerings.id]
+  enrollment_type varchar [note: 'NORMAL, RETAKE, IMPROVEMENT, ADVANCED']
+  
+  attendance_score decimal
+  midterm_score decimal
+  final_score decimal
+  total_score decimal
+  
+  is_locked boolean [default: false]
+  created_at timestamp
+}
+
+Table grade_reviews {
+  id uuid [pk]
+  enrollment_id uuid [ref: > enrollments.id]
+  student_id uuid [ref: > students.id]
+  reason text
+  status varchar [note: 'PENDING, APPROVED, REJECTED']
+  reviewed_by uuid [ref: > staff.id, note: 'Cán bộ giáo vụ / Khảo thí xử lý']
+  old_score decimal
+  new_score decimal
+  created_at timestamp
+}
+
+// -------------------------------------------------------------
+// MODULE 6: ĐÁNH GIÁ & KHẢO SÁT
+// -------------------------------------------------------------
+
+Table surveys {
+  id uuid [pk]
+  title varchar
+  type varchar [note: 'COURSE_EVALUATION, LECTURER_EVALUATION, GENERAL']
+  course_offering_id uuid [ref: > course_offerings.id, note: 'Có thể null nếu là General']
+  is_active boolean
+  created_at timestamp
+}
+
+Table survey_responses {
+  id uuid [pk]
+  survey_id uuid [ref: > surveys.id]
+  student_id uuid [ref: > students.id]
+  answers jsonb
+  submitted_at timestamp
+}
+
+// -------------------------------------------------------------
+// MODULE 7: TÀI CHÍNH & HỌC PHÍ
+// -------------------------------------------------------------
+
+Table tuition_rules {
+  id uuid [pk]
+  academic_year_id uuid
+  major_id uuid [ref: > majors.id, note: 'Null = Áp dụng chung, Có giá trị = Cụ thể theo ngành']
+  credit_price decimal
+}
+
+Table tuition_exemptions {
+  id uuid [pk]
+  student_id uuid [ref: > students.id]
+  priority_category_id uuid [ref: > priority_categories.id]
+  semester_id uuid
+  discount_percentage decimal
+  document_url varchar
+  status varchar [note: 'PENDING, APPROVED, REJECTED']
+}
+
+// -------------------------------------------------------------
+// MODULE 8: TỐT NGHIỆP, RÈN LUYỆN & HỖ TRỢ SV
+// -------------------------------------------------------------
+
+Table discipline_rewards {
+  id uuid [pk]
+  student_id uuid [ref: > students.id]
+  type varchar [note: 'REWARD, DISCIPLINE']
+  level varchar [note: 'Khiển trách, Cảnh cáo, Đình chỉ, Buộc thôi học (nếu là Kỷ luật)']
+  reason text
+  document_url varchar [note: 'Link tới quyết định đính kèm']
+  issued_date date
+}
+
+Table theses {
+  id uuid [pk]
+  student_id uuid [ref: > students.id]
+  topic varchar
+  advisor_id uuid [ref: > lecturers.id]
+  status varchar
+}
+
+Table thesis_committees {
+  id uuid [pk]
+  thesis_id uuid [ref: > theses.id]
+  reviewer_id uuid [ref: > lecturers.id]
+  advisor_score decimal
+  reviewer_score decimal
+  committee_score decimal
+  final_score decimal
+}
+
+Table advising_sessions {
+  id uuid [pk]
+  advisor_id uuid [ref: > lecturers.id, note: 'Giảng viên cố vấn']
+  student_id uuid [ref: > students.id, note: 'Sinh viên được tư vấn']
+  session_date timestamp
+  content text
+  created_at timestamp
+}
+
+Table degrees {
+  id uuid [pk]
+  student_id uuid [ref: - students.id, note: 'One to One nhưng có thể cấp lại']
+  degree_number varchar [unique]
+  classification varchar [note: 'Xuất sắc, Giỏi, Khá, TB...']
+  is_revoked boolean [default: false, note: 'Trạng thái thu hồi bằng']
+  issue_date date
+}

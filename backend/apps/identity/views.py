@@ -1,43 +1,28 @@
-import random
-from openpyxl import load_workbook, Workbook
-from django.http import HttpResponse
-from rest_framework import viewsets, permissions, status, filters
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
-from django.utils import timezone
-from .models import LoginHistory, Role, SystemConfig, OTPToken, AuditLog, Notification
+from django.http import HttpResponse
+
+from .models import Role, SystemConfig, AuditLog, Notification
 from .serializers import (
     UserSerializer, 
     UserCreateUpdateSerializer, 
     CustomTokenObtainPairSerializer,
-    LoginHistorySerializer,
+    LoginSessionSerializer,
     RoleSerializer,
     SystemConfigSerializer,
     NotificationSerializer,
     AuditLogSerializer
 )
+from .services import AuthService, UserService, log_audit
+from .selectors import AuthSelector, NotificationSelector, AuditLogSelector
 
 User = get_user_model()
-
-def log_audit(user, action_name, module, payload=None, request=None):
-    ip_address = None
-    user_agent = None
-    if request:
-        ip_address = request.META.get('REMOTE_ADDR')
-        user_agent = request.META.get('HTTP_USER_AGENT')
-        
-    AuditLog.objects.create(
-        user=user if user and user.is_authenticated else None,
-        action=action_name,
-        module=module,
-        payload=payload,
-        ip_address=ip_address,
-        user_agent=user_agent
-    )
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
@@ -47,22 +32,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         if response.status_code == status.HTTP_200_OK:
             email = request.data.get('email')
             if email:
-                try:
-                    user = User.objects.get(email=email)
-                    user.last_login = timezone.now()
-                    user.save(update_fields=['last_login'])
-                    
-                    ip_address = request.META.get('REMOTE_ADDR')
-                    user_agent = request.META.get('HTTP_USER_AGENT')
-                    LoginHistory.objects.create(
-                        user=user,
-                        ip_address=ip_address,
-                        user_agent=user_agent,
-                        device_info="Unknown"
-                    )
+                user = User.objects.filter(email=email).first()
+                if user:
+                    AuthService.record_login(user, request)
                     log_audit(user, 'LOGIN', 'Auth', {'email': email}, request)
-                except User.DoesNotExist:
-                    pass
         return response
 
 class RoleViewSet(viewsets.ModelViewSet):
@@ -85,7 +58,7 @@ class RoleViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [permissions.IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['status', 'is_active', 'role']
     search_fields = ['email', 'full_name']
 
@@ -107,36 +80,24 @@ class UserViewSet(viewsets.ModelViewSet):
         instance.delete()
 
     @action(detail=True, methods=['get'])
-    def login_history(self, request, pk=None):
+    def login_sessions(self, request, pk=None):
         user = self.get_object()
-        histories = user.login_histories.all()[:50]
-        serializer = LoginHistorySerializer(histories, many=True)
+        sessions = AuthSelector.get_login_sessions(user)
+        serializer = LoginSessionSerializer(sessions, many=True)
         return Response(serializer.data)
 
     @action(detail=False, methods=['post'])
     def import_excel(self, request):
-        if 'file' not in request.FILES:
-            return Response({'error': 'No file uploaded'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        file = request.FILES['file']
-        try:
-            wb = load_workbook(filename=file, read_only=True)
-            ws = wb.active
+        file_obj = request.FILES.get('file')
+        if not file_obj:
+            return Response({'error': 'No file provided'}, status=status.HTTP_400_BAD_REQUEST)
             
-            users_created = 0
-            for row in ws.iter_rows(min_row=2, values_only=True):
-                email = row[0]
-                full_name = row[1]
-                password = row[2]
-                if email and full_name and password:
-                    if not User.objects.filter(email=email).exists():
-                        user = User.objects.create_user(email=email, password=password, full_name=full_name)
-                        users_created += 1
+        count, error = UserService.import_users_from_excel(file_obj, request)
+        if error:
+            return Response({'error': error}, status=status.HTTP_400_BAD_REQUEST)
             
-            log_audit(request.user, 'IMPORT_EXCEL', 'Users', {'count': users_created}, request)
-            return Response({'message': f'Successfully imported {users_created} users'})
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        log_audit(request.user, 'IMPORT_EXCEL', 'Users', {'count': count}, request)
+        return Response({'message': f'Successfully imported {count} users'})
 
 class SystemConfigViewSet(viewsets.ModelViewSet):
     queryset = SystemConfig.objects.all()
@@ -158,7 +119,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
     filterset_fields = ['is_read', 'type']
 
     def get_queryset(self):
-        return Notification.objects.filter(user=self.request.user)
+        return NotificationSelector.get_user_notifications(self.request.user)
 
     @action(detail=True, methods=['post'])
     def mark_as_read(self, request, pk=None):
@@ -168,31 +129,40 @@ class NotificationViewSet(viewsets.ModelViewSet):
         return Response({'status': 'marked as read'})
 
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = AuditLog.objects.all()
     serializer_class = AuditLogSerializer
     permission_classes = [permissions.IsAuthenticated]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['user', 'module']
     search_fields = ['action', 'payload']
 
+    def get_queryset(self):
+        return AuditLogSelector.get_logs()
+        
     @action(detail=False, methods=['get'])
     def export_excel(self, request):
-        queryset = self.filter_queryset(self.get_queryset())
-        
-        wb = Workbook()
+        try:
+            import openpyxl
+            from openpyxl.utils import get_column_letter
+        except ImportError:
+            return Response({'error': 'openpyxl is not installed'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        logs = self.filter_queryset(self.get_queryset())
+        wb = openpyxl.Workbook()
         ws = wb.active
         ws.title = "Audit Logs"
-        ws.append(['ID', 'User', 'Action', 'Module', 'IP Address', 'Created At'])
         
-        for log in queryset:
-            user_email = log.user.email if log.user else 'System/Guest'
-            ws.append([str(log.id), user_email, log.action, log.module, log.ip_address, log.created_at.strftime("%Y-%m-%d %H:%M:%S")])
+        headers = ["ID", "User", "Action", "Module", "IP Address", "Created At"]
+        ws.append(headers)
+        
+        for log in logs:
+            user_str = log.user.email if log.user else "System"
+            ws.append([str(log.id), user_str, log.action, log.module, log.ip_address, str(log.created_at)])
             
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=audit_logs.xlsx'
+        response['Content-Disposition'] = 'attachment; filename="audit_logs.xlsx"'
         wb.save(response)
         
-        log_audit(request.user, 'EXPORT_EXCEL', 'AuditLogs', None, request)
+        log_audit(request.user, 'EXPORT_EXCEL', 'AuditLog', None, request)
         return response
 
 @api_view(['POST'])
@@ -202,27 +172,11 @@ def request_otp(request):
     if not email:
         return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
     
-    try:
-        user = User.objects.get(email=email)
-        code = str(random.randint(100000, 999999))
-        
-        OTPToken.objects.create(
-            user=user,
-            code=code,
-            type=OTPToken.TypeChoices.LOGIN,
-            expires_at=timezone.now() + timezone.timedelta(minutes=5)
-        )
-        
-        # In a real app, send email or SMS here
-        # send_mail('Your OTP', code, 'from@example.com', [email])
-        
+    user, code = AuthService.generate_otp(email)
+    if user:
         log_audit(user, 'REQUEST_OTP', 'Auth', {'email': email}, request)
-        
-        # For testing, we return the code. REMOVE IN PROD.
         return Response({'message': 'OTP sent successfully', 'code_for_testing': code})
-    except User.DoesNotExist:
-        # Return success anyway to prevent email enumeration
-        return Response({'message': 'OTP sent successfully'})
+    return Response({'message': 'OTP sent successfully'})
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -233,37 +187,26 @@ def verify_otp(request):
     if not email or not code:
         return Response({'error': 'Email and code are required'}, status=status.HTTP_400_BAD_REQUEST)
         
-    try:
-        user = User.objects.get(email=email)
-        token = OTPToken.objects.filter(user=user, code=code, is_used=False).order_by('-created_at').first()
+    user, error = AuthService.verify_otp(email, code)
+    if error:
+        return Response({'error': error}, status=status.HTTP_400_BAD_REQUEST)
         
-        if not token or not token.is_valid():
-            return Response({'error': 'Invalid or expired OTP'}, status=status.HTTP_400_BAD_REQUEST)
-            
-        token.is_used = True
-        token.save()
-        
-        # Clear lockout if successful OTP
-        user.failed_login_attempts = 0
-        user.locked_until = None
-        user.save(update_fields=['failed_login_attempts', 'locked_until'])
-        
-        log_audit(user, 'VERIFY_OTP', 'Auth', {'email': email}, request)
-        
-        return Response({'message': 'OTP verified successfully'})
-    except User.DoesNotExist:
-        return Response({'error': 'Invalid or expired OTP'}, status=status.HTTP_400_BAD_REQUEST)
+    log_audit(user, 'VERIFY_OTP', 'Auth', {'email': email}, request)
+    return Response({'message': 'OTP verified successfully'})
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def logout(request):
+def logout_view(request):
     try:
-        refresh_token = request.data.get("refresh")
+        refresh_token = request.data.get('refresh_token')
         if not refresh_token:
             return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
         token = RefreshToken(refresh_token)
         token.blacklist()
-        return Response({'message': 'Logged out successfully'}, status=status.HTTP_205_RESET_CONTENT)
+        
+        log_audit(request.user, 'LOGOUT', 'Auth', None, request)
+        return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -274,27 +217,14 @@ def reset_password(request):
     code = request.data.get('code')
     new_password = request.data.get('new_password')
     
-    if not email or not code or not new_password:
-        return Response({'error': 'Email, code and new_password are required'}, status=status.HTTP_400_BAD_REQUEST)
+    if not all([email, code, new_password]):
+        return Response({'error': 'Email, code, and new_password are required'}, status=status.HTTP_400_BAD_REQUEST)
         
-    try:
-        user = User.objects.get(email=email)
-        # Should ideally use a separate token type for PASSWORD_RESET, 
-        # but for simplicity we reuse the token logic here and assume OTP was sent as PASSWORD_RESET
-        token = OTPToken.objects.filter(user=user, code=code, type=OTPToken.TypeChoices.PASSWORD_RESET, is_used=False).order_by('-created_at').first()
+    user, error = AuthService.verify_otp(email, code)
+    if error:
+        return Response({'error': error}, status=status.HTTP_400_BAD_REQUEST)
         
-        if not token or not token.is_valid():
-            return Response({'error': 'Invalid or expired OTP'}, status=status.HTTP_400_BAD_REQUEST)
-            
-        user.set_password(new_password)
-        user.failed_login_attempts = 0
-        user.locked_until = None
-        user.save()
-        
-        token.is_used = True
-        token.save()
-        
-        log_audit(user, 'RESET_PASSWORD', 'Auth', {'email': email}, request)
-        return Response({'message': 'Password reset successfully'})
-    except User.DoesNotExist:
-        return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+    AuthService.reset_password(user, new_password)
+    log_audit(user, 'RESET_PASSWORD', 'Auth', {'email': email}, request)
+    
+    return Response({'message': 'Password reset successfully'})

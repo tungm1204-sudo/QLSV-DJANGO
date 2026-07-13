@@ -2,6 +2,8 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -80,16 +82,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.email} ({self.full_name})"
 
-class LoginHistory(models.Model):
+class LoginSession(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='login_histories')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='login_sessions')
+    token_jti = models.CharField(max_length=255, unique=True, null=True, blank=True) # ID của refresh token
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     user_agent = models.TextField(null=True, blank=True)
     device_info = models.CharField(max_length=255, null=True, blank=True)
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        db_table = 'identity_login_histories'
+        db_table = 'identity_login_sessions'
         ordering = ['-created_at']
 
     def __str__(self):
@@ -131,6 +135,7 @@ class AuditLog(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     action = models.CharField(max_length=50) # CREATE, UPDATE, DELETE, LOGIN
     module = models.CharField(max_length=100) # e.g. Users, Roles
+    record_id = models.CharField(max_length=255, null=True, blank=True)
     payload = models.JSONField(null=True, blank=True)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
     user_agent = models.TextField(null=True, blank=True)
@@ -146,12 +151,21 @@ class Notification(models.Model):
         WARNING = 'WARNING', 'Warning'
         SUCCESS = 'SUCCESS', 'Success'
         ERROR = 'ERROR', 'Error'
+        SYSTEM = 'SYSTEM', 'System'
+        GRADE = 'GRADE', 'Grade'
+        TUITION = 'TUITION', 'Tuition'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='notifications') # null means broadcast
     title = models.CharField(max_length=255)
     message = models.TextField()
     type = models.CharField(max_length=20, choices=TypeChoices.choices, default=TypeChoices.INFO)
+    
+    # Dùng GenericForeignKey để định tuyến
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    object_id = models.CharField(max_length=255, null=True, blank=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from .models import LoginHistory, Role, SystemConfig, OTPToken, AuditLog, Notification
+from .models import LoginSession, Role, SystemConfig, OTPToken, AuditLog, Notification
 
 User = get_user_model()
 
@@ -101,9 +101,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         }
         return data
 
-class LoginHistorySerializer(serializers.ModelSerializer):
+class LoginSessionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = LoginHistory
+        model = LoginSession
         fields = '__all__'
 
 class SystemConfigSerializer(serializers.ModelSerializer):
