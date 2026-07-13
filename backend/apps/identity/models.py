@@ -1,3 +1,10 @@
+"""
+Module Identity Models
+Định nghĩa các cấu trúc cơ sở dữ liệu (Models) cho phân hệ Quản lý Danh tính và Phân quyền (Tier 1).
+Bao gồm: User, Role, LoginSession, SystemConfig, OTPToken, AuditLog, Notification.
+Lý do: Tách biệt hoàn toàn phần xác thực khỏi logic nghiệp vụ để tập trung kiểm soát bảo mật và phân quyền.
+"""
+
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
@@ -6,7 +13,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, **extra_fields):
+    """
+    Tùy chỉnh Manager cho User model để hỗ trợ đăng nhập bằng Email thay vì Username mặc định của Django.
+    """
+    def create_user(self, email: str, password: str = None, **extra_fields) -> 'User':
         if not email:
             raise ValueError('Email address is required')
         email = self.normalize_email(email)
@@ -29,6 +39,10 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class Role(models.Model):
+    """
+    Model định nghĩa Vai trò (Role) trong hệ thống và danh sách các quyền (permissions) tương ứng.
+    Lý do dùng JSONField cho permissions: Tối ưu tốc độ query và linh hoạt khi mở rộng quyền mới mà không cần join bảng.
+    """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
     description = models.CharField(max_length=255, null=True, blank=True)
@@ -43,6 +57,10 @@ class Role(models.Model):
         return self.name
 
 class User(AbstractBaseUser, PermissionsMixin):
+    """
+    Model lưu trữ thông tin tài khoản người dùng chính của toàn hệ thống (Student, Lecturer, Admin,...).
+    Sử dụng UUID làm khóa chính theo chuẩn dự án để tránh rò rỉ ID tuần tự (ngăn chặn tấn công IDOR).
+    """
     class StatusChoices(models.TextChoices):
         ACTIVE = 'ACTIVE', 'Active'
         INACTIVE = 'INACTIVE', 'Inactive'
@@ -100,6 +118,10 @@ class LoginSession(models.Model):
         return f"{self.user.email} - {self.created_at}"
 
 class SystemConfig(models.Model):
+    """
+    Model lưu trữ các cấu hình động của hệ thống (như: thời gian hết hạn OTP, số lần login sai tối đa).
+    Lý do: Cho phép Admin thay đổi cấu hình nóng (hot-reload) từ UI mà không cần restart lại ứng dụng hay sửa file code.
+    """
     # Fix #12: UUID PK thay vì CharField PK theo rules.md
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     key = models.CharField(max_length=100, unique=True)
