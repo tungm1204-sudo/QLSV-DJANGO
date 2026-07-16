@@ -80,6 +80,12 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             # Lý do: Đẩy logic đếm số lần sai và khóa tài khoản sang Service để quản lý tập trung.
             if email:
                 AuthService.handle_failed_login(email)
+                is_locked, lock_reason = AuthService.check_lockout(email)
+                if is_locked:
+                    return Response(
+                        {'detail': lock_reason, 'code': 'account_locked'},
+                        status=status.HTTP_403_FORBIDDEN
+                    )
             raise
 
         # 3. Đăng nhập thành công.

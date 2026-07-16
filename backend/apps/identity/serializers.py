@@ -43,10 +43,13 @@ class UserCreateUpdateSerializer(serializers.ModelSerializer):
     # Gắn cờ write_only=True cho password.
     # Lý do: Đảm bảo bảo mật. Password chỉ được nhận từ Request, nhưng tuyệt đối không bao giờ xuất hiện trong Response.
     password = serializers.CharField(write_only=True, required=False)
+    role_id = serializers.PrimaryKeyRelatedField(
+        queryset=Role.objects.all(), source='role', write_only=True, required=False, allow_null=True
+    )
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'password', 'full_name', 'avatar', 'status', 'is_active', 'role']
+        fields = ['id', 'email', 'password', 'full_name', 'avatar', 'status', 'is_active', 'role_id']
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
