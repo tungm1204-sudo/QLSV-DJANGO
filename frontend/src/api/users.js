@@ -14,7 +14,7 @@ export const lockUserApi = (id) => apiClient.patch(`/identity/users/${id}/`, { s
 
 export const unlockUserApi = (id) => apiClient.patch(`/identity/users/${id}/`, { status: 'ACTIVE', is_active: true });
 
-export const resetPasswordApi = ({ id, new_password }) => apiClient.patch(`/identity/users/${id}/`, { password: new_password });
+export const resetPasswordApi = ({ id, new_password }) => apiClient.post(`/identity/users/${id}/force_reset_password/`, { password: new_password });
 
 export const importExcelApi = (file) => {
   const formData = new FormData();

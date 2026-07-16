@@ -251,6 +251,7 @@ class UserService:
         return user
 
     @staticmethod
+    @transaction.atomic
     def update_user(user, validated_data, actor_id, ip_address=None, user_agent=None):
         password = validated_data.pop('password', None)
         for key, value in validated_data.items():
@@ -266,6 +267,7 @@ class UserService:
         return user
 
     @staticmethod
+    @transaction.atomic
     def delete_user(user, actor_id, ip_address=None, user_agent=None):
         user_info = {'id': str(user.id), 'email': user.email}
         user.delete()

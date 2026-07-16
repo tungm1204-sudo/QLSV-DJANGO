@@ -52,6 +52,7 @@ class Role(models.Model):
 
     class Meta:
         db_table = 'identity_roles'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
@@ -150,6 +151,9 @@ class OTPToken(models.Model):
 
     class Meta:
         db_table = 'identity_otp_tokens'
+        indexes = [
+            models.Index(fields=['user', 'code', 'type', 'is_used']),
+        ]
 
     def is_valid(self):
         return not self.is_used and timezone.now() <= self.expires_at

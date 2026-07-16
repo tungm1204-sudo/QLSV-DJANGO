@@ -32,6 +32,8 @@ export default function UsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [resetPasswordUser, setResetPasswordUser] = useState(null);
+  const [resetPasswordValue, setResetPasswordValue] = useState('');
 
   // Fetch Users
   const { data: usersData, isLoading: isLoadingUsers } = useQuery({
@@ -114,7 +116,21 @@ export default function UsersPage() {
       toast.success(variables.isLocked ? 'Đã mở khóa tài khoản' : 'Đã khóa tài khoản');
       queryClient.invalidateQueries(['users']);
     },
-    onError: handleError
+    onError: (err) => {
+      toast.error(err.response?.data?.detail || 'Lỗi khi cập nhật trạng thái');
+    }
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: resetPasswordApi,
+    onSuccess: () => {
+      toast.success('Đổi mật khẩu thành công');
+      setResetPasswordUser(null);
+      setResetPasswordValue('');
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.detail || 'Lỗi khi đổi mật khẩu');
+    }
   });
 
   const onSubmit = (data) => {
@@ -286,12 +302,8 @@ export default function UsersPage() {
                             )}
                             title={!canUpdate ? "Không có quyền reset mật khẩu" : "Reset mật khẩu khẩn cấp"}
                             onClick={() => {
-                              const newPass = prompt(`Nhập mật khẩu mới cho ${user.email}:`);
-                              if (newPass) {
-                                resetPasswordApi({ id: user.id, new_password: newPass })
-                                  .then(() => toast.success('Đổi mật khẩu thành công'))
-                                  .catch(() => toast.error('Lỗi khi đổi mật khẩu'));
-                              }
+                              setResetPasswordUser(user);
+                              setResetPasswordValue('');
                             }}
                           >
                             <KeyRound size={16} />
@@ -387,6 +399,57 @@ export default function UsersPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Password Modal */}
+      {resetPasswordUser && (
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+              <h3 className="text-lg font-semibold text-slate-900">Reset Mật Khẩu</h3>
+              <button 
+                onClick={() => setResetPasswordUser(null)}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                &times;
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-slate-600 mb-4">
+                Nhập mật khẩu mới cho tài khoản <span className="font-semibold text-slate-900">{resetPasswordUser.email}</span>:
+              </p>
+              <input
+                type="text"
+                value={resetPasswordValue}
+                onChange={(e) => setResetPasswordValue(e.target.value)}
+                placeholder="Mật khẩu mới (ít nhất 6 ký tự)"
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              />
+            </div>
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex justify-end gap-3">
+              <button 
+                onClick={() => setResetPasswordUser(null)}
+                className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Hủy
+              </button>
+              <button 
+                onClick={() => {
+                  if (resetPasswordValue.length < 6) {
+                    toast.error('Mật khẩu phải từ 6 ký tự');
+                    return;
+                  }
+                  resetPasswordMutation.mutate({ id: resetPasswordUser.id, new_password: resetPasswordValue });
+                }}
+                disabled={resetPasswordMutation.isPending}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50"
+              >
+                {resetPasswordMutation.isPending && <Loader2 size={16} className="animate-spin" />}
+                Xác nhận
+              </button>
+            </div>
           </div>
         </div>
       )}

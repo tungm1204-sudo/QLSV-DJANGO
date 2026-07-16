@@ -217,6 +217,23 @@ class UserViewSet(viewsets.ModelViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=True, methods=['post'])
+    def force_reset_password(self, request, pk=None):
+        user = self.get_object()
+        new_password = request.data.get('password')
+        if not new_password:
+            return Response({'error': 'Password is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Validates and updates password, creates AuditLog
+        UserService.update_user(
+            user,
+            {'password': new_password},
+            request.user.id,
+            get_client_ip(request),
+            get_user_agent(request)
+        )
+        return Response({'message': 'Password reset successfully'})
+
     @action(detail=True, methods=['get'])
     def login_sessions(self, request, pk=None):
         user = self.get_object()

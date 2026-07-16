@@ -70,6 +70,10 @@ export default function RolesPage() {
       queryClient.invalidateQueries(['roles']);
       setSelectedRole(res.data);
       setIsCreating(false);
+      toast.success('Thêm vai trò mới thành công!');
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.detail || 'Lỗi khi tạo vai trò');
     }
   });
 
@@ -77,6 +81,10 @@ export default function RolesPage() {
     mutationFn: updateRoleApi,
     onSuccess: () => {
       queryClient.invalidateQueries(['roles']);
+      toast.success('Cập nhật vai trò thành công!');
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.detail || 'Lỗi khi cập nhật vai trò');
     }
   });
 
@@ -85,6 +93,10 @@ export default function RolesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries(['roles']);
       setSelectedRole(null);
+      toast.success('Đã xóa vai trò!');
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.detail || 'Lỗi khi xóa vai trò');
     }
   });
 
