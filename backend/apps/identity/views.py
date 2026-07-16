@@ -30,7 +30,9 @@ from .services import (
     AuthService, UserService, RoleService, SystemConfigService,
     NotificationService, AuditLogService, log_audit
 )
+from .permissions import require_permission
 from .selectors import AuthSelector, NotificationSelector, AuditLogSelector
+from .constants import get_permission_choices_list
 
 User = get_user_model()
 
@@ -98,7 +100,17 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'available_permissions']:
+            return [require_permission('ROLES_VIEW')()]
+        elif self.action == 'create':
+            return [require_permission('ROLES_CREATE')()]
+        elif self.action in ['update', 'partial_update']:
+            return [require_permission('ROLES_UPDATE')()]
+        elif self.action == 'destroy':
+            return [require_permission('ROLES_DELETE')()]
+        return [permissions.IsAuthenticated()]
 
     def create(self, request, *args, **kwargs):
         # 1. Hứng Request: Dùng Serializer để validate dữ liệu đầu vào.
@@ -141,13 +153,29 @@ class RoleViewSet(viewsets.ModelViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=False, methods=['get'])
+    def available_permissions(self, request):
+        return Response(get_permission_choices_list())
+
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.select_related('role').all()
-    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['status', 'is_active', 'role']
     search_fields = ['email', 'full_name']
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [require_permission('USERS_VIEW')()]
+        elif self.action == 'create':
+            return [require_permission('USERS_CREATE')()]
+        elif self.action in ['update', 'partial_update']:
+            return [require_permission('USERS_UPDATE')()]
+        elif self.action == 'destroy':
+            return [require_permission('USERS_DELETE')()]
+        elif self.action == 'import_excel':
+            return [require_permission('USERS_CREATE')()]
+        return [permissions.IsAuthenticated()]
 
     def get_serializer_class(self):
         if self.action in ['create', 'update', 'partial_update']:
@@ -196,6 +224,10 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = LoginSessionSerializer(sessions, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        return Response(UserSerializer(request.user).data)
+
     @action(detail=False, methods=['post'])
     def import_excel(self, request):
         file_obj = request.FILES.get('file')
@@ -243,6 +275,31 @@ class SystemConfigViewSet(viewsets.ModelViewSet):
             get_user_agent(request)
         )
         return Response(SystemConfigSerializer(config).data)
+
+
+class LoginSessionViewSet(viewsets.ViewSet):
+    """
+    View quản lý phiên đăng nhập của User hiện tại.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def list(self, request):
+        sessions = AuthSelector.get_login_sessions(request.user)
+        serializer = LoginSessionSerializer(sessions, many=True)
+        return Response(serializer.data)
+
+    def destroy(self, request, pk=None):
+        try:
+            # Chỉ cho phép xóa session của chính mình
+            session = AuthSelector.get_login_sessions(request.user).get(pk=pk)
+            # Trong thực tế Enterprise: Ta sẽ đưa Refresh Token vào Blacklist tại đây nếu có lưu jti
+            session.is_active = False
+            session.save(update_fields=['is_active'])
+            
+            log_audit(request.user.id, 'REVOKE_SESSION', 'Auth', {'session_id': str(pk)}, get_client_ip(request), get_user_agent(request))
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception:
+            return Response({'error': 'Session not found or already deleted'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
@@ -304,6 +361,32 @@ def request_otp(request):
 
     response_data = {'message': 'OTP sent successfully'}
     # Fix #11: Chỉ trả về code khi DEBUG=True (môi trường dev/test)
+    if settings.DEBUG and user and code:
+        response_data['code_for_testing'] = code
+
+    return Response(response_data)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def request_password_reset_otp(request):
+    email = request.data.get('email')
+    if not email:
+        return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user, code = AuthService.generate_otp(email, otp_type='PASSWORD_RESET')
+    if user:
+        # Mock sending email by printing to console
+        print(f"\n========================================================")
+        print(f"🔒 MOCK EMAIL: YÊU CẦU KHÔI PHỤC MẬT KHẨU")
+        print(f"To: {email}")
+        print(f"Mã OTP của bạn là: {code}")
+        print(f"========================================================\n")
+        
+        log_audit(user.id, 'REQUEST_PASSWORD_RESET', 'Auth', {'email': email}, get_client_ip(request), get_user_agent(request))
+
+    # Always return success to prevent email enumeration
+    response_data = {'message': 'Nếu email hợp lệ, mã OTP đã được gửi.'}
     if settings.DEBUG and user and code:
         response_data['code_for_testing'] = code
 

@@ -58,3 +58,14 @@ File này định nghĩa danh tính, cách suy nghĩ và các quy tắc bắt bu
 User có thể "dạy" AI thêm kỹ năng mới bằng cách:
 1. Cập nhật trực tiếp file `AGENTS.md` này để nạp thêm rule (luật) mới.
 2. Dùng lệnh `/learn` trong khung chat (hoặc gọi Workflow Skill Creator) để AI tự động đúc kết một quy trình phức tạp thành một **Skill** mới và lưu vào thư mục `.agents/skills/`. Lần sau chỉ cần gọi tên Skill là AI sẽ làm chuẩn xác!
+
+---
+
+## PHẦN 6: QUY TẮC THIẾT KẾ FRONTEND (UI/UX)
+*(Bắt buộc tuân thủ khi viết code cho Frontend)*
+
+- Bắt buộc phải đọc và làm theo file `docs/architecture/ui_guidelines.md`.
+- **Công nghệ chính:** Sử dụng `shadcn/ui`, `Tailwind CSS`, `lucide-react`.
+- **Tính thẩm mỹ:** Chuẩn Enterprise, tối giản, màu Indigo/Slate, font Inter/Geist.
+- **UX Code:** Bắt buộc dùng Skeleton Loading khi đang tải API (bằng Tanstack Query). Xử lý form bằng `react-hook-form` + `zod`.
+- **Phản hồi:** Thêm, Sửa, Xóa thành công phải bắn Toast Notification thay vì Alert.

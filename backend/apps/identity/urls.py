@@ -9,7 +9,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     UserViewSet, CustomTokenObtainPairView, RoleViewSet, 
     SystemConfigViewSet, NotificationViewSet, AuditLogViewSet,
-    request_otp, verify_otp, logout_view, reset_password
+    LoginSessionViewSet,
+    request_otp, verify_otp, logout_view, reset_password, request_password_reset_otp
 )
 
 router = DefaultRouter()
@@ -18,6 +19,7 @@ router.register(r'roles', RoleViewSet, basename='role')
 router.register(r'system-configs', SystemConfigViewSet, basename='systemconfig')
 router.register(r'notifications', NotificationViewSet, basename='notification')
 router.register(r'audit-logs', AuditLogViewSet, basename='auditlog')
+router.register(r'auth/sessions', LoginSessionViewSet, basename='loginsession')
 
 urlpatterns = [
     # Auth endpoints
@@ -26,6 +28,7 @@ urlpatterns = [
     path('auth/logout/', logout_view, name='logout'),
     path('auth/request-otp/', request_otp, name='request_otp'),
     path('auth/verify-otp/', verify_otp, name='verify_otp'),
+    path('auth/password-reset/request-otp/', request_password_reset_otp, name='request_password_reset_otp'),
     path('auth/reset-password/', reset_password, name='reset_password'),
     
     # ViewSets

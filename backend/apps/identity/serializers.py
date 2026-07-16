@@ -62,14 +62,18 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         
         # Bổ sung thêm thông tin user profile vào chung Response.
         # Lý do: Giúp Frontend tiết kiệm được 1 lần gọi API /me. Vừa login xong là có luôn thông tin để vẽ giao diện (avatar, phân quyền).
+        # FIX: role phải là object đầy đủ (id, name, permissions) để nhất quán với response /me/
         data['user'] = {
             'id': str(user.id),
             'email': user.email,
             'full_name': user.full_name,
             'status': user.status,
             'avatar': user.avatar,
-            'role': user.role.name if user.role else None,
-            'permissions': user.role.permissions if user.role else []
+            'role': {
+                'id': str(user.role.id),
+                'name': user.role.name,
+                'permissions': user.role.permissions,
+            } if user.role else None,
         }
         return data
 

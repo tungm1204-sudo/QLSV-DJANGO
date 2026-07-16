@@ -6,7 +6,8 @@ Lý do: Giữ cho View luôn mỏng, dễ dàng viết unit test, và đảm b�
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError as DjangoValidationError
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.utils import timezone
 from django.db import transaction
 from .models import AuditLog, OTPToken, LoginSession, SystemConfig, Role, Notification
@@ -236,8 +237,8 @@ class UserService:
         if password:
             try:
                 validate_password(password)
-            except ValidationError as e:
-                raise ValidationError({'password': list(e.messages)})
+            except DjangoValidationError as e:
+                raise DRFValidationError({'password': list(e.messages)})
 
         user = User(**validated_data)
         if password:
@@ -257,8 +258,8 @@ class UserService:
         if password:
             try:
                 validate_password(password, user=user)
-            except ValidationError as e:
-                raise ValidationError({'password': list(e.messages)})
+            except DjangoValidationError as e:
+                raise DRFValidationError({'password': list(e.messages)})
             user.set_password(password)
         user.save()
         log_audit(actor_id, 'UPDATE', 'Users', {'id': str(user.id), 'email': user.email}, ip_address, user_agent)
