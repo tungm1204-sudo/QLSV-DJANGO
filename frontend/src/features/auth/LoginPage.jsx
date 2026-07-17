@@ -11,7 +11,7 @@ import { cn } from '../../utils/index';
 
 const loginSchema = z.object({
   email: z.string().email('Email không hợp lệ'),
-  password: z.string().min(6, 'Mật khẩu ít nhất 6 ký tự'),
+  password: z.string().min(8, 'Mật khẩu ít nhất 8 ký tự'),
 });
 
 const otpSchema = z.object({
@@ -24,7 +24,7 @@ const forgotSchema = z.object({
 
 const resetPasswordSchema = z.object({
   code: z.string().length(6, 'Mã OTP phải gồm 6 chữ số'),
-  new_password: z.string().min(6, 'Mật khẩu ít nhất 6 ký tự'),
+  new_password: z.string().min(8, 'Mật khẩu ít nhất 8 ký tự'),
 });
 
 export default function LoginPage() {

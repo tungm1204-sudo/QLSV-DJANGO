@@ -5,7 +5,7 @@ Lý do: Tách biệt logic đọc (Selector) và ghi (Service). Đặc biệt �
 """
 
 from django.contrib.auth import get_user_model
-from .models import LoginSession, Notification, AuditLog
+from .models import LoginSession, Notification, AuditLog, SystemConfig
 
 User = get_user_model()
 
@@ -41,3 +41,9 @@ class AuditLogSelector:
         # BẮT BUỘC dùng select_related('user').
         # Lý do: Giúp Django tạo ra câu lệnh SQL có JOIN ngay từ đầu, lấy luôn thông tin User thay vì query riêng lẻ từng User cho mỗi dòng AuditLog.
         return AuditLog.objects.select_related('user').order_by('-created_at')
+
+class SystemConfigSelector:
+    @staticmethod
+    def get_configs():
+        # Lấy toàn bộ cấu hình hệ thống
+        return SystemConfig.objects.all().order_by('key')

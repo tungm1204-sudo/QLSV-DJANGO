@@ -9,21 +9,24 @@ import {
   Edit2, Trash2, KeyRound, Loader2 
 } from 'lucide-react';
 
-import { getUsersApi, createUserApi, updateUserApi, lockUserApi, unlockUserApi, resetPasswordApi } from '../../api/users';
+import { getUsersApi, createUserApi, updateUserApi, lockUserApi, unlockUserApi, resetPasswordApi, deleteUserApi } from '../../api/users';
 import { getRolesApi } from '../../api/roles';
 import { usePermissions } from '../../hooks/usePermissions';
+import useAuthStore from '../auth/store/useAuthStore';
+import ConfirmModal from '../../components/ui/ConfirmModal';
 import { cn } from '../../utils';
 
 const userSchema = z.object({
   email: z.string().email('Email không hợp lệ'),
   full_name: z.string().min(2, 'Tên phải từ 2 ký tự').max(100),
-  password: z.string().min(6, 'Mật khẩu phải từ 6 ký tự').optional().or(z.literal('')),
+  password: z.string().min(8, 'Mật khẩu phải từ 8 ký tự').optional().or(z.literal('')),
   // FIX: field phải là role_id (UUID) để Backend xử lý qua UserCreateUpdateSerializer
   role_id: z.string().uuid('Vai trò không hợp lệ').optional().nullable(),
 });
 
 export default function UsersPage() {
   const queryClient = useQueryClient();
+  const { user: currentUser } = useAuthStore();
   const { hasPermission } = usePermissions();
   const canCreate = hasPermission('USERS_CREATE');
   const canUpdate = hasPermission('USERS_UPDATE');
@@ -34,6 +37,7 @@ export default function UsersPage() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [resetPasswordUser, setResetPasswordUser] = useState(null);
   const [resetPasswordValue, setResetPasswordValue] = useState('');
+  const [deleteUserConfig, setDeleteUserConfig] = useState({ isOpen: false, userId: null });
 
   // Fetch Users
   const { data: usersData, isLoading: isLoadingUsers } = useQuery({
@@ -130,6 +134,18 @@ export default function UsersPage() {
     },
     onError: (err) => {
       toast.error(err.response?.data?.detail || 'Lỗi khi đổi mật khẩu');
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteUserApi,
+    onSuccess: () => {
+      toast.success('Xóa người dùng thành công');
+      queryClient.invalidateQueries(['users']);
+      setDeleteUserConfig({ isOpen: false, userId: null });
+    },
+    onError: (err) => {
+      toast.error(err.response?.data?.detail || 'Lỗi khi xóa người dùng');
     }
   });
 
@@ -235,7 +251,10 @@ export default function UsersPage() {
                 </tr>
               ) : (
                 users.map((user) => {
-                  const isLocked = !user.is_active || user.status === 'LOCKED';
+                  const isTemporarilyLocked = user.locked_until && new Date(user.locked_until) > new Date();
+                  const isLocked = !user.is_active || user.status === 'LOCKED' || isTemporarilyLocked;
+                  const isCurrentUser = currentUser?.id === user.id;
+                  
                   return (
                     <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-4">
@@ -262,11 +281,11 @@ export default function UsersPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span className={cn(
-                          "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-wider",
+                          "px-2.5 py-1 text-xs font-medium rounded-full flex items-center gap-1 w-max",
                           isLocked ? "bg-red-50 text-red-700 border border-red-100" : "bg-emerald-50 text-emerald-700 border border-emerald-100"
                         )}>
                           {isLocked ? <ShieldAlert size={12} /> : <ShieldCheck size={12} />}
-                          {isLocked ? 'Bị Khóa' : 'Hoạt động'}
+                          {isTemporarilyLocked ? 'Bị Khóa (Tạm thời)' : isLocked ? 'Bị Khóa' : 'Hoạt động'}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
@@ -284,13 +303,13 @@ export default function UsersPage() {
                           </button>
                           <button 
                             onClick={() => lockUnlockMutation.mutate({ id: user.id, isLocked })}
-                            disabled={!canUpdate}
+                            disabled={!canUpdate || isCurrentUser}
                             className={cn(
                               "p-1.5 rounded-lg transition-colors",
-                              !canUpdate ? "text-slate-200 cursor-not-allowed" :
+                              (!canUpdate || isCurrentUser) ? "text-slate-200 cursor-not-allowed" :
                               isLocked ? "text-emerald-500 hover:bg-emerald-50" : "text-red-500 hover:bg-red-50"
                             )}
-                            title={!canUpdate ? "Không có quyền cập nhật trạng thái" : isLocked ? "Mở khóa tài khoản" : "Khóa tài khoản"}
+                            title={isCurrentUser ? "Không thể khóa tài khoản của chính mình" : !canUpdate ? "Không có quyền cập nhật trạng thái" : isLocked ? "Mở khóa tài khoản" : "Khóa tài khoản"}
                           >
                             {isLocked ? <ShieldCheck size={16} /> : <ShieldAlert size={16} />}
                           </button>
@@ -307,6 +326,19 @@ export default function UsersPage() {
                             }}
                           >
                             <KeyRound size={16} />
+                          </button>
+                          <button 
+                            disabled={!canDelete || isCurrentUser}
+                            className={cn(
+                              "p-1.5 rounded-lg transition-colors",
+                              (!canDelete || isCurrentUser) ? "text-slate-200 cursor-not-allowed" : "text-slate-400 hover:text-red-600 hover:bg-red-50"
+                            )}
+                            onClick={() => {
+                              setDeleteUserConfig({ isOpen: true, userId: user.id });
+                            }}
+                            title={isCurrentUser ? "Không thể xóa tài khoản của chính mình" : !canDelete ? "Không có quyền xóa" : "Xóa người dùng"}
+                          >
+                            <Trash2 size={16} />
                           </button>
                         </div>
                       </td>
@@ -453,6 +485,14 @@ export default function UsersPage() {
           </div>
         </div>
       )}
+      {/* Delete Confirm Modal */}
+      <ConfirmModal
+        isOpen={deleteUserConfig.isOpen}
+        onClose={() => setDeleteUserConfig({ isOpen: false, userId: null })}
+        onConfirm={() => deleteMutation.mutate(deleteUserConfig.userId)}
+        title="Xóa người dùng"
+        message="Bạn có chắc chắn muốn xóa người dùng này khỏi hệ thống? Dữ liệu đã xóa sẽ không thể khôi phục."
+      />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { getRolesApi, createRoleApi, updateRoleApi, deleteRoleApi, getAvailablePermissionsApi } from '../../api/roles';
 import { usePermissions } from '../../hooks/usePermissions';
+import ConfirmModal from '../../components/ui/ConfirmModal';
 import { cn } from '../../utils';
 
 const roleSchema = z.object({
@@ -45,6 +46,7 @@ export default function RolesPage() {
   const [selectedRole, setSelectedRole] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [deleteRoleConfig, setDeleteRoleConfig] = useState({ isOpen: false, roleId: null });
 
   const { data: rolesResponse, isLoading: isLoadingRoles } = useQuery({
     queryKey: ['roles'],
@@ -93,6 +95,7 @@ export default function RolesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries(['roles']);
       setSelectedRole(null);
+      setDeleteRoleConfig({ isOpen: false, roleId: null });
       toast.success('Đã xóa vai trò!');
     },
     onError: (err) => {
@@ -294,9 +297,7 @@ export default function RolesPage() {
                     type="button"
                     disabled={!canDelete}
                     onClick={() => {
-                      if (window.confirm('Bạn có chắc chắn muốn xóa vai trò này?')) {
-                        deleteMutation.mutate(selectedRole.id);
-                      }
+                      setDeleteRoleConfig({ isOpen: true, roleId: selectedRole.id });
                     }}
                     className={cn(
                       "flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-xl transition-colors",
@@ -439,6 +440,13 @@ export default function RolesPage() {
         )}
       </div>
 
+      <ConfirmModal
+        isOpen={deleteRoleConfig.isOpen}
+        onClose={() => setDeleteRoleConfig({ isOpen: false, roleId: null })}
+        onConfirm={() => deleteMutation.mutate(deleteRoleConfig.roleId)}
+        title="Xóa Vai trò"
+        message="Bạn có chắc chắn muốn xóa vai trò này? Các người dùng đang có vai trò này có thể bị mất quyền."
+      />
     </div>
   );
 }

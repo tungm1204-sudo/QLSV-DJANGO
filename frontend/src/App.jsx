@@ -11,6 +11,8 @@ import LoginPage from './features/auth/LoginPage';
 import DashboardPage from './features/dashboard/DashboardPage';
 import RolesPage from './features/roles/RolesPage';
 import UsersPage from './features/users/UsersPage';
+import AuditLogsPage from './features/audit_logs/AuditLogsPage';
+import SystemConfigsPage from './features/configs/SystemConfigsPage';
 
 // QueryClient: cấu hình mặc định cho toàn bộ ứng dụng
 const queryClient = new QueryClient({
@@ -36,9 +38,9 @@ export default function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/users" element={<UsersPage />} />
               <Route path="/roles" element={<RolesPage />} />
-              <Route path="/audit-logs" element={<div className="p-6">Đang phát triển: Nhật ký</div>} />
+              <Route path="/audit-logs" element={<AuditLogsPage />} />
               <Route path="/notifications" element={<div className="p-6">Đang phát triển: Thông báo</div>} />
-              <Route path="/system-config" element={<div className="p-6">Đang phát triển: Cấu hình</div>} />
+              <Route path="/system-config" element={<SystemConfigsPage />} />
               
               {/* Nếu nhập sai URL khi đã đăng nhập -> về dashboard */}
               <Route path="*" element={<Navigate to="/dashboard" replace />} />
