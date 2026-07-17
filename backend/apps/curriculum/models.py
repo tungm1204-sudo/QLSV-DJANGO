@@ -56,3 +56,18 @@ class Prerequisite(TimeStampedModel):
 
     def __str__(self) -> str:
         return f"{self.course.code} requires {self.required_course.code}"
+
+class EquivalentCourse(TimeStampedModel):
+    """
+    Model lưu trữ Học phần thay thế / tương đương.
+    - Môn học B có thể thay thế cho Môn học A nếu chương trình đào tạo thay đổi.
+    """
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='equivalent_to', help_text="Môn học trong khung chương trình cũ")
+    equivalent_course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='equivalent_for', help_text="Môn học mới dùng để thay thế")
+
+    class Meta:
+        db_table = 'curriculum_equivalent_courses'
+        unique_together = ('course', 'equivalent_course')
+
+    def __str__(self) -> str:
+        return f"{self.equivalent_course.code} is equivalent to {self.course.code}"

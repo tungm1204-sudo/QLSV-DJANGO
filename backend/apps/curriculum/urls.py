@@ -15,3 +15,13 @@ router.register(r'prerequisites', PrerequisiteViewSet, basename='prerequisite')
 urlpatterns = [
     path('', include(router.urls)),
 ]
+
+from rest_framework import viewsets
+from .serializers import EquivalentCourseSerializer
+from .selectors import EquivalentCourseSelector
+
+class EquivalentCourseViewSet(viewsets.ModelViewSet):
+    queryset = EquivalentCourseSelector.get_equivalent_courses()
+    serializer_class = EquivalentCourseSerializer
+
+router.register(r'equivalent-courses', EquivalentCourseViewSet, basename='equivalent-course')

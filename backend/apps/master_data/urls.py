@@ -23,3 +23,23 @@ router.register(r'semesters', SemesterViewSet, basename='semester')
 urlpatterns = [
     path('', include(router.urls)),
 ]
+
+from rest_framework import viewsets
+from .serializers import SpecializationSerializer, EducationSystemSerializer, AcademicYearSerializer
+from .selectors import SpecializationSelector, EducationSystemSelector, AcademicYearSelector
+
+class SpecializationViewSet(viewsets.ModelViewSet):
+    queryset = SpecializationSelector.get_specializations()
+    serializer_class = SpecializationSerializer
+
+class EducationSystemViewSet(viewsets.ModelViewSet):
+    queryset = EducationSystemSelector.get_education_systems()
+    serializer_class = EducationSystemSerializer
+
+class AcademicYearViewSet(viewsets.ModelViewSet):
+    queryset = AcademicYearSelector.get_academic_years()
+    serializer_class = AcademicYearSerializer
+
+router.register(r'specializations', SpecializationViewSet, basename='specialization')
+router.register(r'education-systems', EducationSystemViewSet, basename='education-system')
+router.register(r'academic-years', AcademicYearViewSet, basename='academic-year')

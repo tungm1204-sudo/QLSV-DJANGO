@@ -24,3 +24,8 @@ class PrerequisiteSelector:
     def get_prerequisites() -> QuerySet[Prerequisite]:
         """Lấy danh sách môn tiên quyết kèm thông tin các môn học liên quan."""
         return Prerequisite.objects.select_related('course', 'required_course').all()
+
+class EquivalentCourseSelector:
+    @staticmethod
+    def get_equivalent_courses():
+        return __import__('apps.curriculum.models', fromlist=['EquivalentCourse']).EquivalentCourse.objects.select_related('course', 'equivalent_course').all()

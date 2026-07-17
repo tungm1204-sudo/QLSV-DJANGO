@@ -9,6 +9,21 @@ Tất cả model đều kế thừa TimeStampedModel để có sẵn id (UUID) v
 from django.db import models
 from apps.core.models import TimeStampedModel
 
+class EducationSystem(TimeStampedModel):
+    """
+    Model lưu trữ Hệ đào tạo.
+    - VD: Chính quy, Liên thông, Vừa làm vừa học.
+    """
+    code = models.CharField(max_length=50, unique=True, help_text="Mã hệ đào tạo (VD: CQ)")
+    name = models.CharField(max_length=255, help_text="Tên hệ đào tạo (VD: Chính quy)")
+    is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
+
+    class Meta:
+        db_table = 'master_data_education_systems'
+
+    def __str__(self) -> str:
+        return self.name
+
 class Department(TimeStampedModel):
     """
     Model lưu trữ danh mục Khoa/Bộ môn/Phòng ban.
@@ -50,6 +65,21 @@ class Major(TimeStampedModel):
 
     def __str__(self) -> str:
         return self.name
+
+class Specialization(TimeStampedModel):
+    """
+    Model lưu trữ Chuyên ngành trực thuộc Ngành học.
+    """
+    code = models.CharField(max_length=50, unique=True, help_text="Mã chuyên ngành")
+    name = models.CharField(max_length=255, help_text="Tên chuyên ngành")
+    major = models.ForeignKey(Major, on_delete=models.PROTECT, related_name='specializations', help_text="Thuộc ngành học nào")
+    is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
+
+    class Meta:
+        db_table = 'master_data_specializations'
+
+    def __str__(self) -> str:
+        return f"{self.name} ({self.major.name})"
 
 class Room(TimeStampedModel):
     """
@@ -124,6 +154,22 @@ class Cohort(TimeStampedModel):
     def __str__(self) -> str:
         return self.code
 
+class AcademicYear(TimeStampedModel):
+    """
+    Model lưu trữ Năm học.
+    - VD: Năm học 2024-2025.
+    """
+    code = models.CharField(max_length=50, unique=True, help_text="Mã năm học (VD: 2024-2025)")
+    name = models.CharField(max_length=255, help_text="Tên năm học (VD: Năm học 2024-2025)")
+    is_current = models.BooleanField(default=False, help_text="Có phải là năm học hiện tại không?")
+    is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
+
+    class Meta:
+        db_table = 'master_data_academic_years'
+
+    def __str__(self) -> str:
+        return self.name
+
 class Semester(TimeStampedModel):
     """
     Model lưu trữ Học kỳ trong năm học.
@@ -136,7 +182,7 @@ class Semester(TimeStampedModel):
         HE = 'HE', 'Học kỳ Hè'
 
     code = models.CharField(max_length=50, unique=True, help_text="Mã học kỳ (VD: 2024-HK1)")
-    year = models.CharField(max_length=50, help_text="Năm học (VD: 2024-2025)")
+    academic_year = models.ForeignKey(AcademicYear, on_delete=models.PROTECT, related_name='semesters', null=True, help_text="Thuộc năm học nào")
     season = models.CharField(max_length=50, choices=SeasonChoices.choices, help_text="Mùa học kỳ (HK1, HK2, Hè)")
     start_date = models.DateField(help_text="Ngày bắt đầu học kỳ")
     end_date = models.DateField(help_text="Ngày kết thúc học kỳ")

@@ -54,3 +54,18 @@ class SemesterSelector:
     def get_semesters() -> QuerySet[Semester]:
         """Lấy danh sách Học kỳ."""
         return Semester.objects.all()
+
+class SpecializationSelector:
+    @staticmethod
+    def get_specializations():
+        return __import__('apps.master_data.models', fromlist=['Specialization']).Specialization.objects.select_related('major').all()
+
+class EducationSystemSelector:
+    @staticmethod
+    def get_education_systems():
+        return __import__('apps.master_data.models', fromlist=['EducationSystem']).EducationSystem.objects.all()
+
+class AcademicYearSelector:
+    @staticmethod
+    def get_academic_years():
+        return __import__('apps.master_data.models', fromlist=['AcademicYear']).AcademicYear.objects.all()

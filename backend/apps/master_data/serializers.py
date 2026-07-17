@@ -5,7 +5,10 @@ Thực hiện Serialize/Deserialize dữ liệu cho Master Data.
 Tuyệt đối không chứa business logic ở đây theo chuẩn rules.md.
 """
 from rest_framework import serializers
-from .models import Department, Major, Room, PriorityCategory, ExamType, Cohort, Semester
+from .models import (
+    Department, Major, Room, PriorityCategory, ExamType, Cohort, Semester,
+    Specialization, EducationSystem, AcademicYear
+)
 
 class DepartmentSerializer(serializers.ModelSerializer):
     """Serializer cho Khoa/Bộ môn"""
@@ -47,4 +50,19 @@ class SemesterSerializer(serializers.ModelSerializer):
     """Serializer cho Học kỳ"""
     class Meta:
         model = Semester
+        fields = '__all__'
+
+class SpecializationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Specialization
+        fields = '__all__'
+
+class EducationSystemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EducationSystem
+        fields = '__all__'
+
+class AcademicYearSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AcademicYear
         fields = '__all__'
