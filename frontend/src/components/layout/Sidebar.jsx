@@ -8,7 +8,7 @@ const menuItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Tổng quan' },
   { path: '/users', icon: Users, label: 'Người dùng', requiredPerm: 'USERS_VIEW' },
   { path: '/roles', icon: Shield, label: 'Phân quyền', requiredPerm: 'ROLES_VIEW' },
-  { path: '/audit-logs', icon: FileText, label: 'Nhật ký', requiredPerm: 'SYSTEM_VIEW' },
+  { path: '/audit-logs', icon: FileText, label: 'Nhật ký', requiredPerm: 'AUDIT_VIEW' },
   { path: '/notifications', icon: Bell, label: 'Thông báo', requiredPerm: 'NOTIF_VIEW' },
   { path: '/system-config', icon: Settings, label: 'Cấu hình', requiredPerm: 'SYSTEM_VIEW' },
 ];

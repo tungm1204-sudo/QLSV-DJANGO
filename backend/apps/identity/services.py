@@ -11,7 +11,11 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.utils import timezone
 from django.db import transaction
 from .models import AuditLog, OTPToken, LoginSession, SystemConfig, Role, Notification
+import logging
+import openpyxl
 import random
+
+logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
@@ -70,12 +74,14 @@ class SystemConfigService:
     Bắt buộc phải ghi log để audit do cấu hình ảnh hưởng trực tiếp đến hệ thống.
     """
     @staticmethod
+    @transaction.atomic
     def create_config(validated_data, actor_id, ip_address=None, user_agent=None):
         config = SystemConfig.objects.create(**validated_data)
         log_audit(actor_id, 'CREATE', 'SystemConfig', {'key': config.key}, ip_address, user_agent)
         return config
 
     @staticmethod
+    @transaction.atomic
     def update_config(config, validated_data, actor_id, ip_address=None, user_agent=None):
         for key, value in validated_data.items():
             setattr(config, key, value)
@@ -210,14 +216,21 @@ class AuthService:
             user.failed_login_attempts += 1
 
             max_attempts = 5
+            lockout_duration = 15
             try:
-                config = SystemConfig.objects.get(key='MAX_LOGIN_ATTEMPTS')
-                max_attempts = int(config.value)
+                config_attempts = SystemConfig.objects.get(key='MAX_LOGIN_ATTEMPTS')
+                max_attempts = int(config_attempts.value)
+            except (SystemConfig.DoesNotExist, ValueError):
+                pass
+            
+            try:
+                config_duration = SystemConfig.objects.get(key='LOCKOUT_DURATION_MINUTES')
+                lockout_duration = int(config_duration.value)
             except (SystemConfig.DoesNotExist, ValueError):
                 pass
 
             if user.failed_login_attempts >= max_attempts:
-                user.locked_until = timezone.now() + timezone.timedelta(minutes=15)
+                user.locked_until = timezone.now() + timezone.timedelta(minutes=lockout_duration)
             user.save(update_fields=['failed_login_attempts', 'locked_until'])
         except User.DoesNotExist:
             pass
@@ -256,6 +269,11 @@ class UserService:
         password = validated_data.pop('password', None)
         for key, value in validated_data.items():
             setattr(user, key, value)
+            
+        if validated_data.get('status') == 'ACTIVE':
+            user.failed_login_attempts = 0
+            user.locked_until = None
+
         if password:
             try:
                 validate_password(password, user=user)
@@ -277,11 +295,6 @@ class UserService:
     @transaction.atomic
     def import_users_from_excel(file_obj, actor_id, ip_address=None, user_agent=None):
         try:
-            import openpyxl
-        except ImportError:
-            return 0, "openpyxl is not installed"
-
-        try:
             wb = openpyxl.load_workbook(file_obj)
             sheet = wb.active
             created_count = 0
@@ -297,17 +310,13 @@ class UserService:
                 log_audit(actor_id, 'IMPORT_EXCEL', 'Users', {'count': created_count}, ip_address, user_agent)
             return created_count, None
         except Exception as e:
+            logger.exception("Import Excel failed")
             return 0, str(e)
 
 
 class AuditLogService:
     @staticmethod
     def export_to_excel(queryset):
-        try:
-            import openpyxl
-        except ImportError:
-            return None, "openpyxl is not installed"
-
         wb = openpyxl.Workbook()
         ws = wb.active
         ws.title = "Audit Logs"
@@ -320,3 +329,4 @@ class AuditLogService:
             ws.append([str(log.id), user_str, log.action, log.module, log.ip_address, str(log.created_at)])
 
         return wb, None
+

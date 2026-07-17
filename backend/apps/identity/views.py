@@ -14,6 +14,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.conf import settings
+import logging
+
+logger = logging.getLogger(__name__)
 
 from .models import Role, SystemConfig, AuditLog, Notification
 from .serializers import (
@@ -31,7 +34,7 @@ from .services import (
     NotificationService, AuditLogService, log_audit
 )
 from .permissions import require_permission
-from .selectors import AuthSelector, NotificationSelector, AuditLogSelector
+from .selectors import AuthSelector, NotificationSelector, AuditLogSelector, SystemConfigSelector
 from .constants import get_permission_choices_list
 
 User = get_user_model()
@@ -270,9 +273,22 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class SystemConfigViewSet(viewsets.ModelViewSet):
-    queryset = SystemConfig.objects.all()
+    """
+    API ViewSet cho SystemConfig.
+    """
     serializer_class = SystemConfigSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return SystemConfigSelector.get_configs()
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            from .permissions import require_permission
+            return [require_permission('SYSTEM_VIEW')()]
+        elif self.action in ['create', 'update', 'partial_update', 'destroy']:
+            from .permissions import require_permission
+            return [require_permission('SYSTEM_UPDATE')()]
+        return [permissions.IsAuthenticated()]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -342,20 +358,26 @@ class NotificationViewSet(viewsets.ModelViewSet):
 
 
 class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API ViewSet cho AuditLog. Chỉ đọc.
+    """
     serializer_class = AuditLogSerializer
-    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['user', 'module']
-    search_fields = ['action', 'payload']
+    filterset_fields = ['user__email', 'action', 'module']
+    search_fields = ['user__email', 'action', 'module', 'payload']
 
     def get_queryset(self):
+        # Sử dụng Selector theo đúng kiến trúc Service Layer để tránh N+1
         return AuditLogSelector.get_logs()
+
+    def get_permissions(self):
+        from .permissions import require_permission
+        return [require_permission('AUDIT_VIEW')()]
 
     @action(detail=False, methods=['get'])
     def export_excel(self, request):
         queryset = self.filter_queryset(self.get_queryset())
 
-        # Fix #9: log_audit trước khi wb.save() để tránh exception sau khi stream
         log_audit(
             request.user.id, 'EXPORT_EXCEL', 'AuditLog', None,
             get_client_ip(request), get_user_agent(request)
@@ -399,12 +421,12 @@ def request_password_reset_otp(request):
 
     user, code = AuthService.generate_otp(email, otp_type='PASSWORD_RESET')
     if user:
-        # Mock sending email by printing to console
-        print(f"\n========================================================")
-        print(f"🔒 MOCK EMAIL: YÊU CẦU KHÔI PHỤC MẬT KHẨU")
-        print(f"To: {email}")
-        print(f"Mã OTP của bạn là: {code}")
-        print(f"========================================================\n")
+        if settings.DEBUG:
+            logger.debug(f"\n========================================================")
+            logger.debug(f"🔒 MOCK EMAIL: YÊU CẦU KHÔI PHỤC MẬT KHẨU")
+            logger.debug(f"To: {email}")
+            logger.debug(f"Mã OTP của bạn là: {code}")
+            logger.debug(f"========================================================\n")
         
         log_audit(user.id, 'REQUEST_PASSWORD_RESET', 'Auth', {'email': email}, get_client_ip(request), get_user_agent(request))
 

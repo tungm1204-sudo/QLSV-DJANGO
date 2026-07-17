@@ -51,7 +51,7 @@ export default function Header() {
   const hasMore = visibleCount < allNotifications.length;
 
   return (
-    <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200 shrink-0 sticky top-0 z-20">
+    <header className="flex items-center justify-between px-6 py-4 bg-white border-b border-slate-200 shrink-0 sticky top-0 z-50">
       {/* Search Bar */}
       <div className="flex-1 max-w-md">
         <div className="relative group">

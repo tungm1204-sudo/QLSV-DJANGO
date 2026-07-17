@@ -15,7 +15,7 @@ User = get_user_model()
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
-        fields = '__all__'
+        fields = ['id', 'name', 'description', 'permissions']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -31,8 +31,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'full_name', 'avatar', 'status', 'is_active', 'created_at', 'role', 'role_id']
-        read_only_fields = ['id', 'created_at']
+        fields = ['id', 'email', 'full_name', 'avatar', 'status', 'is_active', 'created_at', 'role', 'role_id', 'locked_until']
+        read_only_fields = ['id', 'created_at', 'locked_until']
 
 
 class UserCreateUpdateSerializer(serializers.ModelSerializer):
@@ -100,6 +100,9 @@ class NotificationSerializer(serializers.ModelSerializer):
 
 
 class AuditLogSerializer(serializers.ModelSerializer):
+    user_email = serializers.CharField(source='user.email', read_only=True)
+    user_full_name = serializers.CharField(source='user.full_name', read_only=True)
+
     class Meta:
         model = AuditLog
         fields = '__all__'

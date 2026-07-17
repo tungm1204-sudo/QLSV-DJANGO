@@ -56,6 +56,11 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Fix: Bỏ qua interceptor (không redirect) nếu đang ở bước Đăng nhập
+      if (originalRequest.url?.includes('/auth/login/')) {
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
         // Nếu đang refresh, xếp hàng request này chờ
         return new Promise((resolve, reject) => {
