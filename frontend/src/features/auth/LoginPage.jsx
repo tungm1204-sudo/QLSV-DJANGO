@@ -55,7 +55,14 @@ export default function LoginPage() {
         setStep('otp');
       }
     },
-    onError: (err) => setServerError(err.response?.data?.detail || 'Đăng nhập thất bại. Vui lòng kiểm tra lại.'),
+    onError: (err) => {
+      const errorData = err.response?.data;
+      if (errorData?.code === 'account_locked') {
+        setServerError('Tài khoản đã bị khóa do nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút.');
+      } else {
+        setServerError(errorData?.detail || 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.');
+      }
+    },
   });
 
   const otpMutation = useMutation({
