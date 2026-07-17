@@ -56,10 +56,11 @@ INSTALLED_APPS = [
 
     # Local apps — thêm module mới vào đây khi build
     'apps.identity',
-    # 'apps.master_data',  ← Bỏ comment khi module đã có code
+    'apps.master_data',
+    'apps.curriculum',
+    'apps.affairs',
     # 'apps.hr',
     # 'apps.students',
-    # 'apps.academics',
     # 'apps.enrollment',
     # 'apps.grading',
     # 'apps.scheduling',
