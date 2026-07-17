@@ -201,6 +201,15 @@ class AuthService:
         user.last_login = timezone.now()
         user.save(update_fields=['last_login'])
 
+        # Invalidate old sessions
+        LoginSession.objects.filter(user=user, is_active=True).update(is_active=False)
+
+        # Blacklist old outstanding tokens to prevent concurrent logins
+        from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+        outstanding_tokens = OutstandingToken.objects.filter(user=user)
+        for token in outstanding_tokens:
+            BlacklistedToken.objects.get_or_create(token=token)
+
         LoginSession.objects.create(
             user=user,
             ip_address=ip_address,
@@ -267,6 +276,13 @@ class UserService:
     @transaction.atomic
     def update_user(user, validated_data, actor_id, ip_address=None, user_agent=None):
         password = validated_data.pop('password', None)
+        
+        if validated_data.get('status') == 'LOCKED':
+            if user.is_superuser:
+                raise DRFValidationError({'status': 'Không thể khóa tài khoản Super Admin.'})
+            if user.id == actor_id:
+                raise DRFValidationError({'status': 'Không thể tự khóa tài khoản của chính mình.'})
+
         for key, value in validated_data.items():
             setattr(user, key, value)
             

@@ -139,7 +139,8 @@ export default function Header() {
             <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-slate-100 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
               <div className="p-3 border-b border-slate-50">
                 <p className="text-sm font-semibold text-slate-900">{user?.full_name}</p>
-                <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+                <p className="text-xs text-slate-500 truncate max-w-[180px]">{user?.email}</p>
+                <p className="text-xs font-medium text-blue-600 truncate max-w-[180px] mt-0.5">{user?.role?.name || 'Chưa phân quyền'}</p>
               </div>
               
               <div className="p-1.5">
