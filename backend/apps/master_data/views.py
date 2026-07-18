@@ -11,18 +11,23 @@ from rest_framework.request import Request
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.core.exceptions import ValidationError
 
-from .models import Department, Major, Room, PriorityCategory, ExamType, Cohort, Semester
+from .models import (
+    Department, Major, Room, PriorityCategory, ExamType, Cohort, Semester,
+    Specialization, EducationSystem, AcademicYear
+)
 from .selectors import (
-    DepartmentSelector, MajorSelector, RoomSelector, PriorityCategorySelector, 
-    ExamTypeSelector, CohortSelector, SemesterSelector
+    DepartmentSelector, MajorSelector, RoomSelector, PriorityCategorySelector,
+    ExamTypeSelector, CohortSelector, SemesterSelector,
+    SpecializationSelector, EducationSystemSelector, AcademicYearSelector
 )
 from .services import (
-    DepartmentService, MajorService, RoomService, PriorityCategoryService, 
+    DepartmentService, MajorService, RoomService, PriorityCategoryService,
     ExamTypeService, CohortService, SemesterService
 )
 from .serializers import (
-    DepartmentSerializer, MajorSerializer, RoomSerializer, PriorityCategorySerializer, 
-    ExamTypeSerializer, CohortSerializer, SemesterSerializer
+    DepartmentSerializer, MajorSerializer, RoomSerializer, PriorityCategorySerializer,
+    ExamTypeSerializer, CohortSerializer, SemesterSerializer,
+    SpecializationSerializer, EducationSystemSerializer, AcademicYearSerializer
 )
 
 class DepartmentViewSet(viewsets.ModelViewSet):
@@ -87,3 +92,18 @@ class SemesterViewSet(viewsets.ModelViewSet):
     """API endpoint cho Học kỳ"""
     queryset = SemesterSelector.get_semesters()
     serializer_class = SemesterSerializer
+
+class SpecializationViewSet(viewsets.ModelViewSet):
+    """API endpoint cho Chuyên ngành"""
+    queryset = SpecializationSelector.get_specializations()
+    serializer_class = SpecializationSerializer
+
+class EducationSystemViewSet(viewsets.ModelViewSet):
+    """API endpoint cho Hệ đào tạo"""
+    queryset = EducationSystemSelector.get_education_systems()
+    serializer_class = EducationSystemSerializer
+
+class AcademicYearViewSet(viewsets.ModelViewSet):
+    """API endpoint cho Năm học"""
+    queryset = AcademicYearSelector.get_academic_years()
+    serializer_class = AcademicYearSerializer
