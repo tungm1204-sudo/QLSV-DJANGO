@@ -193,3 +193,23 @@ class Semester(TimeStampedModel):
 
     def __str__(self) -> str:
         return self.code
+
+
+class AdministrativeClass(TimeStampedModel):
+    """
+    Lớp hành chính cho sinh viên (Ví dụ: K62-CNTT1).
+    Phân biệt với lớp học phần (CourseOffering).
+    """
+    code = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=100)
+    major = models.ForeignKey(Major, on_delete=models.PROTECT, related_name='administrative_classes')
+    cohort = models.ForeignKey(Cohort, on_delete=models.PROTECT, related_name='administrative_classes')
+    advisor_id = models.UUIDField(null=True, blank=True, help_text="ID của Giảng viên cố vấn (sẽ map với hr.Lecturer)")
+    is_active = models.BooleanField(default=True)
+    
+    class Meta:
+        db_table = 'master_data_administrative_classes'
+        verbose_name_plural = 'Administrative Classes'
+
+    def __str__(self):
+        return self.code

@@ -59,7 +59,7 @@ INSTALLED_APPS = [
     'apps.master_data',
     'apps.curriculum',
     'apps.affairs',
-    # 'apps.hr',
+    'apps.hr',
     # 'apps.students',
     # 'apps.enrollment',
     # 'apps.grading',
