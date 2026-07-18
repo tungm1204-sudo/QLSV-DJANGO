@@ -17,11 +17,11 @@ Như vậy, khối lượng được chia đều, 2 Dev không bao giờ sửa c
 
 #### 📅 KHỐI 2 (Ngày 4-6): DANH MỤC GỐC & NHÂN SỰ (Module 2, 3)
 *   **Ngày 4 (Dev A - Backend P1 - Master Data):** API Đơn vị đào tạo (Khoa/Bộ môn), Ngành/Chuyên ngành, Khóa học/Học kỳ, Chương trình đào tạo (Khung, môn tiên quyết, số tín chỉ), Môn học/Học phần, Phòng học, Hình thức thi, Đối tượng ưu tiên, Khen thưởng/Kỷ luật.
-*   **Ngày 5 (Dev A - Backend P2 - HR):** API Quản lý Sinh viên (Hồ sơ, Import Excel, Trạng thái), Giảng viên, Cán bộ/Nhân viên, Phân công giảng dạy (Gán GV cho lớp, Kiểm tra trùng lịch dạy).
+*   **Ngày 5 (Dev A - Backend P2 - HR):** API Quản lý Sinh viên (Hồ sơ, Import Excel, Trạng thái), Giảng viên, Cán bộ/Nhân viên. *(Lưu ý cho Dev B: Tính năng "Phân công giảng dạy" đã được dời sang Ngày 7 vì phụ thuộc vào Lớp học phần)*.
 *   **Ngày 6 (Dev B - Frontend):** Kéo code. Ráp giao diện (UI) cho toàn bộ màn hình Quản lý Danh mục gốc và Hồ sơ Sinh viên, Giảng viên, Cán bộ. Merge vào `develop`.
 
 #### 📅 KHỐI 3 (Ngày 7-9): ĐÀO TẠO & ĐĂNG KÝ HỌC PHẦN (Module 4)
-*   **Ngày 7 (Dev A - Backend P1 - Curriculum):** API Kế hoạch đào tạo năm học (Sao chép, Phê duyệt), Xây dựng Thời khóa biểu (Xếp lịch, Kiểm tra trùng lịch phòng/GV), Mở lớp học phần (Điều kiện đăng ký, Giới hạn sĩ số).
+*   **Ngày 7 (Dev A - Backend P1 - Curriculum):** API Kế hoạch đào tạo năm học (Sao chép, Phê duyệt), Xây dựng Thời khóa biểu (Xếp lịch, Kiểm tra trùng lịch phòng/GV), Mở lớp học phần (Điều kiện đăng ký, Giới hạn sĩ số). Phân công giảng dạy (Gán GV cho lớp, Kiểm tra trùng lịch dạy - *được dời từ Ngày 5 sang*).
 *   **Ngày 8 (Dev A - Backend P2 - Enrollment):** API Đăng ký học phần (Kiểm tra điều kiện tiên quyết, Kiểm tra xung đột lịch), Đăng ký ngoài kế hoạch (Học cải thiện, Học vượt), Chốt danh sách lớp, Điều chỉnh đăng ký (Đổi lớp, Hủy lớp) sử dụng Database Transaction để chống Race Condition.
 *   **Ngày 9 (Dev B - Frontend):** Kéo code. Ráp màn hình Lên kế hoạch đào tạo cho Giáo vụ và màn hình Đăng ký tín chỉ online cực kỳ quan trọng cho Sinh viên.
 
