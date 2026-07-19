@@ -21,10 +21,14 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0']
 
 # --- CORS ---
-# Cho phép tất cả origin khi development để dev frontend dễ gọi API.
-# Lý do: Dev frontend thường chạy ở port khác (vd: localhost:5173) nên cần CORS mở.
-# TUYỆT ĐỐI không đặt True ở production.
-CORS_ALLOW_ALL_ORIGINS = True
+# Cho phép frontend (React/Vite chạy ở port 5173) gọi API và gửi kèm Cookie (withCredentials).
+# Lý do: HTTPOnly Cookie cần CORS cụ thể thay vì ALLOW_ALL để hoạt động bảo mật.
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+CORS_ALLOW_CREDENTIALS = True
 
 # --- LOGGING (tùy chọn) ---
 # Hiển thị câu lệnh SQL ra console khi dev để debug query N+1.

@@ -47,3 +47,28 @@ class SystemConfigSelector:
     def get_configs():
         # Lấy toàn bộ cấu hình hệ thống
         return SystemConfig.objects.all().order_by('key')
+
+    @staticmethod
+    def get_lockout_config():
+        """
+        Lấy thông số cấu hình khóa tài khoản khi nhập sai mật khẩu.
+        """
+        max_attempts = 5
+        lockout_time = 15
+        
+        try:
+            attempts_val = SystemConfig.objects.filter(key='MAX_LOGIN_ATTEMPTS').values_list('value', flat=True).first()
+            if attempts_val is not None:
+                max_attempts = int(attempts_val)
+        except ValueError:
+            pass
+            
+        try:
+            # Dùng LOCKOUT_DURATION_MINUTES giống tên config cũ để tương thích DB
+            time_val = SystemConfig.objects.filter(key='LOCKOUT_DURATION_MINUTES').values_list('value', flat=True).first()
+            if time_val is not None:
+                lockout_time = int(time_val)
+        except ValueError:
+            pass
+            
+        return max_attempts, lockout_time

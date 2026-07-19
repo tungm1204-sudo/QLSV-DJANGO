@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [host.strip() for host in _allowed.split(',') if host.strip()]
 # Đặt trong .env: CORS_ALLOWED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
 _cors = os.environ.get('CORS_ALLOWED_ORIGINS', '')
 CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _cors.split(',') if origin.strip()]
+CORS_ALLOW_CREDENTIALS = True
 
 # --- SECURITY HEADERS ---
 # Bật các HTTP Header bảo mật để chống các loại tấn công phổ biến trên trình duyệt.

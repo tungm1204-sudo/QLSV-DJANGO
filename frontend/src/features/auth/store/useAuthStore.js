@@ -11,28 +11,36 @@ const useAuthStore = create(
   persist(
     (set) => ({
       accessToken: null,
-      refreshToken: null,
       user: null,
+      isAuthenticated: false,
 
       // Gọi sau khi đăng nhập thành công
-      setTokens: (accessToken, refreshToken) =>
-        set({ accessToken, refreshToken }),
+      setTokens: (accessToken) =>
+        set({ accessToken, isAuthenticated: true }),
 
       // Gọi sau khi lấy được thông tin user
       setUser: (user) => set({ user }),
 
       // Gọi khi đăng xuất hoặc token hết hạn không thể refresh
       clearAuth: () =>
-        set({ accessToken: null, refreshToken: null, user: null }),
+        set({ accessToken: null, user: null, isAuthenticated: false }),
     }),
     {
       name: 'qlsv-auth-storage',
       storage: createJSONStorage(() => localStorage),
-      // Chỉ persist token, không persist user để re-fetch mỗi lần
+      // Fix: Chỉ persist cờ isAuthenticated để biết user đã đăng nhập, không persist accessToken để tránh XSS.
+      // Dùng hàm trung gian tạo cờ thay vì lưu trực tiếp.
       partialize: (state) => ({
-        accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
+        isAuthenticated: state.isAuthenticated,
       }),
+      merge: (persistedState, currentState) => {
+        // Merge state: Nếu có cờ isAuthenticated = true thì đánh dấu là có thể đang login.
+        // Nhưng access_token vẫn = null cho đến khi gọi refresh_token.
+        return {
+          ...currentState,
+          ...persistedState,
+        }
+      }
     }
   )
 );

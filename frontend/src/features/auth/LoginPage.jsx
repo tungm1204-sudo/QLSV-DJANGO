@@ -46,7 +46,7 @@ export default function LoginPage() {
     onSuccess: (res) => {
       setServerError('');
       if (res.data.access) {
-        setTokens(res.data.access, res.data.refresh);
+        setTokens(res.data.access);
         fetchAndRedirect(res.data.access);
         return;
       }
@@ -58,7 +58,7 @@ export default function LoginPage() {
     onError: (err) => {
       const errorData = err.response?.data;
       if (errorData?.code === 'account_locked') {
-        setServerError('Tài khoản đã bị khóa do nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút.');
+        setServerError(errorData?.detail || 'Tài khoản đã bị khóa do nhập sai quá nhiều lần.');
       } else {
         setServerError(errorData?.detail || 'Đăng nhập thất bại. Vui lòng kiểm tra lại email và mật khẩu.');
       }
@@ -69,7 +69,7 @@ export default function LoginPage() {
     mutationFn: (data) => verifyOtpApi({ otp: data.otp, otp_token: otpToken }),
     onSuccess: (res) => {
       setServerError('');
-      setTokens(res.data.access, res.data.refresh);
+      setTokens(res.data.access);
       fetchAndRedirect(res.data.access);
     },
     onError: (err) => setServerError(err.response?.data?.detail || 'Mã OTP không đúng hoặc đã hết hạn.'),

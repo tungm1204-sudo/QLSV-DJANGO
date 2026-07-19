@@ -1,7 +1,7 @@
 import axios from 'axios';
 import useAuthStore from '../features/auth/store/useAuthStore';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000/api/v1';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || `http://${window.location.hostname}:8000/api/v1`;
 
 /**
  * apiClient - Axios instance trung tâm của toàn bộ ứng dụng.
@@ -17,6 +17,7 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // ─────────────────────────────────────────────
@@ -76,21 +77,16 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const { refreshToken, setTokens, clearAuth } = useAuthStore.getState();
-
-      if (!refreshToken) {
-        clearAuth();
-        window.location.href = '/login';
-        return Promise.reject(error);
-      }
+      const { setTokens, clearAuth } = useAuthStore.getState();
 
       try {
-        const response = await axios.post(`${API_BASE_URL}/identity/auth/refresh/`, {
-          refresh: refreshToken,
+        // Fix: Gọi API refresh không cần gửi body vì refresh_token đã nằm trong Cookie
+        const response = await axios.post(`${API_BASE_URL}/identity/auth/refresh/`, {}, {
+          withCredentials: true
         });
 
         const newAccessToken = response.data.access;
-        setTokens(newAccessToken, refreshToken);
+        setTokens(newAccessToken);
         processQueue(null, newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return apiClient(originalRequest);

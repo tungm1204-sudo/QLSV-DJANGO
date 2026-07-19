@@ -9,7 +9,7 @@ import { cn } from '../../utils/index';
 
 export default function Header() {
   const navigate = useNavigate();
-  const { user, refreshToken, clearAuth } = useAuthStore();
+  const { user, clearAuth } = useAuthStore();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSessions, setShowSessions] = useState(false);
@@ -18,7 +18,7 @@ export default function Header() {
   const userMenuRef = useRef(null);
 
   const logoutMutation = useMutation({
-    mutationFn: () => logoutApi(refreshToken),
+    mutationFn: () => logoutApi(),
     onSettled: () => {
       clearAuth();
       navigate('/login', { replace: true });

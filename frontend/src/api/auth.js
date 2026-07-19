@@ -30,8 +30,8 @@ export const revokeSessionApi = (sessionId) =>
   apiClient.delete(`/identity/auth/sessions/${sessionId}/`);
 
 // Đăng xuất phiên hiện tại
-export const logoutApi = (refreshToken) =>
-  apiClient.post('/identity/auth/logout/', { refresh: refreshToken });
+export const logoutApi = () =>
+  apiClient.post('/identity/auth/logout/', {});
 
 // Yêu cầu OTP khôi phục mật khẩu
 export const requestPasswordResetOtpApi = (payload) =>

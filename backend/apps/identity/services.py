@@ -11,6 +11,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.utils import timezone
 from django.db import transaction
 from .models import AuditLog, OTPToken, LoginSession, SystemConfig, Role, Notification
+from .selectors import SystemConfigSelector
 import logging
 import openpyxl
 import random
@@ -118,8 +119,18 @@ class AuthService:
             # Kiểm tra xem tài khoản có đang bị khóa (cột locked_until có giá trị) 
             # VÀ thời gian khóa vẫn lớn hơn thời gian thực tại server (timezone.now()) hay không.
             # Lý do: Nếu đã qua mốc thời gian khóa, hệ thống sẽ bỏ qua logic này và tự động cho phép login tiếp.
-            if user.locked_until and user.locked_until > timezone.now():
-                return True, f"Account is locked until {user.locked_until.strftime('%Y-%m-%d %H:%M:%S')} UTC."
+            if user.locked_until:
+                if user.locked_until > timezone.now():
+                    delta = user.locked_until - timezone.now()
+                    minutes_left = int(delta.total_seconds() // 60) + 1
+                    return True, f"Tài khoản đã bị khóa do nhập sai quá nhiều lần. Vui lòng thử lại sau {minutes_left} phút."
+                else:
+                    # Fix: Khi thời gian khóa đã hết, phải reset lại số lần sai về 0
+                    # để người dùng được phép nhập lại từ đầu (được sai thêm 5 lần nữa)
+                    # Nếu không reset, họ chỉ cần nhập sai 1 lần là bị khóa lại ngay lập tức.
+                    user.failed_login_attempts = 0
+                    user.locked_until = None
+                    user.save(update_fields=['failed_login_attempts', 'locked_until'])
             
             # Không bị khóa hoặc đã hết hạn khóa -> Trả về False (cho phép đi tiếp)
             return False, None
@@ -194,7 +205,7 @@ class AuthService:
 
     @staticmethod
     @transaction.atomic
-    def record_login(user, ip_address=None, user_agent=None):
+    def record_login(user, ip_address=None, user_agent=None, current_refresh_token=None):
         """
         Fix #5: Bọc trong @transaction.atomic — ghi user.last_login và tạo LoginSession là 1 đơn vị.
         """
@@ -207,6 +218,10 @@ class AuthService:
         # Blacklist old outstanding tokens to prevent concurrent logins
         from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
         outstanding_tokens = OutstandingToken.objects.filter(user=user)
+        
+        if current_refresh_token:
+            outstanding_tokens = outstanding_tokens.exclude(token=current_refresh_token)
+            
         for token in outstanding_tokens:
             BlacklistedToken.objects.get_or_create(token=token)
 
@@ -219,30 +234,31 @@ class AuthService:
         )
 
     @staticmethod
-    def handle_failed_login(email):
+    def handle_failed_login(email: str) -> None:
         try:
             user = User.objects.get(email=email)
             user.failed_login_attempts += 1
 
-            max_attempts = 5
-            lockout_duration = 15
-            try:
-                config_attempts = SystemConfig.objects.get(key='MAX_LOGIN_ATTEMPTS')
-                max_attempts = int(config_attempts.value)
-            except (SystemConfig.DoesNotExist, ValueError):
-                pass
-            
-            try:
-                config_duration = SystemConfig.objects.get(key='LOCKOUT_DURATION_MINUTES')
-                lockout_duration = int(config_duration.value)
-            except (SystemConfig.DoesNotExist, ValueError):
-                pass
+            max_attempts, lockout_duration = SystemConfigSelector.get_lockout_config()
 
             if user.failed_login_attempts >= max_attempts:
                 user.locked_until = timezone.now() + timezone.timedelta(minutes=lockout_duration)
             user.save(update_fields=['failed_login_attempts', 'locked_until'])
         except User.DoesNotExist:
             pass
+
+    @staticmethod
+    @transaction.atomic
+    def revoke_session(session_id: str, user_id: str, ip_address: str, user_agent: str) -> None:
+        """
+        Thu hồi một phiên đăng nhập cụ thể của người dùng.
+        """
+        session = LoginSession.objects.filter(user_id=user_id).get(pk=session_id)
+        
+        session.is_active = False
+        session.save(update_fields=['is_active'])
+        
+        log_audit(user_id, 'REVOKE_SESSION', 'Auth', {'session_id': str(session_id)}, ip_address, user_agent)
 
 
 class UserService:

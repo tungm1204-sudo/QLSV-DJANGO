@@ -7,13 +7,14 @@ Lý do: View phải được thiết kế "siêu mỏng" (Thin Views). Nó chỉ
 from rest_framework import viewsets, permissions, status, serializers as drf_serializers
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.filters import SearchFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.conf import settings
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 import logging
 
 logger = logging.getLogger(__name__)
@@ -98,12 +99,68 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         AuthService.clear_lockout(user)
         
         # Ghi nhận session đăng nhập để user có thể kiểm tra (và quản lý) các thiết bị đang đăng nhập.
-        AuthService.record_login(user, ip, ua)
+        AuthService.record_login(user, ip, ua, current_refresh_token=serializer.validated_data.get('refresh'))
         
         # Lưu vết (Audit Log) để đảm bảo bảo mật.
         log_audit(user.id, 'LOGIN', 'Auth', {'email': email}, ip, ua)
 
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+        # Xử lý JWT bằng HTTPOnly Cookie thay vì trả về body
+        response = Response({
+            'access': serializer.validated_data['access'],
+            'user': serializer.validated_data.get('user', {})
+        }, status=status.HTTP_200_OK)
+
+        # Đặt refresh token vào HttpOnly cookie
+        response.set_cookie(
+            key=settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'],
+            value=serializer.validated_data['refresh'],
+            max_age=int(settings.SIMPLE_JWT['REFRESH_TOKEN_LIFETIME'].total_seconds()),
+            secure=settings.SESSION_COOKIE_SECURE,
+            httponly=True,
+            samesite='Lax'
+        )
+
+        return response
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    """
+    Tự động đọc refresh_token từ Cookie thay vì body request.
+    """
+    def post(self, request, *args, **kwargs):
+        # Lấy refresh_token từ cookie
+        refresh_token = request.COOKIES.get(settings.SIMPLE_JWT.get('AUTH_COOKIE_REFRESH', 'refresh_token'))
+        
+        if not refresh_token:
+            raise InvalidToken('No refresh token found in cookies')
+            
+        # An toàn: Tạo dict mới thay vì sửa request.data (có thể là QueryDict immutable)
+        data = {'refresh': refresh_token}
+        serializer = self.get_serializer(data=data)
+        
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            raise InvalidToken(e.args[0])
+
+        response = Response(serializer.validated_data, status=status.HTTP_200_OK)
+        
+        # Response gốc của SimpleJWT trả về cả access và refresh mới (nếu ROTATE_REFRESH_TOKENS=True).
+        # Do ROTATE_REFRESH_TOKENS=False, nó thường chỉ trả về access.
+        if 'refresh' in response.data:
+            # Nếu có tạo refresh mới, hãy cập nhật cookie và xóa khỏi body
+            response.set_cookie(
+                key=settings.SIMPLE_JWT.get('AUTH_COOKIE_REFRESH', 'refresh_token'),
+                value=response.data['refresh'],
+                max_age=int(settings.SIMPLE_JWT.get('REFRESH_TOKEN_LIFETIME').total_seconds()),
+                secure=settings.SESSION_COOKIE_SECURE,
+                httponly=True,
+                samesite='Lax'
+            )
+            del response.data['refresh']
+            
+        return response
+
 
 
 class RoleViewSet(viewsets.ModelViewSet):
@@ -329,16 +386,15 @@ class LoginSessionViewSet(viewsets.ViewSet):
 
     def destroy(self, request, pk=None):
         try:
-            # Chỉ cho phép xóa session của chính mình
-            session = AuthSelector.get_login_sessions(request.user).get(pk=pk)
-            # Trong thực tế Enterprise: Ta sẽ đưa Refresh Token vào Blacklist tại đây nếu có lưu jti
-            session.is_active = False
-            session.save(update_fields=['is_active'])
-            
-            log_audit(request.user.id, 'REVOKE_SESSION', 'Auth', {'session_id': str(pk)}, get_client_ip(request), get_user_agent(request))
+            AuthService.revoke_session(
+                session_id=pk,
+                user_id=request.user.id,
+                ip_address=get_client_ip(request),
+                user_agent=get_user_agent(request)
+            )
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except Exception:
-            return Response({'error': 'Session not found or already deleted'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
@@ -460,15 +516,19 @@ def verify_otp(request):
 @permission_classes([permissions.IsAuthenticated])
 def logout_view(request):
     try:
-        refresh_token = request.data.get('refresh_token')
-        if not refresh_token:
-            return Response({'error': 'Refresh token is required'}, status=status.HTTP_400_BAD_REQUEST)
-
-        token = RefreshToken(refresh_token)
-        token.blacklist()
+        # Lấy refresh token từ cookie thay vì body
+        refresh_token = request.COOKIES.get(settings.SIMPLE_JWT.get('AUTH_COOKIE_REFRESH', 'refresh_token'))
+        
+        if refresh_token:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
 
         log_audit(request.user.id, 'LOGOUT', 'Auth', None, get_client_ip(request), get_user_agent(request))
-        return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+        
+        response = Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+        # Xóa cookie
+        response.delete_cookie(settings.SIMPLE_JWT.get('AUTH_COOKIE_REFRESH', 'refresh_token'))
+        return response
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 

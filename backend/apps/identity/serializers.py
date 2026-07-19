@@ -84,19 +84,19 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 class LoginSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = LoginSession
-        fields = '__all__'
+        fields = ['id', 'user', 'ip_address', 'user_agent', 'created_at', 'is_active']
 
 
 class SystemConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = SystemConfig
-        fields = '__all__'
+        fields = ['id', 'key', 'value', 'description', 'updated_at']
 
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = '__all__'
+        fields = ['id', 'user', 'type', 'title', 'content', 'link', 'is_read', 'created_at']
 
 
 class AuditLogSerializer(serializers.ModelSerializer):
@@ -105,4 +105,4 @@ class AuditLogSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = AuditLog
-        fields = '__all__'
+        fields = ['id', 'user', 'user_email', 'user_full_name', 'action', 'module', 'payload', 'ip_address', 'user_agent', 'created_at']

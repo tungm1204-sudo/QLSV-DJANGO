@@ -10,11 +10,11 @@ import { toast } from 'sonner';
  * Tự động fetch lại thông tin user nếu accessToken có nhưng user đang rỗng (do F5).
  */
 export default function AuthGuard() {
-  const { accessToken, user, setUser, clearAuth } = useAuthStore();
-  const [isFetching, setIsFetching] = useState(!user && !!accessToken);
+  const { isAuthenticated, user, setUser, clearAuth } = useAuthStore();
+  const [isFetching, setIsFetching] = useState(isAuthenticated && !user);
 
   useEffect(() => {
-    if (accessToken && !user) {
+    if (isAuthenticated && !user) {
       getMeApi()
         .then((res) => {
           setUser(res.data);
@@ -29,9 +29,9 @@ export default function AuthGuard() {
     } else {
       setIsFetching(false);
     }
-  }, [accessToken, user, setUser, clearAuth]);
+  }, [isAuthenticated, user, setUser, clearAuth]);
 
-  if (!accessToken) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 

@@ -7,7 +7,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
-    UserViewSet, CustomTokenObtainPairView, RoleViewSet, 
+    UserViewSet, CustomTokenObtainPairView, CustomTokenRefreshView, RoleViewSet, 
     SystemConfigViewSet, NotificationViewSet, AuditLogViewSet,
     LoginSessionViewSet,
     request_otp, verify_otp, logout_view, reset_password, request_password_reset_otp
@@ -24,7 +24,7 @@ router.register(r'auth/sessions', LoginSessionViewSet, basename='loginsession')
 urlpatterns = [
     # Auth endpoints
     path('auth/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/refresh/', CustomTokenRefreshView.as_view(), name='token_refresh'),
     path('auth/logout/', logout_view, name='logout'),
     path('auth/request-otp/', request_otp, name='request_otp'),
     path('auth/verify-otp/', verify_otp, name='verify_otp'),
