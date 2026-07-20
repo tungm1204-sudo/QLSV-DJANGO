@@ -13,6 +13,7 @@ import RolesPage from './features/roles/RolesPage';
 import UsersPage from './features/users/UsersPage';
 import AuditLogsPage from './features/audit_logs/AuditLogsPage';
 import SystemConfigsPage from './features/configs/SystemConfigsPage';
+import MasterDataPage from './features/master_data/MasterDataPage';
 
 // QueryClient: cấu hình mặc định cho toàn bộ ứng dụng
 const queryClient = new QueryClient({
@@ -36,6 +37,7 @@ export default function App() {
           <Route element={<AuthGuard />}>
             <Route element={<DashboardLayout />}>
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/master-data" element={<MasterDataPage />} />
               <Route path="/users" element={<UsersPage />} />
               <Route path="/roles" element={<RolesPage />} />
               <Route path="/audit-logs" element={<AuditLogsPage />} />

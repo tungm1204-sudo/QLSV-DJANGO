@@ -10,6 +10,8 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.core.exceptions import ValidationError
+from rest_framework.filters import SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import (
     Department, Major, Room, PriorityCategory, ExamType, Cohort, Semester,
@@ -34,6 +36,9 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     """API endpoint xử lý CRUD cho Khoa/Bộ môn"""
     queryset = DepartmentSelector.get_departments()
     serializer_class = DepartmentSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name']
+    filterset_fields = ['type', 'is_active', 'parent_id']
 
     def destroy(self, request: Request, *args: Tuple[Any], **kwargs: dict[str, Any]) -> Response:
         """
@@ -51,6 +56,9 @@ class MajorViewSet(viewsets.ModelViewSet):
     """API endpoint xử lý CRUD cho Ngành học"""
     queryset = MajorSelector.get_majors()
     serializer_class = MajorSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name']
+    filterset_fields = ['department_id']
 
     def destroy(self, request: Request, *args: Tuple[Any], **kwargs: dict[str, Any]) -> Response:
         major = self.get_object()
@@ -64,6 +72,9 @@ class RoomViewSet(viewsets.ModelViewSet):
     """API endpoint xử lý CRUD cho Phòng học"""
     queryset = RoomSelector.get_rooms()
     serializer_class = RoomSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name', 'type']
+    filterset_fields = ['status', 'type']
 
     def destroy(self, request: Request, *args: Tuple[Any], **kwargs: dict[str, Any]) -> Response:
         room = self.get_object()
@@ -77,33 +88,54 @@ class PriorityCategoryViewSet(viewsets.ModelViewSet):
     """API endpoint cho Đối tượng ưu tiên"""
     queryset = PriorityCategorySelector.get_categories()
     serializer_class = PriorityCategorySerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name']
+    filterset_fields = ['is_active']
 
 class ExamTypeViewSet(viewsets.ModelViewSet):
     """API endpoint cho Hình thức thi"""
     queryset = ExamTypeSelector.get_exam_types()
     serializer_class = ExamTypeSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name']
+    filterset_fields = ['is_active']
 
 class CohortViewSet(viewsets.ModelViewSet):
     """API endpoint cho Khóa học"""
     queryset = CohortSelector.get_cohorts()
     serializer_class = CohortSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name']
+    filterset_fields = ['is_active', 'admission_year']
 
 class SemesterViewSet(viewsets.ModelViewSet):
     """API endpoint cho Học kỳ"""
     queryset = SemesterSelector.get_semesters()
     serializer_class = SemesterSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name']
+    filterset_fields = ['academic_year_id', 'is_current', 'season']
 
 class SpecializationViewSet(viewsets.ModelViewSet):
     """API endpoint cho Chuyên ngành"""
     queryset = SpecializationSelector.get_specializations()
     serializer_class = SpecializationSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name']
+    filterset_fields = ['major_id', 'is_active']
 
 class EducationSystemViewSet(viewsets.ModelViewSet):
     """API endpoint cho Hệ đào tạo"""
     queryset = EducationSystemSelector.get_education_systems()
     serializer_class = EducationSystemSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name']
+    filterset_fields = ['is_active']
 
 class AcademicYearViewSet(viewsets.ModelViewSet):
     """API endpoint cho Năm học"""
     queryset = AcademicYearSelector.get_academic_years()
     serializer_class = AcademicYearSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name']
+    filterset_fields = ['is_active', 'is_current']

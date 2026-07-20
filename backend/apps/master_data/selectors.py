@@ -17,7 +17,7 @@ class DepartmentSelector:
         Lấy danh sách Khoa/Bộ môn.
         Why: Dùng select_related('parent') để chống lỗi N+1 khi FE muốn hiển thị tên đơn vị cha.
         """
-        return Department.objects.select_related('parent').all()
+        return Department.objects.select_related('parent').order_by('-created_at')
 
 class MajorSelector:
     @staticmethod
@@ -26,31 +26,31 @@ class MajorSelector:
         Lấy danh sách Ngành học.
         Why: Dùng select_related('department') để lấy thông tin Khoa trực tiếp cùng 1 query.
         """
-        return Major.objects.select_related('department').all()
+        return Major.objects.select_related('department').order_by('-created_at')
 
 class RoomSelector:
     @staticmethod
     def get_rooms() -> QuerySet[Room]:
         """Lấy danh sách Phòng học."""
-        return Room.objects.all()
+        return Room.objects.order_by('-created_at')
 
 class PriorityCategorySelector:
     @staticmethod
     def get_categories() -> QuerySet[PriorityCategory]:
         """Lấy danh sách Đối tượng ưu tiên."""
-        return PriorityCategory.objects.all()
+        return PriorityCategory.objects.order_by('-created_at')
 
 class ExamTypeSelector:
     @staticmethod
     def get_exam_types() -> QuerySet[ExamType]:
         """Lấy danh sách Hình thức thi."""
-        return ExamType.objects.all()
+        return ExamType.objects.order_by('-created_at')
 
 class CohortSelector:
     @staticmethod
     def get_cohorts() -> QuerySet[Cohort]:
         """Lấy danh sách Khóa học."""
-        return Cohort.objects.all()
+        return Cohort.objects.order_by('-created_at')
 
 class SemesterSelector:
     @staticmethod
@@ -59,7 +59,7 @@ class SemesterSelector:
         Lấy danh sách Học kỳ.
         Why: Dùng select_related('academic_year') để lấy thông tin năm học liên kết trong 1 query.
         """
-        return Semester.objects.select_related('academic_year').all()
+        return Semester.objects.select_related('academic_year').order_by('-created_at')
 
 class SpecializationSelector:
     @staticmethod
@@ -68,16 +68,16 @@ class SpecializationSelector:
         Lấy danh sách Chuyên ngành.
         Why: Dùng select_related('major') để lấy Ngành học cha trong 1 query, chống N+1.
         """
-        return Specialization.objects.select_related('major').all()
+        return Specialization.objects.select_related('major').order_by('-created_at')
 
 class EducationSystemSelector:
     @staticmethod
     def get_education_systems() -> QuerySet[EducationSystem]:
         """Lấy danh sách Hệ đào tạo."""
-        return EducationSystem.objects.all()
+        return EducationSystem.objects.order_by('-created_at')
 
 class AcademicYearSelector:
     @staticmethod
     def get_academic_years() -> QuerySet[AcademicYear]:
         """Lấy danh sách Năm học."""
-        return AcademicYear.objects.all()
+        return AcademicYear.objects.order_by('-created_at')

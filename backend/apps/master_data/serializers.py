@@ -12,12 +12,27 @@ from .models import (
 
 class DepartmentSerializer(serializers.ModelSerializer):
     """Serializer cho Khoa/Bộ môn"""
+    parent_name = serializers.CharField(source='parent.name', read_only=True)
+    manager_full_name = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Department
         fields = '__all__'
 
+    def get_manager_full_name(self, obj):
+        if obj.manager_id:
+            from apps.identity.models import User
+            try:
+                user = User.objects.get(id=obj.manager_id)
+                return user.full_name
+            except User.DoesNotExist:
+                return None
+        return None
+
 class MajorSerializer(serializers.ModelSerializer):
     """Serializer cho Ngành học"""
+    department_name = serializers.CharField(source='department.name', read_only=True)
+
     class Meta:
         model = Major
         fields = '__all__'
@@ -48,11 +63,15 @@ class CohortSerializer(serializers.ModelSerializer):
 
 class SemesterSerializer(serializers.ModelSerializer):
     """Serializer cho Học kỳ"""
+    academic_year_name = serializers.CharField(source='academic_year.name', read_only=True)
+
     class Meta:
         model = Semester
         fields = '__all__'
 
 class SpecializationSerializer(serializers.ModelSerializer):
+    major_name = serializers.CharField(source='major.name', read_only=True)
+
     class Meta:
         model = Specialization
         fields = '__all__'

@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, Shield, FileText, Settings, Bell, ChevronLeft, ChevronRight, GraduationCap } from 'lucide-react';
+import { LayoutDashboard, Users, Shield, FileText, Settings, Bell, ChevronLeft, ChevronRight, GraduationCap, Database } from 'lucide-react';
 import { useState } from 'react';
 import { usePermissions } from '../../hooks/usePermissions';
 import { cn } from '../../utils/index';
 
 const menuItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Tổng quan' },
+  { path: '/master-data', icon: Database, label: 'Danh mục gốc', requiredPerm: null }, // Mọi người đều có thể xem tạm thời
   { path: '/users', icon: Users, label: 'Người dùng', requiredPerm: 'USERS_VIEW' },
   { path: '/roles', icon: Shield, label: 'Phân quyền', requiredPerm: 'ROLES_VIEW' },
   { path: '/audit-logs', icon: FileText, label: 'Nhật ký', requiredPerm: 'AUDIT_VIEW' },
