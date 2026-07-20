@@ -13,21 +13,11 @@ from .models import (
 class DepartmentSerializer(serializers.ModelSerializer):
     """Serializer cho Khoa/Bộ môn"""
     parent_name = serializers.CharField(source='parent.name', read_only=True)
-    manager_full_name = serializers.SerializerMethodField(read_only=True)
+    manager_full_name = serializers.CharField(source='manager.full_name', read_only=True, default=None)
 
     class Meta:
         model = Department
         fields = '__all__'
-
-    def get_manager_full_name(self, obj):
-        if obj.manager_id:
-            from apps.identity.models import User
-            try:
-                user = User.objects.get(id=obj.manager_id)
-                return user.full_name
-            except User.DoesNotExist:
-                return None
-        return None
 
 class MajorSerializer(serializers.ModelSerializer):
     """Serializer cho Ngành học"""

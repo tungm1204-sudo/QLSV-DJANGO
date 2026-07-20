@@ -15,9 +15,9 @@ class DepartmentSelector:
     def get_departments() -> QuerySet[Department]:
         """
         Lấy danh sách Khoa/Bộ môn.
-        Why: Dùng select_related('parent') để chống lỗi N+1 khi FE muốn hiển thị tên đơn vị cha.
+        Why: Dùng select_related('parent', 'manager') để chống lỗi N+1 khi FE muốn hiển thị tên đơn vị cha và người quản lý.
         """
-        return Department.objects.select_related('parent').order_by('-created_at')
+        return Department.objects.select_related('parent', 'manager').order_by('-created_at')
 
 class MajorSelector:
     @staticmethod
