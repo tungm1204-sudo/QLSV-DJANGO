@@ -38,7 +38,10 @@ class IdentityModuleTests(TestCase):
         url = reverse('token_obtain_pair')
         for i in range(5):
             response = self.client.post(url, {'email': 'test@example.com', 'password': 'WrongPassword'})
-            self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+            if i < 4:
+                self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+            else:
+                self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         self.user.refresh_from_db()
         self.assertIsNotNone(self.user.locked_until)
