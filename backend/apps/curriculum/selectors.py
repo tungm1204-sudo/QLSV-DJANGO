@@ -5,7 +5,7 @@ Tầng truy vấn DB đọc (Read-only) cho Module Đào tạo.
 Bắt buộc dùng select_related với FK.
 """
 from django.db.models import QuerySet
-from .models import Course, TrainingProgram, Prerequisite
+from .models import Course, TrainingProgram, Prerequisite, EquivalentCourse, TrainingPlan, CourseOffering, Schedule
 
 class CourseSelector:
     @staticmethod
@@ -28,4 +28,19 @@ class PrerequisiteSelector:
 class EquivalentCourseSelector:
     @staticmethod
     def get_equivalent_courses():
-        return __import__('apps.curriculum.models', fromlist=['EquivalentCourse']).EquivalentCourse.objects.select_related('course', 'equivalent_course').all()
+        return EquivalentCourse.objects.select_related('course', 'equivalent_course').all()
+
+class TrainingPlanSelector:
+    @staticmethod
+    def get_training_plans() -> QuerySet[TrainingPlan]:
+        return TrainingPlan.objects.select_related('department', 'created_by', 'approved_by').all()
+
+class CourseOfferingSelector:
+    @staticmethod
+    def get_course_offerings() -> QuerySet[CourseOffering]:
+        return CourseOffering.objects.select_related('training_plan', 'course', 'lecturer').all()
+
+class ScheduleSelector:
+    @staticmethod
+    def get_schedules() -> QuerySet[Schedule]:
+        return Schedule.objects.select_related('course_offering', 'course_offering__course', 'course_offering__lecturer').all()

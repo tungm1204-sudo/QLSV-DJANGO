@@ -12,9 +12,18 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.core.exceptions import ValidationError
 
 from .models import Course, TrainingProgram, Prerequisite
-from .selectors import CourseSelector, TrainingProgramSelector, PrerequisiteSelector
-from .services import CourseService, TrainingProgramService, PrerequisiteService
-from .serializers import CourseSerializer, TrainingProgramSerializer, PrerequisiteSerializer
+from .selectors import (
+    CourseSelector, TrainingProgramSelector, PrerequisiteSelector, EquivalentCourseSelector,
+    TrainingPlanSelector, CourseOfferingSelector, ScheduleSelector
+)
+from .services import (
+    CourseService, TrainingProgramService, PrerequisiteService,
+    TrainingPlanService, CourseOfferingService, ScheduleService
+)
+from .serializers import (
+    CourseSerializer, TrainingProgramSerializer, PrerequisiteSerializer, EquivalentCourseSerializer,
+    TrainingPlanSerializer, CourseOfferingSerializer, ScheduleSerializer
+)
 
 class CourseViewSet(viewsets.ModelViewSet):
     """API Endpoint Quản lý Môn học"""
@@ -53,5 +62,37 @@ class PrerequisiteViewSet(viewsets.ModelViewSet):
         try:
             PrerequisiteService.delete_prerequisite(prerequisite)
             return Response(status=status.HTTP_204_NO_CONTENT)
+        except ValidationError as e:
+            raise DRFValidationError(detail=str(e.message))
+
+class EquivalentCourseViewSet(viewsets.ModelViewSet):
+    queryset = EquivalentCourseSelector.get_equivalent_courses()
+    serializer_class = EquivalentCourseSerializer
+
+class TrainingPlanViewSet(viewsets.ModelViewSet):
+    queryset = TrainingPlanSelector.get_training_plans()
+    serializer_class = TrainingPlanSerializer
+
+class CourseOfferingViewSet(viewsets.ModelViewSet):
+    queryset = CourseOfferingSelector.get_course_offerings()
+    serializer_class = CourseOfferingSerializer
+    
+    def create(self, request: Request, *args: Tuple[Any], **kwargs: dict[str, Any]) -> Response:
+        try:
+            offering = CourseOfferingService.create_offering(request.data)
+            serializer = self.get_serializer(offering)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            raise DRFValidationError(detail=str(e.message))
+
+class ScheduleViewSet(viewsets.ModelViewSet):
+    queryset = ScheduleSelector.get_schedules()
+    serializer_class = ScheduleSerializer
+
+    def create(self, request: Request, *args: Tuple[Any], **kwargs: dict[str, Any]) -> Response:
+        try:
+            schedule = ScheduleService.create_schedule(request.data)
+            serializer = self.get_serializer(schedule)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as e:
             raise DRFValidationError(detail=str(e.message))

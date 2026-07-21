@@ -138,56 +138,56 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 - [ ] **Tra cứu/tìm kiếm nhân viên** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 
 ### Phân công giảng dạy
-- [ ] **Gán giảng viên phụ trách cho từng lớp học phần**
-- [ ] **Kiểm tra trùng lịch giảng dạy của giảng viên** - *Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL.*
+- [x] **Gán giảng viên phụ trách cho từng lớp học phần**
+- [x] **Kiểm tra trùng lịch giảng dạy của giảng viên** - *Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL.*
 - [ ] **Thống kê khối lượng giờ giảng theo giảng viên/học kỳ**
 - [ ] **Điều chỉnh/thay đổi giảng viên phụ trách giữa kỳ**
 
 ### Kế hoạch đào tạo năm học
-- [ ] **Lập kế hoạch mở môn học theo từng học kỳ/năm học**
+- [x] **Lập kế hoạch mở môn học theo từng học kỳ/năm học**
 
 ## MODULE 4: Kế hoạch & Đăng ký học phần
-- [ ] **Dự kiến số lớp, sĩ số mỗi môn** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
-- [ ] **Phê duyệt kế hoạch đào tạo (workflow duyệt)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Sao chép kế hoạch từ học kỳ trước để điều chỉnh**
+- [x] **Dự kiến số lớp, sĩ số mỗi môn** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
+- [x] **Phê duyệt kế hoạch đào tạo (workflow duyệt)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Sao chép kế hoạch từ học kỳ trước để điều chỉnh**
 
 ### Xây dựng thời khóa biểu
-- [ ] **Xếp lịch học theo phòng/giảng viên/thời gian**
-- [ ] **Kiểm tra trùng lịch (phòng, giảng viên, lớp)** - *Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL.*
+- [x] **Xếp lịch học theo phòng/giảng viên/thời gian**
+- [x] **Kiểm tra trùng lịch (phòng, giảng viên, lớp)** - *Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL.*
 - [ ] **Xếp lịch thi sơ bộ**
 - [ ] **Xuất thời khóa biểu theo lớp/giảng viên/phòng** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
 - [ ] **Điều chỉnh thời khóa biểu khi có thay đổi** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
 
 ### Mở lớp học phần
-- [ ] **Tạo lớp học phần từ học phần trong chương trình đào tạo** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Thiết lập giới hạn sĩ số tối đa/tối thiểu** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
+- [x] **Tạo lớp học phần từ học phần trong chương trình đào tạo** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Thiết lập giới hạn sĩ số tối đa/tối thiểu** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
 - [ ] **Thiết lập điều kiện đăng ký (đã học môn tiên quyết...)** - *Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa.*
 - [ ] **Đóng/hủy lớp học phần nếu không đủ sĩ số** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
 
 ### Đăng ký học phần
-- [ ] **Sinh viên xem danh sách lớp học phần mở trong kỳ**
-- [ ] **Đăng ký học phần online**
+- [x] **Sinh viên xem danh sách lớp học phần mở trong kỳ**
+- [x] **Đăng ký học phần online**
 - [ ] **Hệ thống tự kiểm tra điều kiện (môn tiên quyết, số tín chỉ tối đa)** - *Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa.*
 - [ ] **Hệ thống tự kiểm tra xung đột lịch học** - *Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL.*
-- [ ] **Xác nhận đăng ký thành công, xem phiếu đăng ký**
+- [x] **Xác nhận đăng ký thành công, xem phiếu đăng ký**
 
 ### Đăng ký ngoài kế hoạch
 - [ ] **Đăng ký học lại (môn không đạt)**
 - [ ] **Đăng ký học cải thiện điểm**
 - [ ] **Đăng ký học vượt (vượt tiến độ)**
-- [ ] **Phê duyệt các trường hợp đăng ký đặc biệt**
+- [x] **Phê duyệt các trường hợp đăng ký đặc biệt**
 
 ### Danh sách lớp chính thức
 - [ ] **Chốt danh sách sinh viên sau thời gian đăng ký/điều chỉnh**
 - [ ] **Đồng bộ danh sách sang module điểm danh**
-- [ ] **Xuất danh sách lớp (file Excel/PDF) cho giảng viên** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [ ] **Khóa danh sách, không cho chỉnh sửa sau khi chốt** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
+- [x] **Xuất danh sách lớp (file Excel/PDF) cho giảng viên** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Khóa danh sách, không cho chỉnh sửa sau khi chốt** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
 
 ### Điều chỉnh đăng ký
-- [ ] **Hủy đăng ký học phần trong thời gian quy định**
-- [ ] **Đổi lớp học phần (chuyển từ lớp này sang lớp khác)**
+- [x] **Hủy đăng ký học phần trong thời gian quy định**
+- [x] **Đổi lớp học phần (chuyển từ lớp này sang lớp khác)**
 - [ ] **Giới hạn thời gian được phép điều chỉnh**
-- [ ] **Lưu lịch sử các lần điều chỉnh**
+- [x] **Lưu lịch sử các lần điều chỉnh**
 
 ### Lập lịch thi
 - [ ] **Xếp lịch thi theo môn/lớp học phần**
