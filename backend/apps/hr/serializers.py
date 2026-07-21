@@ -18,8 +18,9 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = [
             'id', 'user', 'student_code', 'major', 'major_detail',
-            'administrative_class', 'administrative_class_code',
-            'status', 'contact_phone', 'address', 'id_card_number',
+            'administrative_class', 'administrative_class_code', 'education_system', 'priority_category',
+            'status', 'date_of_birth', 'gender', 'place_of_birth', 'ethnicity', 'religion', 'nationality',
+            'personal_email', 'contact_phone', 'address', 'permanent_address', 'id_card_number', 'bank_account', 'health_insurance_number',
             'parent_info', 'documents', 'created_at', 'updated_at'
         ]
 
@@ -31,7 +32,9 @@ class LecturerSerializer(serializers.ModelSerializer):
         model = Lecturer
         fields = [
             'id', 'user', 'lecturer_code', 'department', 'department_detail',
-            'academic_title', 'contract_type', 'teaching_domain',
+            'degree', 'academic_title', 'contract_type', 'teaching_domain', 'join_date', 'status',
+            'date_of_birth', 'gender', 'id_card_number', 'place_of_birth', 'ethnicity', 'religion', 'nationality',
+            'contact_phone', 'personal_email', 'address', 'bank_account',
             'created_at', 'updated_at'
         ]
 
@@ -43,6 +46,7 @@ class StaffSerializer(serializers.ModelSerializer):
         model = Staff
         fields = [
             'id', 'user', 'staff_code', 'department', 'department_detail',
-            'position', 'responsibilities',
+            'position', 'degree', 'responsibilities', 'join_date', 'status',
+            'date_of_birth', 'gender', 'id_card_number', 'contact_phone', 'personal_email', 'address', 'bank_account',
             'created_at', 'updated_at'
         ]

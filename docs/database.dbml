@@ -94,6 +94,19 @@ Table staff {
   staff_code varchar [unique]
   department_id uuid [note: 'Khoa/Phòng ban']
   position varchar [note: 'Giáo vụ, Kế toán, Chuyên viên...']
+  degree varchar [note: 'Cử nhân, Thạc sĩ...']
+  responsibilities text
+  join_date date
+  status varchar [default: 'ACTIVE']
+  
+  date_of_birth date
+  gender varchar
+  id_card_number varchar
+  contact_phone varchar
+  personal_email varchar
+  address text
+  bank_account varchar
+  
   created_at timestamp
   updated_at timestamp
 }
@@ -103,7 +116,25 @@ Table lecturers {
   user_id uuid [ref: - identity_users.id]
   lecturer_code varchar [unique]
   department_id uuid
+  degree varchar [note: 'Cử nhân, Thạc sĩ, Tiến sĩ...']
   academic_title varchar [note: 'Thạc sĩ, Tiến sĩ, PGS, GS...']
+  contract_type varchar [note: 'Cơ hữu, Thỉnh giảng']
+  teaching_domain text
+  join_date date
+  status varchar [default: 'ACTIVE']
+  
+  date_of_birth date
+  gender varchar
+  id_card_number varchar
+  place_of_birth varchar
+  ethnicity varchar
+  religion varchar
+  nationality varchar
+  contact_phone varchar
+  personal_email varchar
+  address text
+  bank_account varchar
+  
   created_at timestamp
   updated_at timestamp
 }
@@ -117,8 +148,28 @@ Table students {
   user_id uuid [ref: - identity_users.id]
   student_code varchar [unique]
   major_id uuid
-  class_id uuid
-  status varchar [note: 'Đang học, Bảo lưu, Đã Tốt nghiệp, Buộc thôi học']
+  administrative_class_id uuid [note: 'Lớp hành chính']
+  education_system_id uuid [note: 'Hệ đào tạo']
+  priority_category_id uuid
+  status varchar [note: 'ACTIVE, PAUSED, GRADUATED, DROPPED_OUT']
+  
+  date_of_birth date
+  gender varchar
+  place_of_birth varchar
+  ethnicity varchar
+  religion varchar
+  nationality varchar
+  
+  personal_email varchar
+  contact_phone varchar
+  address text
+  permanent_address text
+  id_card_number varchar
+  bank_account varchar
+  health_insurance_number varchar
+  parent_info jsonb
+  documents jsonb
+  
   created_at timestamp
   updated_at timestamp
 }

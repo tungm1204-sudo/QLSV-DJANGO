@@ -6,7 +6,7 @@ Tuân thủ rule: Sử dụng UUID, không chứa logic nghiệp vụ trong mode
 import uuid
 from django.db import models
 from apps.identity.models import User
-from apps.master_data.models import Department, Major, AdministrativeClass
+from apps.master_data.models import Department, Major, AdministrativeClass, EducationSystem, PriorityCategory
 
 class Student(models.Model):
     """
@@ -15,14 +15,30 @@ class Student(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='student_profile')
     student_code = models.CharField(max_length=50, unique=True)
+    # Thông tin Học tập
     major = models.ForeignKey(Major, on_delete=models.PROTECT, related_name='students', null=True, blank=True)
     administrative_class = models.ForeignKey(AdministrativeClass, on_delete=models.PROTECT, related_name='students', null=True, blank=True)
+    education_system = models.ForeignKey(EducationSystem, on_delete=models.PROTECT, related_name='students', null=True, blank=True, help_text="Hệ đào tạo")
+    priority_category = models.ForeignKey(PriorityCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='students', help_text="Đối tượng ưu tiên")
     
     status = models.CharField(max_length=50, default='ACTIVE', help_text="ACTIVE, PAUSED, GRADUATED, DROPPED_OUT")
     
+    # Thông tin Nhân khẩu học & Liên hệ
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=20, choices=[('MALE', 'Nam'), ('FEMALE', 'Nữ'), ('OTHER', 'Khác')], null=True, blank=True)
+    place_of_birth = models.CharField(max_length=255, null=True, blank=True, help_text="Nơi sinh / Quê quán")
+    ethnicity = models.CharField(max_length=50, null=True, blank=True, default='Kinh', help_text="Dân tộc")
+    religion = models.CharField(max_length=50, null=True, blank=True, default='Không', help_text="Tôn giáo")
+    nationality = models.CharField(max_length=50, null=True, blank=True, default='Việt Nam', help_text="Quốc tịch")
+    
+    personal_email = models.EmailField(null=True, blank=True, help_text="Email cá nhân dự phòng")
     contact_phone = models.CharField(max_length=20, null=True, blank=True)
-    address = models.TextField(null=True, blank=True)
+    address = models.TextField(null=True, blank=True, help_text="Địa chỉ tạm trú hiện tại")
+    permanent_address = models.TextField(null=True, blank=True, help_text="Hộ khẩu thường trú")
+    
     id_card_number = models.CharField(max_length=50, null=True, blank=True)
+    bank_account = models.CharField(max_length=100, null=True, blank=True, help_text="Số TK Ngân hàng - Tên Ngân hàng")
+    health_insurance_number = models.CharField(max_length=50, null=True, blank=True, help_text="Mã BHYT")
     parent_info = models.JSONField(null=True, blank=True, help_text="Thông tin phụ huynh: Tên, SĐT, Địa chỉ")
     documents = models.JSONField(null=True, blank=True, help_text="Danh sách URLs giấy tờ đính kèm (CCCD, học bạ)")
 
@@ -43,11 +59,28 @@ class Lecturer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='lecturer_profile')
     lecturer_code = models.CharField(max_length=50, unique=True)
+    # Thông tin Công tác
     department = models.ForeignKey(Department, on_delete=models.PROTECT, related_name='lecturers')
-    
-    academic_title = models.CharField(max_length=100, null=True, blank=True, help_text="Thạc sĩ, Tiến sĩ, PGS, GS...")
+    degree = models.CharField(max_length=100, null=True, blank=True, help_text="Cử nhân, Thạc sĩ, Tiến sĩ...")
+    academic_title = models.CharField(max_length=100, null=True, blank=True, help_text="Giảng viên, PGS, GS...")
     contract_type = models.CharField(max_length=50, null=True, blank=True, help_text="Cơ hữu, Thỉnh giảng")
     teaching_domain = models.TextField(null=True, blank=True, help_text="Chuyên môn/Lĩnh vực giảng dạy")
+    join_date = models.DateField(null=True, blank=True, help_text="Ngày bắt đầu công tác")
+    status = models.CharField(max_length=50, default='ACTIVE', help_text="ACTIVE (Đang công tác), RETIRED (Nghỉ hưu), RESIGNED (Nghỉ việc)")
+    
+    # Thông tin Cá nhân
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=20, choices=[('MALE', 'Nam'), ('FEMALE', 'Nữ'), ('OTHER', 'Khác')], null=True, blank=True)
+    id_card_number = models.CharField(max_length=50, null=True, blank=True)
+    place_of_birth = models.CharField(max_length=255, null=True, blank=True)
+    ethnicity = models.CharField(max_length=50, null=True, blank=True, default='Kinh')
+    religion = models.CharField(max_length=50, null=True, blank=True, default='Không')
+    nationality = models.CharField(max_length=50, null=True, blank=True, default='Việt Nam')
+    
+    contact_phone = models.CharField(max_length=20, null=True, blank=True)
+    personal_email = models.EmailField(null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    bank_account = models.CharField(max_length=100, null=True, blank=True, help_text="Số TK Ngân hàng - Tên Ngân hàng")
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -66,10 +99,22 @@ class Staff(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='staff_profile')
     staff_code = models.CharField(max_length=50, unique=True)
+    # Thông tin Công tác
     department = models.ForeignKey(Department, on_delete=models.PROTECT, related_name='staffs')
-    
     position = models.CharField(max_length=100, null=True, blank=True, help_text="Giáo vụ, Kế toán, Chuyên viên...")
+    degree = models.CharField(max_length=100, null=True, blank=True, help_text="Cử nhân, Thạc sĩ...")
     responsibilities = models.TextField(null=True, blank=True, help_text="Nhiệm vụ phụ trách")
+    join_date = models.DateField(null=True, blank=True, help_text="Ngày bắt đầu công tác")
+    status = models.CharField(max_length=50, default='ACTIVE', help_text="ACTIVE, RETIRED, RESIGNED")
+
+    # Thông tin Cá nhân
+    date_of_birth = models.DateField(null=True, blank=True)
+    gender = models.CharField(max_length=20, choices=[('MALE', 'Nam'), ('FEMALE', 'Nữ'), ('OTHER', 'Khác')], null=True, blank=True)
+    id_card_number = models.CharField(max_length=50, null=True, blank=True)
+    contact_phone = models.CharField(max_length=20, null=True, blank=True)
+    personal_email = models.EmailField(null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    bank_account = models.CharField(max_length=100, null=True, blank=True, help_text="Số TK Ngân hàng - Tên Ngân hàng")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
