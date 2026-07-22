@@ -10,13 +10,13 @@ from .models import Student, Lecturer, Staff
 def get_students() -> QuerySet[Student]:
     # WHY: Dùng select_related để lấy luôn thông tin User, Major, Class trong 1 query duy nhất, tránh N+1.
     return Student.objects.select_related(
-        'user', 'major', 'administrative_class'
+        'user', 'major', 'administrative_class', 'education_system', 'priority_category'
     ).all()
 
 def get_student(student_id: str) -> Student:
     # WHAT: Lấy chi tiết 1 sinh viên.
     return Student.objects.select_related(
-        'user', 'major', 'administrative_class'
+        'user', 'major', 'administrative_class', 'education_system', 'priority_category'
     ).get(id=student_id)
 
 def get_lecturers() -> QuerySet[Lecturer]:

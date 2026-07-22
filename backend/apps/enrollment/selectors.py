@@ -36,7 +36,8 @@ def get_student_enrollments(student_id: str, semester_id: str = None) -> QuerySe
         'course_offering',
         'course_offering__course',
         'course_offering__semester',
-        'course_offering__lecturer'
+        'course_offering__lecturer',
+        'course_offering__training_plan'
     ).prefetch_related('course_offering__schedules')
 
 def get_course_offering_students(course_offering_id: str) -> QuerySet[Enrollment]:

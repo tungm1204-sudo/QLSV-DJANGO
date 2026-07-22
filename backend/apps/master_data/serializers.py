@@ -7,13 +7,12 @@ Tuyệt đối không chứa business logic ở đây theo chuẩn rules.md.
 from rest_framework import serializers
 from .models import (
     Department, Major, Room, PriorityCategory, ExamType, Cohort, Semester,
-    Specialization, EducationSystem, AcademicYear
+    Specialization, EducationSystem, AcademicYear, AdministrativeClass
 )
 
 class DepartmentSerializer(serializers.ModelSerializer):
     """Serializer cho Khoa/Bộ môn"""
     parent_name = serializers.CharField(source='parent.name', read_only=True)
-    manager_full_name = serializers.CharField(source='manager.full_name', read_only=True, default=None)
 
     class Meta:
         model = Department
@@ -74,4 +73,12 @@ class EducationSystemSerializer(serializers.ModelSerializer):
 class AcademicYearSerializer(serializers.ModelSerializer):
     class Meta:
         model = AcademicYear
+        fields = '__all__'
+
+class AdministrativeClassSerializer(serializers.ModelSerializer):
+    major_name = serializers.CharField(source='major.name', read_only=True)
+    cohort_name = serializers.CharField(source='cohort.name', read_only=True)
+
+    class Meta:
+        model = AdministrativeClass
         fields = '__all__'

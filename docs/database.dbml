@@ -92,7 +92,7 @@ Table staff {
   id uuid [pk]
   user_id uuid [ref: - identity_users.id]
   staff_code varchar [unique]
-  department_id uuid [note: 'Khoa/Phòng ban']
+  department_id uuid [ref: > master_data_departments.id, note: 'Khoa/Phòng ban']
   position varchar [note: 'Giáo vụ, Kế toán, Chuyên viên...']
   degree varchar [note: 'Cử nhân, Thạc sĩ...']
   responsibilities text
@@ -115,7 +115,7 @@ Table lecturers {
   id uuid [pk]
   user_id uuid [ref: - identity_users.id]
   lecturer_code varchar [unique]
-  department_id uuid
+  department_id uuid [ref: > master_data_departments.id]
   degree varchar [note: 'Cử nhân, Thạc sĩ, Tiến sĩ...']
   academic_title varchar [note: 'Thạc sĩ, Tiến sĩ, PGS, GS...']
   contract_type varchar [note: 'Cơ hữu, Thỉnh giảng']
@@ -147,10 +147,10 @@ Table students {
   id uuid [pk]
   user_id uuid [ref: - identity_users.id]
   student_code varchar [unique]
-  major_id uuid
-  administrative_class_id uuid [note: 'Lớp hành chính']
-  education_system_id uuid [note: 'Hệ đào tạo']
-  priority_category_id uuid
+  major_id uuid [ref: > master_data_majors.id]
+  administrative_class_id uuid [ref: > master_data_administrative_classes.id, note: 'Lớp hành chính']
+  education_system_id uuid [ref: > master_data_education_systems.id, note: 'Hệ đào tạo']
+  priority_category_id uuid [ref: > master_data_priority_categories.id]
   status varchar [note: 'ACTIVE, PAUSED, GRADUATED, DROPPED_OUT']
   
   date_of_birth date
@@ -174,17 +174,119 @@ Table students {
   updated_at timestamp
 }
 
-Table majors {
+Table master_data_education_systems {
+  id uuid [pk]
+  code varchar [unique, note: 'Mã hệ đào tạo']
+  name varchar [note: 'Tên hệ đào tạo']
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_departments {
+  id uuid [pk]
+  code varchar [unique, note: 'Mã đơn vị']
+  name varchar
+  type varchar [note: 'FACULTY, DEPARTMENT, CENTER, OFFICE']
+  parent_id uuid [ref: > master_data_departments.id]
+  manager_id uuid
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_majors {
   id uuid [pk]
   code varchar [unique]
   name varchar
-  department_id uuid
+  department_id uuid [ref: > master_data_departments.id]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
 }
 
-Table priority_categories {
+Table master_data_specializations {
   id uuid [pk]
-  name varchar [note: 'Con thương binh, Dân tộc thiểu số...']
-  discount_percentage decimal [note: 'Mức giảm học phí mặc định (%)']
+  code varchar [unique]
+  name varchar
+  major_id uuid [ref: > master_data_majors.id]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_rooms {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  type varchar [note: 'THEORY, PRACTICE, HALL']
+  capacity int
+  status varchar [note: 'ACTIVE, MAINTENANCE']
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_priority_categories {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar [note: 'Đối tượng ưu tiên']
+  discount_percentage decimal [note: 'Phần trăm giảm học phí (%)']
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_exam_types {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_cohorts {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  admission_year int
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_academic_years {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  is_current boolean [default: false]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_semesters {
+  id uuid [pk]
+  code varchar [unique]
+  academic_year_id uuid [ref: > master_data_academic_years.id]
+  season varchar [note: 'HK1, HK2, HE']
+  start_date date
+  end_date date
+  is_current boolean [default: false]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_administrative_classes {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  major_id uuid [ref: > master_data_majors.id]
+  cohort_id uuid [ref: > master_data_cohorts.id]
+  advisor_id uuid [ref: > lecturers.id]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
 }
 
 // -------------------------------------------------------------

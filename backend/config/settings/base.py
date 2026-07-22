@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'django_filters',
     'corsheaders',
+    'drf_spectacular',
 
     # Local apps — thêm module mới vào đây khi build
     'apps.identity',
@@ -152,6 +153,21 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '20/min',   # Anonymous user: 20 request/phút
         'user': '100/min',  # Logged-in user: 100 request/phút
+    },
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+# --- SWAGGER SPECTACULAR ---
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'QLSV API',
+    'DESCRIPTION': 'Tài liệu API cho Hệ thống Quản lý Sinh viên',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # Cấu hình UI
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
     },
 }
 

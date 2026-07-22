@@ -7,7 +7,7 @@ Tuân thủ chuẩn Service Layer: Đưa toàn bộ việc filter, select_relate
 from django.db.models import QuerySet
 from .models import (
     Department, Major, Room, PriorityCategory, ExamType, Cohort, Semester,
-    Specialization, EducationSystem, AcademicYear
+    Specialization, EducationSystem, AcademicYear, AdministrativeClass
 )
 
 class DepartmentSelector:
@@ -15,9 +15,10 @@ class DepartmentSelector:
     def get_departments() -> QuerySet[Department]:
         """
         Lấy danh sách Khoa/Bộ môn.
-        Why: Dùng select_related('parent', 'manager') để chống lỗi N+1 khi FE muốn hiển thị tên đơn vị cha và người quản lý.
+        Why: Dùng select_related('parent') để chống lỗi N+1 khi FE muốn hiển thị tên đơn vị cha.
+        manager_id là UUIDField nên không thể select_related('manager').
         """
-        return Department.objects.select_related('parent', 'manager').order_by('-created_at')
+        return Department.objects.select_related('parent').order_by('-created_at')
 
 class MajorSelector:
     @staticmethod
@@ -81,3 +82,9 @@ class AcademicYearSelector:
     def get_academic_years() -> QuerySet[AcademicYear]:
         """Lấy danh sách Năm học."""
         return AcademicYear.objects.order_by('-created_at')
+
+class AdministrativeClassSelector:
+    @staticmethod
+    def get_administrative_classes() -> QuerySet[AdministrativeClass]:
+        """Lấy danh sách Lớp hành chính."""
+        return AdministrativeClass.objects.select_related('major', 'cohort').order_by('-created_at')

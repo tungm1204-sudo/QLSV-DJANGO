@@ -15,12 +15,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import (
     Department, Major, Room, PriorityCategory, ExamType, Cohort, Semester,
-    Specialization, EducationSystem, AcademicYear
+    Specialization, EducationSystem, AcademicYear, AdministrativeClass
 )
 from .selectors import (
     DepartmentSelector, MajorSelector, RoomSelector, PriorityCategorySelector,
     ExamTypeSelector, CohortSelector, SemesterSelector,
-    SpecializationSelector, EducationSystemSelector, AcademicYearSelector
+    SpecializationSelector, EducationSystemSelector, AcademicYearSelector,
+    AdministrativeClassSelector
 )
 from .services import (
     DepartmentService, MajorService, RoomService, PriorityCategoryService,
@@ -29,7 +30,8 @@ from .services import (
 from .serializers import (
     DepartmentSerializer, MajorSerializer, RoomSerializer, PriorityCategorySerializer,
     ExamTypeSerializer, CohortSerializer, SemesterSerializer,
-    SpecializationSerializer, EducationSystemSerializer, AcademicYearSerializer
+    SpecializationSerializer, EducationSystemSerializer, AcademicYearSerializer,
+    AdministrativeClassSerializer
 )
 
 class DepartmentViewSet(viewsets.ModelViewSet):
@@ -139,3 +141,11 @@ class AcademicYearViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['code', 'name']
     filterset_fields = ['is_active', 'is_current']
+
+class AdministrativeClassViewSet(viewsets.ModelViewSet):
+    """API endpoint cho Lớp hành chính"""
+    queryset = AdministrativeClassSelector.get_administrative_classes()
+    serializer_class = AdministrativeClassSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['code', 'name']
+    filterset_fields = ['major_id', 'cohort_id', 'is_active']

@@ -9,7 +9,8 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     DepartmentViewSet, MajorViewSet, RoomViewSet, PriorityCategoryViewSet,
     ExamTypeViewSet, CohortViewSet, SemesterViewSet,
-    SpecializationViewSet, EducationSystemViewSet, AcademicYearViewSet
+    SpecializationViewSet, EducationSystemViewSet, AcademicYearViewSet,
+    AdministrativeClassViewSet
 )
 
 router = DefaultRouter()
@@ -23,6 +24,7 @@ router.register(r'semesters', SemesterViewSet, basename='semester')
 router.register(r'specializations', SpecializationViewSet, basename='specialization')
 router.register(r'education-systems', EducationSystemViewSet, basename='education-system')
 router.register(r'academic-years', AcademicYearViewSet, basename='academic-year')
+router.register(r'administrative-classes', AdministrativeClassViewSet, basename='administrative-class')
 
 urlpatterns = [
     path('', include(router.urls)),

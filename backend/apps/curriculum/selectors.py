@@ -33,14 +33,20 @@ class EquivalentCourseSelector:
 class TrainingPlanSelector:
     @staticmethod
     def get_training_plans() -> QuerySet[TrainingPlan]:
-        return TrainingPlan.objects.select_related('department', 'created_by', 'approved_by').all()
+        return TrainingPlan.objects.select_related('department', 'created_by', 'approved_by', 'semester').all()
 
 class CourseOfferingSelector:
     @staticmethod
     def get_course_offerings() -> QuerySet[CourseOffering]:
-        return CourseOffering.objects.select_related('training_plan', 'course', 'lecturer').all()
+        return CourseOffering.objects.select_related('training_plan', 'course', 'lecturer', 'semester').all()
 
 class ScheduleSelector:
     @staticmethod
     def get_schedules() -> QuerySet[Schedule]:
-        return Schedule.objects.select_related('course_offering', 'course_offering__course', 'course_offering__lecturer').all()
+        return Schedule.objects.select_related(
+            'course_offering', 
+            'course_offering__course', 
+            'course_offering__lecturer',
+            'course_offering__semester',
+            'course_offering__training_plan'
+        ).all()
