@@ -52,6 +52,13 @@ Tại đây, bạn sẽ thấy giao diện trực quan liệt kê TOÀN BỘ dan
   - Khi gọi các API get list của Sinh viên, Kế hoạch đào tạo, hay Lớp học phần, bạn sẽ thấy JSON trả về đã **tự động đính kèm thông tin chi tiết (nested) hoặc các trường tên (name)** của các bảng phụ.
   - Bạn **KHÔNG CẦN** gọi API phụ để map dữ liệu nữa, cứ chọc thẳng vào object JSON trả về để lấy text in ra UI. Form và Table của bạn sẽ load nhanh hơn đáng kể!
 
+### 4. Cập nhật và Chuẩn hóa Thiết kế Database (DBML)
+- **Vấn đề cũ:** Trong file `database.dbml` phiên bản trước, các bảng danh mục (Master Data) bị thiếu sót nghiêm trọng hoặc đặt tên không nhất quán (ví dụ: bảng `priority_categories` bị rời rạc).
+- **Giải pháp:** Backend đã bổ sung đầy đủ **11 bảng Danh mục gốc** vào DBML.
+- **Tác vụ của Dev B:** 
+  - Toàn bộ các bảng danh mục nền tảng nay đều được chuẩn hóa và gom nhóm với tiền tố **`master_data_`** (VD: `master_data_departments`, `master_data_priority_categories`, `master_data_majors`).
+  - Khi bạn đọc cấu trúc `database.dbml`, hãy lưu ý sự thay đổi tiền tố này để không bị nhầm lẫn là bảng cũ đã bị xóa nhé!
+
 ---
 
 ## 📅 Ngày cập nhật: 21/07/2026 (Update Module HR Sát Thực Tế)
