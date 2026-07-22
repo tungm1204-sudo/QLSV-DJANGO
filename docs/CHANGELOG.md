@@ -20,18 +20,37 @@ Tại đây, bạn sẽ thấy giao diện trực quan liệt kê TOÀN BỘ dan
 ## 📅 Ngày cập nhật: 23/07/2026 (Fix N+1 Query & Cập nhật API AdministrativeClass)
 
 ### 1. Thêm mới API Quản lý Lớp hành chính (AdministrativeClass)
-- **Vấn đề cũ:** Backend đã tạo bảng `Lớp hành chính` trong Database nhưng quên không mở API, dẫn đến việc Dev B không có dữ liệu để đổ vào Dropdown khi tạo mới Sinh viên.
-- **Giải pháp:** Đội Backend đã thêm đầy đủ API cho Lớp hành chính. 
-- **Endpoint mới:** `GET /api/v1/master-data/administrative-classes/`
-- **Tác vụ của Dev B:** Vui lòng sử dụng API này để lấy danh sách lớp đổ vào ô Select/Dropdown khi làm form Đăng ký Sinh viên nhé.
+- **Vấn đề cũ:** Backend đã thiết kế bảng `Lớp hành chính` trong Database nhưng quên chưa publish API. Điều này gây khó khăn cho Frontend khi làm form "Thêm mới Sinh viên" vì không có API để lấy danh sách Lớp đổ vào thẻ `<select>`.
+- **Giải pháp:** Đội Backend đã thêm đầy đủ API cho Lớp hành chính, bao gồm cả các trường tên liên kết để Frontend dễ hiển thị.
+- **Endpoint mới:** 
+  - `GET /api/v1/master-data/administrative-classes/` (Lấy danh sách, hỗ trợ search/filter)
+  - `GET /api/v1/master-data/administrative-classes/{id}/` (Lấy chi tiết)
+- **Cấu trúc JSON trả về mẫu:**
+  ```json
+  {
+    "id": "uuid...",
+    "code": "IT1",
+    "name": "Công nghệ thông tin 1",
+    "major_name": "Công nghệ thông tin",
+    "cohort_name": "K64",
+    "major": "uuid...",
+    "cohort": "uuid...",
+    "advisor": "uuid...",
+    "is_active": true
+  }
+  ```
+- **Tác vụ của Dev B:** Vui lòng sử dụng API này để render component Dropdown/Select danh sách Lớp hành chính khi tạo hoặc sửa thông tin Sinh viên nhé.
 
 ### 2. Sửa lỗi Crash API Khoa/Bộ môn (Department)
-- **Vấn đề cũ:** Khi gọi `GET /api/v1/master-data/departments/`, hệ thống trả về lỗi 500 do sai logic query tới `manager_id`.
-- **Giải pháp:** Backend đã vá lỗi này. API giờ chạy mượt mà.
+- **Vấn đề cũ:** Khi gọi `GET /api/v1/master-data/departments/`, API trả về lỗi `500 Internal Server Error`. Nguyên nhân do Backend query nhầm khóa ngoại `manager_id` (trường này thiết kế là tham chiếu lỏng UUID, không phải ForeignKey).
+- **Giải pháp:** Đã gỡ bỏ đoạn query sai. API hiện tại đã hoạt động mượt mà trả về đúng mảng danh sách Khoa/Bộ môn.
 
-### 3. Tối ưu hiệu năng toàn hệ thống (Fix N+1 Query)
-- Backend đã chuẩn hóa lại toàn bộ các câu lệnh query ở các module: Sinh viên, Lớp học phần, Kế hoạch đào tạo, Đăng ký học phần. 
-- Dữ liệu trả về ở các API này hiện tại đã có đầy đủ thông tin của các bảng liên kết (ví dụ: thông tin chi tiết về Hệ đào tạo, Đối tượng ưu tiên của Sinh viên) trong cùng 1 request thay vì chỉ trả về ID. Dev B không cần phải gọi thêm API phụ để lấy thông tin chi tiết nữa!
+### 3. Tối ưu dữ liệu trả về (Tránh N+1 Query)
+- **Vấn đề cũ:** Ở các API như Lấy danh sách sinh viên (`GET /api/v1/hr/students/`), payload trước đây chỉ có mã ID của `education_system` hay `priority_category`. Dev B sẽ phải gọi thêm nhiều API lẻ tẻ để ánh xạ ra "Tên hệ đào tạo" hay "Tên đối tượng ưu tiên" để in ra màn hình.
+- **Giải pháp:** Backend đã sử dụng `.select_related()` để JOIN trực tiếp dưới Database.
+- **Kết quả (Tác vụ của Dev B):** 
+  - Khi gọi các API get list của Sinh viên, Kế hoạch đào tạo, hay Lớp học phần, bạn sẽ thấy JSON trả về đã **tự động đính kèm thông tin chi tiết (nested) hoặc các trường tên (name)** của các bảng phụ.
+  - Bạn **KHÔNG CẦN** gọi API phụ để map dữ liệu nữa, cứ chọc thẳng vào object JSON trả về để lấy text in ra UI. Form và Table của bạn sẽ load nhanh hơn đáng kể!
 
 ---
 
