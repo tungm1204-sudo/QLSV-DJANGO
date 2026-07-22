@@ -53,11 +53,16 @@ Tại đây, bạn sẽ thấy giao diện trực quan liệt kê TOÀN BỘ dan
   - Bạn **KHÔNG CẦN** gọi API phụ để map dữ liệu nữa, cứ chọc thẳng vào object JSON trả về để lấy text in ra UI. Form và Table của bạn sẽ load nhanh hơn đáng kể!
 
 ### 4. Cập nhật và Chuẩn hóa Thiết kế Database (DBML)
-- **Vấn đề cũ:** Trong file `database.dbml` phiên bản trước, các bảng danh mục (Master Data) bị thiếu sót nghiêm trọng hoặc đặt tên không nhất quán (ví dụ: bảng `priority_categories` bị rời rạc).
-- **Giải pháp:** Backend đã bổ sung đầy đủ **11 bảng Danh mục gốc** vào DBML.
+- **Tại sao thiết kế cũ lại bị đánh giá là "không nhất quán"?**
+  - Trong file `database.dbml` ban đầu, các bảng cấu hình danh mục (như `priority_categories`, `education_systems`...) nằm rải rác, trôi nổi và bị trộn lẫn lộn với các bảng dữ liệu nghiệp vụ (như `students`, `enrollments`).
+  - Điều này khiến Frontend (Dev B) gặp khó khăn: Không phân biệt được đâu là dữ liệu Cấu hình tĩnh (chỉ dùng để làm mồi cho các ô Dropdown/Select) và đâu là dữ liệu giao dịch phát sinh hàng ngày.
+  - Hơn nữa, một số bảng danh mục cực kỳ quan trọng (như `AdministrativeClass` - Lớp hành chính) lại hoàn toàn vắng mặt trong DBML ban đầu.
+- **Giải pháp quy chuẩn lại từ Backend:**
+  - Backend đã bổ sung đầy đủ **11 bảng Danh mục gốc** vào DBML.
+  - Tách bạch ranh giới: Toàn bộ các bảng danh mục này nay được gom chung vào một Nhóm (Module) mang tên `Master Data` và bắt buộc phải có tiền tố **`master_data_`** (VD: `master_data_departments`, `master_data_priority_categories`, `master_data_majors`).
 - **Tác vụ của Dev B:** 
-  - Toàn bộ các bảng danh mục nền tảng nay đều được chuẩn hóa và gom nhóm với tiền tố **`master_data_`** (VD: `master_data_departments`, `master_data_priority_categories`, `master_data_majors`).
-  - Khi bạn đọc cấu trúc `database.dbml`, hãy lưu ý sự thay đổi tiền tố này để không bị nhầm lẫn là bảng cũ đã bị xóa nhé!
+  - Khi bạn đọc cấu trúc `database.dbml`, nếu thấy bảng nào bắt đầu bằng `master_data_`, hãy ngầm hiểu đó là **API dùng để lấy danh sách cho Dropdown/Select form**.
+  - Hãy lưu ý sự thay đổi tiền tố này để không bị nhầm lẫn là các bảng cũ đã bị xóa nhé!
 
 ---
 
