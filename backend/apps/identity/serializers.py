@@ -7,7 +7,7 @@ Lý do: Đảm bảo dữ liệu đầu vào (Input) được validate đúng fo
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import get_user_model
-from .models import LoginSession, Role, SystemConfig, AuditLog, Notification
+from .models import Role, User, LoginSession, OTPToken
 
 User = get_user_model()
 
@@ -87,22 +87,3 @@ class LoginSessionSerializer(serializers.ModelSerializer):
         fields = ['id', 'user', 'ip_address', 'user_agent', 'created_at', 'is_active']
 
 
-class SystemConfigSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SystemConfig
-        fields = ['id', 'key', 'value', 'description', 'updated_at']
-
-
-class NotificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Notification
-        fields = ['id', 'user', 'type', 'title', 'content', 'link', 'is_read', 'created_at']
-
-
-class AuditLogSerializer(serializers.ModelSerializer):
-    user_email = serializers.CharField(source='user.email', read_only=True)
-    user_full_name = serializers.CharField(source='user.full_name', read_only=True)
-
-    class Meta:
-        model = AuditLog
-        fields = ['id', 'user', 'user_email', 'user_full_name', 'action', 'module', 'payload', 'ip_address', 'user_agent', 'created_at']

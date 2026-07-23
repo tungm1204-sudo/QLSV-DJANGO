@@ -11,7 +11,7 @@ from django.db.models import F
 
 from apps.enrollment.models import Enrollment
 from apps.curriculum.models import CourseOffering, Schedule, Prerequisite
-from apps.identity.models import AuditLog
+from apps.core.models import AuditLog
 
 def _create_audit_log(user, action: str, module: str, record_id: str, payload: dict):
     """

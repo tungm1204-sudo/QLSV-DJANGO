@@ -1,3 +1,3 @@
 import apiClient from './client';
 
-export const getAuditLogsApi = (params) => apiClient.get('/identity/audit-logs/', { params });
+export const getAuditLogsApi = (params) => apiClient.get('/core/audit-logs/', { params });

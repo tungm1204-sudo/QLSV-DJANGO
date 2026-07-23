@@ -65,7 +65,7 @@ Table identity_audit_logs {
   created_at timestamp
 }
 
-Table identity_notifications {
+Table notifications_notifications {
   id uuid [pk]
   user_id uuid [ref: > identity_users.id, note: 'null = broadcast']
   title varchar
@@ -77,7 +77,7 @@ Table identity_notifications {
   created_at timestamp
 }
 
-Table identity_system_configs {
+Table core_system_configs {
   key varchar [pk]
   value jsonb
   description text
@@ -88,7 +88,7 @@ Table identity_system_configs {
 // MODULE 3: CÁN BỘ - NHÂN VIÊN (STAFF & LECTURERS)
 // -------------------------------------------------------------
 
-Table staff {
+Table hr_staffs {
   id uuid [pk]
   user_id uuid [ref: - identity_users.id]
   staff_code varchar [unique]
@@ -111,7 +111,7 @@ Table staff {
   updated_at timestamp
 }
 
-Table lecturers {
+Table hr_lecturers {
   id uuid [pk]
   user_id uuid [ref: - identity_users.id]
   lecturer_code varchar [unique]
@@ -143,7 +143,7 @@ Table lecturers {
 // MODULE 2: DANH MỤC & SINH VIÊN
 // -------------------------------------------------------------
 
-Table students {
+Table hr_students {
   id uuid [pk]
   user_id uuid [ref: - identity_users.id]
   student_code varchar [unique]
@@ -283,7 +283,7 @@ Table master_data_administrative_classes {
   name varchar
   major_id uuid [ref: > master_data_majors.id]
   cohort_id uuid [ref: > master_data_cohorts.id]
-  advisor_id uuid [ref: > lecturers.id]
+  advisor_id uuid [ref: > hr_lecturers.id]
   is_active boolean [default: true]
   created_at timestamp
   updated_at timestamp
@@ -293,7 +293,7 @@ Table master_data_administrative_classes {
 // MODULE 4: QUẢN LÝ ĐÀO TẠO & HỌC PHẦN
 // -------------------------------------------------------------
 
-Table courses {
+Table curriculum_courses {
   id uuid [pk]
   code varchar [unique]
   name varchar
@@ -301,11 +301,11 @@ Table courses {
   major_id uuid [ref: > majors.id]
 }
 
-Table course_offerings {
+Table curriculum_course_offerings {
   id uuid [pk]
-  course_id uuid [ref: > courses.id]
+  course_id uuid [ref: > curriculum_courses.id]
   semester_id uuid
-  lecturer_id uuid [ref: > lecturers.id]
+  lecturer_id uuid [ref: > hr_lecturers.id]
   min_capacity int [note: 'Sĩ số tối thiểu để mở lớp']
   max_capacity int
   current_enrollment int
@@ -319,9 +319,9 @@ Table course_offerings {
   status varchar [note: 'OPEN, CLOSED, CANCELLED']
 }
 
-Table schedules {
+Table curriculum_schedules {
   id uuid [pk]
-  course_offering_id uuid [ref: > course_offerings.id]
+  course_offering_id uuid [ref: > curriculum_course_offerings.id]
   day_of_week varchar [note: 'MONDAY, TUESDAY, WEDNESDAY...']
   start_period int
   end_period int
@@ -332,10 +332,10 @@ Table schedules {
 // MODULE 5: ĐĂNG KÝ HỌC PHẦN & ĐIỂM SỐ
 // -------------------------------------------------------------
 
-Table enrollments {
+Table enrollment_enrollments {
   id uuid [pk]
-  student_id uuid [ref: > students.id]
-  course_offering_id uuid [ref: > course_offerings.id]
+  student_id uuid [ref: > hr_students.id]
+  course_offering_id uuid [ref: > curriculum_course_offerings.id]
   enrollment_type varchar [note: 'NORMAL, RETAKE, IMPROVEMENT, ADVANCED']
   
   attendance_score decimal
@@ -349,11 +349,11 @@ Table enrollments {
 
 Table grade_reviews {
   id uuid [pk]
-  enrollment_id uuid [ref: > enrollments.id]
-  student_id uuid [ref: > students.id]
+  enrollment_id uuid [ref: > enrollment_enrollments.id]
+  student_id uuid [ref: > hr_students.id]
   reason text
   status varchar [note: 'PENDING, APPROVED, REJECTED']
-  reviewed_by uuid [ref: > staff.id, note: 'Cán bộ giáo vụ / Khảo thí xử lý']
+  reviewed_by uuid [ref: > hr_staffs.id, note: 'Cán bộ giáo vụ / Khảo thí xử lý']
   old_score decimal
   new_score decimal
   created_at timestamp
@@ -367,7 +367,7 @@ Table surveys {
   id uuid [pk]
   title varchar
   type varchar [note: 'COURSE_EVALUATION, LECTURER_EVALUATION, GENERAL']
-  course_offering_id uuid [ref: > course_offerings.id, note: 'Có thể null nếu là General']
+  course_offering_id uuid [ref: > curriculum_course_offerings.id, note: 'Có thể null nếu là General']
   is_active boolean
   created_at timestamp
 }
@@ -375,7 +375,7 @@ Table surveys {
 Table survey_responses {
   id uuid [pk]
   survey_id uuid [ref: > surveys.id]
-  student_id uuid [ref: > students.id]
+  student_id uuid [ref: > hr_students.id]
   answers jsonb
   submitted_at timestamp
 }
@@ -393,7 +393,7 @@ Table tuition_rules {
 
 Table tuition_exemptions {
   id uuid [pk]
-  student_id uuid [ref: > students.id]
+  student_id uuid [ref: > hr_students.id]
   priority_category_id uuid [ref: > priority_categories.id]
   semester_id uuid
   discount_percentage decimal
@@ -407,7 +407,7 @@ Table tuition_exemptions {
 
 Table discipline_rewards {
   id uuid [pk]
-  student_id uuid [ref: > students.id]
+  student_id uuid [ref: > hr_students.id]
   type varchar [note: 'REWARD, DISCIPLINE']
   level varchar [note: 'Khiển trách, Cảnh cáo, Đình chỉ, Buộc thôi học (nếu là Kỷ luật)']
   reason text
@@ -417,16 +417,16 @@ Table discipline_rewards {
 
 Table theses {
   id uuid [pk]
-  student_id uuid [ref: > students.id]
+  student_id uuid [ref: > hr_students.id]
   topic varchar
-  advisor_id uuid [ref: > lecturers.id]
+  advisor_id uuid [ref: > hr_lecturers.id]
   status varchar
 }
 
 Table thesis_committees {
   id uuid [pk]
   thesis_id uuid [ref: > theses.id]
-  reviewer_id uuid [ref: > lecturers.id]
+  reviewer_id uuid [ref: > hr_lecturers.id]
   advisor_score decimal
   reviewer_score decimal
   committee_score decimal
@@ -435,8 +435,8 @@ Table thesis_committees {
 
 Table advising_sessions {
   id uuid [pk]
-  advisor_id uuid [ref: > lecturers.id, note: 'Giảng viên cố vấn']
-  student_id uuid [ref: > students.id, note: 'Sinh viên được tư vấn']
+  advisor_id uuid [ref: > hr_lecturers.id, note: 'Giảng viên cố vấn']
+  student_id uuid [ref: > hr_students.id, note: 'Sinh viên được tư vấn']
   session_date timestamp
   content text
   created_at timestamp
@@ -444,7 +444,7 @@ Table advising_sessions {
 
 Table degrees {
   id uuid [pk]
-  student_id uuid [ref: - students.id, note: 'One to One nhưng có thể cấp lại']
+  student_id uuid [ref: - hr_students.id, note: 'One to One nhưng có thể cấp lại']
   degree_number varchar [unique]
   classification varchar [note: 'Xuất sắc, Giỏi, Khá, TB...']
   is_revoked boolean [default: false, note: 'Trạng thái thu hồi bằng']

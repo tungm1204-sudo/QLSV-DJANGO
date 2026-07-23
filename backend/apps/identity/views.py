@@ -19,24 +19,22 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from .models import Role, SystemConfig, AuditLog, Notification
+from .models import Role
+
 from .serializers import (
     UserSerializer,
     UserCreateUpdateSerializer,
     CustomTokenObtainPairSerializer,
     LoginSessionSerializer,
     RoleSerializer,
-    SystemConfigSerializer,
-    NotificationSerializer,
-    AuditLogSerializer
 )
 from .services import (
-    AuthService, UserService, RoleService, SystemConfigService,
-    NotificationService, AuditLogService, log_audit
+    AuthService, UserService, RoleService
 )
+from apps.core.services import log_audit
 from .permissions import require_permission
-from .selectors import AuthSelector, NotificationSelector, AuditLogSelector, SystemConfigSelector
-from .constants import get_permission_choices_list
+from .selectors import AuthSelector
+from .constants import get_permission_choices_list, SYSTEM_ROLES
 
 User = get_user_model()
 
@@ -198,6 +196,13 @@ class RoleViewSet(viewsets.ModelViewSet):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        
+        if instance.name in SYSTEM_ROLES:
+            return Response(
+                {'detail': 'Đây là vai trò mặc định của hệ thống, không được phép chỉnh sửa.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+            
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         role = RoleService.update_role(
@@ -211,6 +216,13 @@ class RoleViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        
+        if instance.name in SYSTEM_ROLES:
+            return Response(
+                {'detail': 'Đây là vai trò mặc định của hệ thống, không được phép xóa.'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+            
         RoleService.delete_role(
             instance,
             request.user.id,
@@ -328,51 +340,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
         return Response({'message': f'Successfully imported {count} users'})
 
-
-class SystemConfigViewSet(viewsets.ModelViewSet):
-    """
-    API ViewSet cho SystemConfig.
-    """
-    serializer_class = SystemConfigSerializer
-
-    def get_queryset(self):
-        return SystemConfigSelector.get_configs()
-
-    def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            from .permissions import require_permission
-            return [require_permission('SYSTEM_VIEW')()]
-        elif self.action in ['create', 'update', 'partial_update', 'destroy']:
-            from .permissions import require_permission
-            return [require_permission('SYSTEM_UPDATE')()]
-        return [permissions.IsAuthenticated()]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        config = SystemConfigService.create_config(
-            serializer.validated_data,
-            request.user.id,
-            get_client_ip(request),
-            get_user_agent(request)
-        )
-        return Response(SystemConfigSerializer(config).data, status=status.HTTP_201_CREATED)
-
-    def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        config = SystemConfigService.update_config(
-            instance,
-            serializer.validated_data,
-            request.user.id,
-            get_client_ip(request),
-            get_user_agent(request)
-        )
-        return Response(SystemConfigSerializer(config).data)
-
-
 class LoginSessionViewSet(viewsets.ViewSet):
     """
     View quản lý phiên đăng nhập của User hiện tại.
@@ -397,56 +364,7 @@ class LoginSessionViewSet(viewsets.ViewSet):
             return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
 
-class NotificationViewSet(viewsets.ModelViewSet):
-    serializer_class = NotificationSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['is_read', 'type']
 
-    def get_queryset(self):
-        return NotificationSelector.get_user_notifications(self.request.user)
-
-    @action(detail=True, methods=['post'])
-    def mark_as_read(self, request, pk=None):
-        notification = self.get_object()
-        NotificationService.mark_as_read(notification)
-        return Response({'status': 'marked as read'})
-
-
-class AuditLogViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    API ViewSet cho AuditLog. Chỉ đọc.
-    """
-    serializer_class = AuditLogSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_fields = ['user__email', 'action', 'module']
-    search_fields = ['user__email', 'action', 'module', 'payload']
-
-    def get_queryset(self):
-        # Sử dụng Selector theo đúng kiến trúc Service Layer để tránh N+1
-        return AuditLogSelector.get_logs()
-
-    def get_permissions(self):
-        from .permissions import require_permission
-        return [require_permission('AUDIT_VIEW')()]
-
-    @action(detail=False, methods=['get'])
-    def export_excel(self, request):
-        queryset = self.filter_queryset(self.get_queryset())
-
-        log_audit(
-            request.user.id, 'EXPORT_EXCEL', 'AuditLog', None,
-            get_client_ip(request), get_user_agent(request)
-        )
-
-        wb, error = AuditLogService.export_to_excel(queryset)
-        if error:
-            return Response({'error': error}, status=status.HTTP_400_BAD_REQUEST)
-
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename="audit_logs.xlsx"'
-        wb.save(response)
-        return response
 
 
 @api_view(['POST'])

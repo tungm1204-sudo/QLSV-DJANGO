@@ -46,7 +46,7 @@ class Student(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'students'
+        db_table = 'hr_students'
 
     def __str__(self):
         return f"{self.student_code} - {self.user.full_name}"
@@ -86,7 +86,7 @@ class Lecturer(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'lecturers'
+        db_table = 'hr_lecturers'
 
     def __str__(self):
         return f"{self.lecturer_code} - {self.user.full_name}"
@@ -120,7 +120,7 @@ class Staff(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        db_table = 'staffs'
+        db_table = 'hr_staffs'
 
     def __str__(self):
         return f"{self.staff_code} - {self.user.full_name}"

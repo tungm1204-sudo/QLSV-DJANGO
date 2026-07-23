@@ -56,11 +56,13 @@ INSTALLED_APPS = [
     'drf_spectacular',
 
     # Local apps — thêm module mới vào đây khi build
+    'apps.core',
     'apps.identity',
     'apps.master_data',
     'apps.curriculum',
     'apps.affairs',
     'apps.hr',
+    'apps.notifications',
     # 'apps.students',
     'apps.enrollment',
     # 'apps.grading',

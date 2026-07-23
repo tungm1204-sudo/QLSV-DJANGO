@@ -4,10 +4,13 @@ import { Shield, Plus, MoreVertical, Trash2, Edit2, Search, CheckCircle2, Shield
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { toast } from 'sonner';
 import { getRolesApi, createRoleApi, updateRoleApi, deleteRoleApi, getAvailablePermissionsApi } from '../../api/roles';
 import { usePermissions } from '../../hooks/usePermissions';
 import ConfirmModal from '../../components/ui/ConfirmModal';
 import { cn } from '../../utils';
+
+const SYSTEM_ROLES = ['Administrator', 'Giáo vụ', 'Giảng viên', 'Sinh viên', 'Kế toán', 'Công tác SV'];
 
 const roleSchema = z.object({
   name: z.string().min(2, 'Tên vai trò phải từ 2 ký tự').max(100, 'Tên vai trò tối đa 100 ký tự'),
@@ -47,6 +50,8 @@ export default function RolesPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteRoleConfig, setDeleteRoleConfig] = useState({ isOpen: false, roleId: null });
+
+  const isSystemRole = selectedRole && !isCreating && SYSTEM_ROLES.includes(selectedRole.name);
 
   const { data: rolesResponse, isLoading: isLoadingRoles } = useQuery({
     queryKey: ['roles'],
@@ -134,6 +139,7 @@ export default function RolesPage() {
   };
 
   const togglePermission = (permId) => {
+    if (isSystemRole) return;
     const current = form.getValues('permissions');
     if (current.includes(permId)) {
       form.setValue('permissions', current.filter(id => id !== permId), { shouldDirty: true });
@@ -143,6 +149,7 @@ export default function RolesPage() {
   };
 
   const toggleAllPermissions = () => {
+    if (isSystemRole) return;
     const current = form.getValues('permissions');
     if (current.length === availablePermissions.length) {
       // If all are selected, unselect all
@@ -154,6 +161,7 @@ export default function RolesPage() {
   };
 
   const toggleGroupPermissions = (permsInGroup) => {
+    if (isSystemRole) return;
     const current = form.getValues('permissions');
     const groupPermIds = permsInGroup.map(p => p.id);
     const allSelectedInGroup = groupPermIds.every(id => current.includes(id));
@@ -237,6 +245,9 @@ export default function RolesPage() {
                   <div className="flex justify-between items-start mb-2">
                     <h3 className={cn("font-bold text-sm", isActive ? "text-white" : "text-slate-800")}>
                       {role.name}
+                      {SYSTEM_ROLES.includes(role.name) && (
+                        <ShieldCheck size={14} className={cn("inline ml-1", isActive ? "text-indigo-200" : "text-indigo-500")} title="Vai trò Hệ thống" />
+                      )}
                     </h3>
                     <div className={cn("flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full", isActive ? "bg-white/20 text-indigo-50" : "bg-slate-100 text-slate-500")}>
                       <Users size={12} />
@@ -284,18 +295,26 @@ export default function RolesPage() {
             {/* Sticky Header */}
             <div className="px-8 py-5 bg-white border-b border-slate-200 flex items-center justify-between sticky top-0 z-20 shadow-sm">
               <div>
-                <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">
+                <h2 className="text-xl font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
                   {isCreating ? 'Tạo Vai trò mới' : 'Chi tiết Vai trò'}
+                  {isSystemRole && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-md border border-indigo-200 flex items-center gap-1">
+                      <ShieldCheck size={12} />
+                      Mặc định hệ thống
+                    </span>
+                  )}
                 </h2>
                 <p className="text-sm text-slate-500 font-medium mt-1">
-                  Thiết lập thông tin và cấu hình Ma trận quyền truy cập
+                  {isSystemRole 
+                    ? 'Đây là vai trò mặc định của hệ thống. Bạn chỉ có thể xem, không thể chỉnh sửa.' 
+                    : 'Thiết lập thông tin và cấu hình Ma trận quyền truy cập'}
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 {!isCreating && (
                   <button 
                     type="button"
-                    disabled={!canDelete}
+                    disabled={!canDelete || isSystemRole}
                     onClick={() => {
                       setDeleteRoleConfig({ isOpen: true, roleId: selectedRole.id });
                     }}
@@ -310,7 +329,7 @@ export default function RolesPage() {
                 )}
                 <button 
                   type="submit"
-                  disabled={(isCreating ? !canCreate : !canUpdate) || createMutation.isPending || updateMutation.isPending}
+                  disabled={(isCreating ? !canCreate : (!canUpdate || isSystemRole)) || createMutation.isPending || updateMutation.isPending}
                   className="flex items-center gap-2 px-6 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-600/20 rounded-xl transition-all disabled:opacity-50"
                 >
                   <CheckCircle2 size={18} />
@@ -333,7 +352,13 @@ export default function RolesPage() {
                       <label className="block text-sm font-semibold text-slate-700 mb-1.5">Tên vai trò <span className="text-red-500">*</span></label>
                       <input 
                         {...form.register('name')}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
+                        disabled={isSystemRole}
+                        className={cn(
+                          "w-full px-4 py-2.5 border rounded-xl text-sm transition-all font-medium",
+                          isSystemRole 
+                            ? "bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed" 
+                            : "bg-slate-50 border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                        )}
                         placeholder="VD: Quản trị viên, Trợ giảng..."
                       />
                       {form.formState.errors.name && (
@@ -345,7 +370,13 @@ export default function RolesPage() {
                       <textarea 
                         {...form.register('description')}
                         rows={2}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none"
+                        disabled={isSystemRole}
+                        className={cn(
+                          "w-full px-4 py-2.5 border rounded-xl text-sm transition-all resize-none",
+                          isSystemRole
+                            ? "bg-slate-100 border-slate-200 text-slate-500 cursor-not-allowed"
+                            : "bg-slate-50 border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                        )}
                         placeholder="Mô tả ngắn gọn về chức năng của vai trò này..."
                       />
                     </div>
@@ -361,14 +392,15 @@ export default function RolesPage() {
                     </h3>
                     <div className="flex items-center gap-3">
                       <div className="text-xs font-semibold px-3 py-1 bg-slate-100 text-slate-600 rounded-lg">
-                        Đã chọn: <span className="text-indigo-600">{form.watch('permissions').length}</span> / {availablePermissions.length}
+                        Đã chọn: <span className="text-indigo-600">{form.watch('permissions').includes('*') ? availablePermissions.length : form.watch('permissions').length}</span> / {availablePermissions.length}
                       </div>
                       <button
                         type="button"
+                        disabled={isSystemRole}
                         onClick={toggleAllPermissions}
-                        className="text-xs font-bold px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-colors"
+                        className="text-xs font-bold px-3 py-1.5 rounded-lg border border-indigo-200 text-indigo-700 bg-indigo-50 hover:bg-indigo-600 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {form.watch('permissions').length === availablePermissions.length ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
+                        {(form.watch('permissions').includes('*') || form.watch('permissions').length === availablePermissions.length) ? 'Bỏ chọn tất cả' : 'Chọn tất cả'}
                       </button>
                     </div>
                   </div>
@@ -378,7 +410,7 @@ export default function RolesPage() {
                       if (perms.length === 0) return null;
                       
                       const groupPermIds = perms.map(p => p.id);
-                      const allSelectedInGroup = groupPermIds.every(id => form.watch('permissions').includes(id));
+                      const allSelectedInGroup = form.watch('permissions').includes('*') || groupPermIds.every(id => form.watch('permissions').includes(id));
 
                       return (
                         <div key={groupName} className="border border-slate-100 rounded-xl overflow-hidden">
@@ -386,15 +418,16 @@ export default function RolesPage() {
                             <h4 className="text-sm font-bold text-slate-700">{groupName}</h4>
                             <button
                               type="button"
+                              disabled={isSystemRole}
                               onClick={() => toggleGroupPermissions(perms)}
-                              className="text-[11px] font-bold px-2.5 py-1 rounded-md border border-slate-200 text-slate-600 bg-white hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                              className="text-[11px] font-bold px-2.5 py-1 rounded-md border border-slate-200 text-slate-600 bg-white hover:bg-slate-100 hover:text-slate-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {allSelectedInGroup ? 'Bỏ chọn' : 'Chọn tất cả'}
                             </button>
                           </div>
                           <div className="p-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                             {perms.map(perm => {
-                              const isChecked = form.watch('permissions').includes(perm.id);
+                              const isChecked = form.watch('permissions').includes('*') || form.watch('permissions').includes(perm.id);
                               
                               // Determine color based on action type
                               let colorClass = "text-indigo-600 bg-indigo-50";
@@ -408,13 +441,16 @@ export default function RolesPage() {
                                   key={perm.id}
                                   onClick={() => togglePermission(perm.id)}
                                   className={cn(
-                                    "flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm",
-                                    isChecked ? "border-slate-300 bg-white shadow-sm" : "border-transparent hover:border-slate-200 hover:bg-slate-50"
+                                    "flex items-start gap-3 p-3 rounded-lg border transition-all",
+                                    isChecked ? "border-slate-300 bg-white shadow-sm" : "border-transparent",
+                                    !isSystemRole && !isChecked && "hover:border-slate-200 hover:bg-slate-50",
+                                    !isSystemRole && "cursor-pointer",
+                                    isSystemRole && "opacity-80"
                                   )}
                                 >
-                                  <div className="relative inline-flex items-center cursor-pointer mt-0.5 shrink-0">
-                                    <input type="checkbox" className="sr-only peer" checked={isChecked} readOnly />
-                                    <div className={cn("w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all", toggleClass)}></div>
+                                  <div className={cn("relative inline-flex items-center mt-0.5 shrink-0", !isSystemRole && "cursor-pointer")}>
+                                    <input type="checkbox" className="sr-only peer" checked={isChecked} readOnly disabled={isSystemRole} />
+                                    <div className={cn("w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all", toggleClass, isSystemRole && "opacity-70")}></div>
                                   </div>
                                   <div>
                                     <p className={cn("text-xs font-bold leading-tight mb-1 transition-colors", isChecked ? "text-slate-900" : "text-slate-600")}>

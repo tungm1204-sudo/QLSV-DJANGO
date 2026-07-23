@@ -48,6 +48,9 @@ File này định nghĩa danh tính, cách suy nghĩ và các quy tắc bắt bu
 - [ ] **Test:** Đã chạy `python manage.py check` và `python manage.py test` thành công (100% PASS).
 - [ ] **Kiến trúc:** ViewSet class chỉ được khai báo trong `views.py`, KHÔNG bao giờ khai báo trong `urls.py`.
 - [ ] **Import:** Không dùng `__import__()` hack. Luôn import trực tiếp ở đầu file.
+- [ ] **Double Testing (BẮT BUỘC):** Khi code xong 1 Module (gồm cả Backend + Frontend), bắt buộc phải test 2 lớp:
+  1. **Lớp Dev (API Test):** Dùng Script/Python giả lập gọi API để đảm bảo logic bảo mật cốt lõi không thể bị bypass (Ví dụ: 403 Forbidden).
+  2. **Lớp End-User (UI Test):** Bắt buộc chạy server và bật trình duyệt (Browser Subagent) đóng vai trò người dùng cuối để click thực tế trên giao diện, nhằm phát hiện các lỗi UX/UI, thiếu Toast, lỗi vô hiệu hóa nút bấm mà API test không thấy được. "Test 2 lần vẫn hơn 1 lần".
 
 ---
 

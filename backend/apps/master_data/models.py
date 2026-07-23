@@ -40,7 +40,7 @@ class Department(TimeStampedModel):
     name = models.CharField(max_length=255, help_text="Tên đơn vị")
     type = models.CharField(max_length=50, choices=TypeChoices.choices, help_text="Loại đơn vị (Khoa/Bộ môn...)")
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children', help_text="Đơn vị cha (VD: Bộ môn thuộc Khoa)")
-    manager_id = models.UUIDField(null=True, blank=True, help_text="ID của Trưởng đơn vị (Tham chiếu lỏng đến bảng Nhân sự)")
+    manager = models.ForeignKey('hr.Lecturer', on_delete=models.SET_NULL, null=True, blank=True, related_name='managed_departments', help_text="Trưởng đơn vị (Tham chiếu đến Giảng viên)")
     is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
 
     class Meta:
@@ -204,7 +204,7 @@ class AdministrativeClass(TimeStampedModel):
     name = models.CharField(max_length=100)
     major = models.ForeignKey(Major, on_delete=models.PROTECT, related_name='administrative_classes')
     cohort = models.ForeignKey(Cohort, on_delete=models.PROTECT, related_name='administrative_classes')
-    advisor_id = models.UUIDField(null=True, blank=True, help_text="ID của Giảng viên cố vấn (sẽ map với hr.Lecturer)")
+    advisor = models.ForeignKey('hr.Lecturer', on_delete=models.SET_NULL, null=True, blank=True, related_name='advised_classes', help_text="Giảng viên cố vấn")
     is_active = models.BooleanField(default=True)
     
     class Meta:

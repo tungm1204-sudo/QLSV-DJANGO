@@ -15,11 +15,11 @@ export function usePermissions() {
   const { user } = useAuthStore();
   const permissions = user?.role?.permissions || [];
 
-  const hasPermission = (perm) => permissions.includes(perm);
+  const hasPermission = (perm) => permissions.includes('*') || permissions.includes(perm);
 
-  const hasAnyPermission = (perms) => perms.some((p) => permissions.includes(p));
+  const hasAnyPermission = (perms) => permissions.includes('*') || perms.some((p) => permissions.includes(p));
 
-  const hasAllPermissions = (perms) => perms.every((p) => permissions.includes(p));
+  const hasAllPermissions = (perms) => permissions.includes('*') || perms.every((p) => permissions.includes(p));
 
   return {
     permissions,

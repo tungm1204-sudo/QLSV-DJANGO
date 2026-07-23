@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APIClient
 from rest_framework import status
-from .models import Role, AuditLog, OTPToken
+from .models import Role, OTPToken
+from apps.core.models import AuditLog
 from django.utils import timezone
 
 User = get_user_model()

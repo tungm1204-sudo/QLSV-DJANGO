@@ -10,8 +10,8 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from django.utils import timezone
 from django.db import transaction
-from .models import AuditLog, OTPToken, LoginSession, SystemConfig, Role, Notification
-from .selectors import SystemConfigSelector
+from .models import OTPToken, LoginSession, Role
+from apps.core.services import log_audit
 import logging
 import openpyxl
 import random
@@ -20,21 +20,6 @@ logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
-
-def log_audit(user_id, action_name: str, module: str, payload: dict = None, ip_address: str = None, user_agent: str = None, record_id: str = None):
-    """
-    Hàm tiện ích ghi lại vết hệ thống (Audit Log).
-    Lý do: Đảm bảo tuân thủ bảo mật, mọi thao tác thay đổi dữ liệu nhạy cảm đều phải gọi hàm này.
-    """
-    AuditLog.objects.create(
-        user_id=user_id,
-        action=action_name,
-        module=module,
-        payload=payload,
-        record_id=record_id,
-        ip_address=ip_address,
-        user_agent=user_agent
-    )
 
 
 class RoleService:
@@ -67,42 +52,6 @@ class RoleService:
         role_info = {'id': str(role.id), 'name': role.name}
         role.delete()
         log_audit(actor_id, 'DELETE', 'Roles', role_info, ip_address, user_agent)
-
-
-class SystemConfigService:
-    """
-    Xử lý tạo, cập nhật cấu hình hệ thống.
-    Bắt buộc phải ghi log để audit do cấu hình ảnh hưởng trực tiếp đến hệ thống.
-    """
-    @staticmethod
-    @transaction.atomic
-    def create_config(validated_data, actor_id, ip_address=None, user_agent=None):
-        config = SystemConfig.objects.create(**validated_data)
-        log_audit(actor_id, 'CREATE', 'SystemConfig', {'key': config.key}, ip_address, user_agent)
-        return config
-
-    @staticmethod
-    @transaction.atomic
-    def update_config(config, validated_data, actor_id, ip_address=None, user_agent=None):
-        for key, value in validated_data.items():
-            setattr(config, key, value)
-        config.save()
-        log_audit(actor_id, 'UPDATE', 'SystemConfig', {'key': config.key}, ip_address, user_agent)
-        return config
-
-
-class NotificationService:
-    """
-    Xử lý logic liên quan đến Thông báo.
-    """
-    @staticmethod
-    def mark_as_read(notification):
-        # Đánh dấu trạng thái đã đọc cho đối tượng notification.
-        notification.is_read = True
-        
-        # Gọi hàm save nhưng chỉ chỉ định trường update_fields=['is_read'].
-        # Lý do: Tối ưu hoá câu lệnh SQL UPDATE, chỉ cập nhật 1 cột duy nhất thay vì toàn bộ các cột, giúp DB chạy nhanh hơn.
-        notification.save(update_fields=['is_read'])
 
 
 class AuthService:
@@ -239,6 +188,7 @@ class AuthService:
             user = User.objects.get(email=email)
             user.failed_login_attempts += 1
 
+            from apps.core.selectors import SystemConfigSelector
             max_attempts, lockout_duration = SystemConfigSelector.get_lockout_config()
 
             if user.failed_login_attempts >= max_attempts:
@@ -345,20 +295,4 @@ class UserService:
             logger.exception("Import Excel failed")
             return 0, str(e)
 
-
-class AuditLogService:
-    @staticmethod
-    def export_to_excel(queryset):
-        wb = openpyxl.Workbook()
-        ws = wb.active
-        ws.title = "Audit Logs"
-
-        headers = ["ID", "User", "Action", "Module", "IP Address", "Created At"]
-        ws.append(headers)
-
-        for log in queryset:
-            user_str = log.user.email if log.user else "System"
-            ws.append([str(log.id), user_str, log.action, log.module, log.ip_address, str(log.created_at)])
-
-        return wb, None
 

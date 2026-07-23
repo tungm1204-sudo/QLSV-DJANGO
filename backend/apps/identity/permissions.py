@@ -22,6 +22,9 @@ class HasPermission(permissions.BasePermission):
         if not role:
             return False
             
+        if '*' in role.permissions:
+            return True
+            
         return self.required_permission in role.permissions
 
 def require_permission(perm_name):

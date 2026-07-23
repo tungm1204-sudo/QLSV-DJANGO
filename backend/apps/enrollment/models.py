@@ -40,7 +40,7 @@ class Enrollment(TimeStampedModel):
     is_locked = models.BooleanField(default=False, help_text="Khóa bản ghi, không cho sửa điểm")
 
     class Meta:
-        db_table = 'enrollments'
+        db_table = 'enrollment_enrollments'
         unique_together = ('student', 'course_offering') # Một SV chỉ đăng ký 1 lớp của 1 môn trong 1 học kỳ.
 
     def __str__(self) -> str:
