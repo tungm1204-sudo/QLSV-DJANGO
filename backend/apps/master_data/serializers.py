@@ -2,7 +2,11 @@
 Master Data Serializers
 """
 from rest_framework import serializers
-from .models import EducationSystem, Department, Major, Specialization, Room, PriorityCategory, ExamType, Cohort, AcademicYear, Semester, AdministrativeClass
+from .models import (
+    EducationSystem, Department, Major, Specialization, Room, PriorityCategory, ExamType, 
+    Cohort, AcademicYear, Semester, AdministrativeClass,
+    Campus, Building, Degree, AcademicTitle, AdmissionType, Ethnicity, Religion, Nationality
+)
 
 class EducationSystemReadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -122,6 +126,95 @@ class AdministrativeClassReadSerializer(serializers.ModelSerializer):
 class AdministrativeClassWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdministrativeClass
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+class CampusReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Campus
+        fields = '__all__'
+
+class CampusWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Campus
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class BuildingReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Building
+        fields = '__all__'
+
+class BuildingWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Building
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class DegreeReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Degree
+        fields = '__all__'
+
+class DegreeWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Degree
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class AcademicTitleReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AcademicTitle
+        fields = '__all__'
+
+class AcademicTitleWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AcademicTitle
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class AdmissionTypeReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdmissionType
+        fields = '__all__'
+
+class AdmissionTypeWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdmissionType
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class EthnicityReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ethnicity
+        fields = '__all__'
+
+class EthnicityWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ethnicity
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class ReligionReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Religion
+        fields = '__all__'
+
+class ReligionWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Religion
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class NationalityReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Nationality
+        fields = '__all__'
+
+class NationalityWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Nationality
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'updated_at']
 

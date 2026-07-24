@@ -404,3 +404,291 @@ class AdministrativeClassViewSet(viewsets.ViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+
+class CampusViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        is_active = request.query_params.get('is_active')
+        if is_active is not None:
+            is_active = str(is_active).lower() == 'true'
+        qs = selectors.get_campuss(is_active=is_active)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.CampusReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.CampusWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        obj = services.create_campus(**serializer.validated_data)
+        return Response(serializers.CampusReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_campus_by_id(pk)
+        return Response(serializers.CampusReadSerializer(obj).data)
+
+    def update(self, request, pk=None):
+        obj = selectors.get_campus_by_id(pk)
+        serializer = serializers.CampusWriteSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_obj = services.update_campus(obj, **serializer.validated_data)
+        return Response(serializers.CampusReadSerializer(updated_obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_campus_by_id(pk)
+        services.delete_campus(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class BuildingViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        is_active = request.query_params.get('is_active')
+        if is_active is not None:
+            is_active = str(is_active).lower() == 'true'
+        qs = selectors.get_buildings(is_active=is_active)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.BuildingReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.BuildingWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        obj = services.create_building(**serializer.validated_data)
+        return Response(serializers.BuildingReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_building_by_id(pk)
+        return Response(serializers.BuildingReadSerializer(obj).data)
+
+    def update(self, request, pk=None):
+        obj = selectors.get_building_by_id(pk)
+        serializer = serializers.BuildingWriteSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_obj = services.update_building(obj, **serializer.validated_data)
+        return Response(serializers.BuildingReadSerializer(updated_obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_building_by_id(pk)
+        services.delete_building(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class DegreeViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        is_active = request.query_params.get('is_active')
+        if is_active is not None:
+            is_active = str(is_active).lower() == 'true'
+        qs = selectors.get_degrees(is_active=is_active)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.DegreeReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.DegreeWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        obj = services.create_degree(**serializer.validated_data)
+        return Response(serializers.DegreeReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_degree_by_id(pk)
+        return Response(serializers.DegreeReadSerializer(obj).data)
+
+    def update(self, request, pk=None):
+        obj = selectors.get_degree_by_id(pk)
+        serializer = serializers.DegreeWriteSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_obj = services.update_degree(obj, **serializer.validated_data)
+        return Response(serializers.DegreeReadSerializer(updated_obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_degree_by_id(pk)
+        services.delete_degree(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AcademicTitleViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        is_active = request.query_params.get('is_active')
+        if is_active is not None:
+            is_active = str(is_active).lower() == 'true'
+        qs = selectors.get_academictitles(is_active=is_active)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.AcademicTitleReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.AcademicTitleWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        obj = services.create_academictitle(**serializer.validated_data)
+        return Response(serializers.AcademicTitleReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_academictitle_by_id(pk)
+        return Response(serializers.AcademicTitleReadSerializer(obj).data)
+
+    def update(self, request, pk=None):
+        obj = selectors.get_academictitle_by_id(pk)
+        serializer = serializers.AcademicTitleWriteSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_obj = services.update_academictitle(obj, **serializer.validated_data)
+        return Response(serializers.AcademicTitleReadSerializer(updated_obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_academictitle_by_id(pk)
+        services.delete_academictitle(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class AdmissionTypeViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        is_active = request.query_params.get('is_active')
+        if is_active is not None:
+            is_active = str(is_active).lower() == 'true'
+        qs = selectors.get_admissiontypes(is_active=is_active)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.AdmissionTypeReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.AdmissionTypeWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        obj = services.create_admissiontype(**serializer.validated_data)
+        return Response(serializers.AdmissionTypeReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_admissiontype_by_id(pk)
+        return Response(serializers.AdmissionTypeReadSerializer(obj).data)
+
+    def update(self, request, pk=None):
+        obj = selectors.get_admissiontype_by_id(pk)
+        serializer = serializers.AdmissionTypeWriteSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_obj = services.update_admissiontype(obj, **serializer.validated_data)
+        return Response(serializers.AdmissionTypeReadSerializer(updated_obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_admissiontype_by_id(pk)
+        services.delete_admissiontype(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class EthnicityViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        is_active = request.query_params.get('is_active')
+        if is_active is not None:
+            is_active = str(is_active).lower() == 'true'
+        qs = selectors.get_ethnicities(is_active=is_active)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.EthnicityReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.EthnicityWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        obj = services.create_ethnicity(**serializer.validated_data)
+        return Response(serializers.EthnicityReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_ethnicity_by_id(pk)
+        return Response(serializers.EthnicityReadSerializer(obj).data)
+
+    def update(self, request, pk=None):
+        obj = selectors.get_ethnicity_by_id(pk)
+        serializer = serializers.EthnicityWriteSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_obj = services.update_ethnicity(obj, **serializer.validated_data)
+        return Response(serializers.EthnicityReadSerializer(updated_obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_ethnicity_by_id(pk)
+        services.delete_ethnicity(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ReligionViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        is_active = request.query_params.get('is_active')
+        if is_active is not None:
+            is_active = str(is_active).lower() == 'true'
+        qs = selectors.get_religions(is_active=is_active)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.ReligionReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.ReligionWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        obj = services.create_religion(**serializer.validated_data)
+        return Response(serializers.ReligionReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_religion_by_id(pk)
+        return Response(serializers.ReligionReadSerializer(obj).data)
+
+    def update(self, request, pk=None):
+        obj = selectors.get_religion_by_id(pk)
+        serializer = serializers.ReligionWriteSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_obj = services.update_religion(obj, **serializer.validated_data)
+        return Response(serializers.ReligionReadSerializer(updated_obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_religion_by_id(pk)
+        services.delete_religion(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class NationalityViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        is_active = request.query_params.get('is_active')
+        if is_active is not None:
+            is_active = str(is_active).lower() == 'true'
+        qs = selectors.get_nationalities(is_active=is_active)
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.NationalityReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.NationalityWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        obj = services.create_nationality(**serializer.validated_data)
+        return Response(serializers.NationalityReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_nationality_by_id(pk)
+        return Response(serializers.NationalityReadSerializer(obj).data)
+
+    def update(self, request, pk=None):
+        obj = selectors.get_nationality_by_id(pk)
+        serializer = serializers.NationalityWriteSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_obj = services.update_nationality(obj, **serializer.validated_data)
+        return Response(serializers.NationalityReadSerializer(updated_obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_nationality_by_id(pk)
+        services.delete_nationality(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)

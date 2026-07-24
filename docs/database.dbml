@@ -94,7 +94,7 @@ Table hr_staffs {
   staff_code varchar [unique]
   department_id uuid [ref: > master_data_departments.id, note: 'Khoa/Phòng ban']
   position varchar [note: 'Giáo vụ, Kế toán, Chuyên viên...']
-  degree varchar [note: 'Cử nhân, Thạc sĩ...']
+  degree_id uuid [ref: > master_data_degrees.id, note: 'Cử nhân, Thạc sĩ...']
   responsibilities text
   join_date date
   status varchar [default: 'ACTIVE']
@@ -116,8 +116,8 @@ Table hr_lecturers {
   user_id uuid [ref: - identity_users.id]
   lecturer_code varchar [unique]
   department_id uuid [ref: > master_data_departments.id]
-  degree varchar [note: 'Cử nhân, Thạc sĩ, Tiến sĩ...']
-  academic_title varchar [note: 'Thạc sĩ, Tiến sĩ, PGS, GS...']
+  degree_id uuid [ref: > master_data_degrees.id, note: 'Cử nhân, Thạc sĩ, Tiến sĩ...']
+  academic_title_id uuid [ref: > master_data_academic_titles.id, note: 'Thạc sĩ, Tiến sĩ, PGS, GS...']
   contract_type varchar [note: 'Cơ hữu, Thỉnh giảng']
   teaching_domain text
   join_date date
@@ -127,9 +127,9 @@ Table hr_lecturers {
   gender varchar
   id_card_number varchar
   place_of_birth varchar
-  ethnicity varchar
-  religion varchar
-  nationality varchar
+  ethnicity_id uuid [ref: > master_data_ethnicities.id]
+  religion_id uuid [ref: > master_data_religions.id]
+  nationality_id uuid [ref: > master_data_nationalities.id]
   contact_phone varchar
   personal_email varchar
   address text
@@ -151,14 +151,15 @@ Table hr_students {
   administrative_class_id uuid [ref: > master_data_administrative_classes.id, note: 'Lớp hành chính']
   education_system_id uuid [ref: > master_data_education_systems.id, note: 'Hệ đào tạo']
   priority_category_id uuid [ref: > master_data_priority_categories.id]
+  admission_type_id uuid [ref: > master_data_admission_types.id]
   status varchar [note: 'ACTIVE, PAUSED, GRADUATED, DROPPED_OUT']
   
   date_of_birth date
   gender varchar
   place_of_birth varchar
-  ethnicity varchar
-  religion varchar
-  nationality varchar
+  ethnicity_id uuid [ref: > master_data_ethnicities.id]
+  religion_id uuid [ref: > master_data_religions.id]
+  nationality_id uuid [ref: > master_data_nationalities.id]
   
   personal_email varchar
   contact_phone varchar
@@ -215,10 +216,31 @@ Table master_data_specializations {
   updated_at timestamp
 }
 
+Table master_data_campuses {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  address varchar
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_buildings {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  campus_id uuid [ref: > master_data_campuses.id]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
 Table master_data_rooms {
   id uuid [pk]
   code varchar [unique]
   name varchar
+  building_id uuid [ref: > master_data_buildings.id]
   type varchar [note: 'THEORY, PRACTICE, HALL']
   capacity int
   status varchar [note: 'ACTIVE, MAINTENANCE']
@@ -284,6 +306,60 @@ Table master_data_administrative_classes {
   major_id uuid [ref: > master_data_majors.id]
   cohort_id uuid [ref: > master_data_cohorts.id]
   advisor_id uuid [ref: > hr_lecturers.id]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_degrees {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_academic_titles {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_admission_types {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_ethnicities {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_religions {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table master_data_nationalities {
+  id uuid [pk]
+  code varchar [unique]
+  name varchar
   is_active boolean [default: true]
   created_at timestamp
   updated_at timestamp
