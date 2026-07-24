@@ -61,81 +61,81 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 ## MODULE 2: Quản lý danh mục gốc
 
 ### Danh mục đơn vị đào tạo
-- [ ] **Thêm/sửa/xóa Khoa, Bộ môn, Trung tâm** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Quản lý cấu trúc phân cấp (Khoa → Bộ môn)**
-- [ ] **Gán trưởng/phó đơn vị**
-- [ ] **Trạng thái hoạt động/ngừng hoạt động của đơn vị**
+- [x] **Thêm/sửa/xóa Khoa, Bộ môn, Trung tâm** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Quản lý cấu trúc phân cấp (Khoa → Bộ môn)**
+- [x] **Gán trưởng/phó đơn vị**
+- [x] **Trạng thái hoạt động/ngừng hoạt động của đơn vị**
 
 ### Danh mục ngành / chuyên ngành
-- [ ] **Thêm/sửa/xóa ngành đào tạo** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Quản lý chuyên ngành trực thuộc ngành**
-- [ ] **Quản lý hệ đào tạo (Chính quy, Liên thông, Vừa làm vừa học...)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Gán ngành thuộc đơn vị (Khoa) quản lý**
+- [x] **Thêm/sửa/xóa ngành đào tạo** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Quản lý chuyên ngành trực thuộc ngành**
+- [x] **Quản lý hệ đào tạo (Chính quy, Liên thông, Vừa làm vừa học...)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Gán ngành thuộc đơn vị (Khoa) quản lý**
 
 ### Danh mục khóa học & học kỳ
-- [ ] **Quản lý khóa tuyển sinh (VD: Khóa 2024-2028)** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Quản lý năm học**
-- [ ] **Quản lý học kỳ (HK1, HK2, Hè) gắn với năm học**
-- [ ] **Thiết lập ngày bắt đầu/kết thúc học kỳ**
+- [x] **Quản lý khóa tuyển sinh (VD: Khóa 2024-2028)** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Quản lý năm học**
+- [x] **Quản lý học kỳ (HK1, HK2, Hè) gắn với năm học**
+- [x] **Thiết lập ngày bắt đầu/kết thúc học kỳ**
 
 ### Danh mục chương trình đào tạo
-- [ ] **Xây dựng khung chương trình đào tạo theo ngành/khóa** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Thiết lập môn tiên quyết (prerequisite)** - *Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa.*
-- [ ] **Thiết lập học phần thay thế/tương đương**
-- [ ] **Quản lý số tín chỉ tối thiểu để tốt nghiệp**
-- [ ] **Sao chép chương trình đào tạo từ khóa trước** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Xây dựng khung chương trình đào tạo theo ngành/khóa** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Thiết lập môn tiên quyết (prerequisite)** - *Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa.*
+- [x] **Thiết lập học phần thay thế/tương đương**
+- [x] **Quản lý số tín chỉ tối thiểu để tốt nghiệp**
+- [x] **Sao chép chương trình đào tạo từ khóa trước** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
 
 ### Danh mục môn học / học phần
-- [ ] **Thêm/sửa/xóa môn học (mã môn, tên môn)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Thiết lập số tín chỉ (lý thuyết, thực hành)**
-- [ ] **Phân loại học phần (bắt buộc, tự chọn, đại cương, chuyên ngành)**
-- [ ] **Quản lý đề cương môn học (tài liệu đính kèm)**
+- [x] **Thêm/sửa/xóa môn học (mã môn, tên môn)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Thiết lập số tín chỉ (lý thuyết, thực hành)**
+- [x] **Phân loại học phần (bắt buộc, tự chọn, đại cương, chuyên ngành)**
+- [x] **Quản lý đề cương môn học (tài liệu đính kèm)**
 
 ### Danh mục phòng học
-- [ ] **Thêm/sửa/xóa phòng học** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Phân loại phòng (lý thuyết, thực hành, hội trường)**
-- [ ] **Thiết lập sức chứa từng phòng**
-- [ ] **Trạng thái sử dụng (đang dùng, bảo trì)**
+- [x] **Thêm/sửa/xóa phòng học** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Phân loại phòng (lý thuyết, thực hành, hội trường)**
+- [x] **Thiết lập sức chứa từng phòng**
+- [x] **Trạng thái sử dụng (đang dùng, bảo trì)**
 
 ### Danh mục hình thức thi
-- [ ] **Thêm/sửa các hình thức thi (viết, trắc nghiệm, vấn đáp, đồ án)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Thiết lập thang điểm tương ứng từng hình thức**
-- [ ] **Gán hình thức thi mặc định theo loại học phần**
+- [x] **Thêm/sửa các hình thức thi (viết, trắc nghiệm, vấn đáp, đồ án)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Thiết lập thang điểm tương ứng từng hình thức**
+- [x] **Gán hình thức thi mặc định theo loại học phần**
 
 ### Danh mục đối tượng ưu tiên
-- [ ] **Thêm/sửa danh mục đối tượng ưu tiên (khu vực, chính sách, dân tộc...)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Thiết lập tỷ lệ/mức miễn giảm học phí tương ứng**
-- [ ] **Thiết lập điểm cộng ưu tiên (nếu áp dụng xét tuyển/học bổng)**
+- [x] **Thêm/sửa danh mục đối tượng ưu tiên (khu vực, chính sách, dân tộc...)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Thiết lập tỷ lệ/mức miễn giảm học phí tương ứng**
+- [x] **Thiết lập điểm cộng ưu tiên (nếu áp dụng xét tuyển/học bổng)**
 
 ### Danh mục khen thưởng / kỷ luật
-- [ ] **Thêm/sửa các loại hình khen thưởng** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Thêm/sửa các loại hình kỷ luật** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Thiết lập điểm cộng/trừ rèn luyện tương ứng từng loại**
-- [ ] **Thiết lập mức độ kỷ luật (khiển trách, cảnh cáo, đình chỉ, buộc thôi học)**
+- [x] **Thêm/sửa các loại hình khen thưởng** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Thêm/sửa các loại hình kỷ luật** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Thiết lập điểm cộng/trừ rèn luyện tương ứng từng loại**
+- [x] **Thiết lập mức độ kỷ luật (khiển trách, cảnh cáo, đình chỉ, buộc thôi học)**
 
 ### Quản lý Sinh viên
-- [ ] **Tạo hồ sơ sinh viên (thông tin cá nhân, liên hệ, gia đình)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Tạo hồ sơ sinh viên (thông tin cá nhân, liên hệ, gia đình)** - *(Backend Done)* *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
 
 ## MODULE 3: Quản lý nhân sự
-- [ ] **Import danh sách sinh viên hàng loạt từ Excel** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [ ] **Cập nhật trạng thái học tập (đang học, bảo lưu, chuyển ngành, thôi học, tốt nghiệp)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
-- [ ] **Quản lý lịch sử lớp học theo từng học kỳ**
-- [ ] **Tra cứu/tìm kiếm sinh viên theo nhiều tiêu chí** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
-- [ ] **Quản lý ảnh đại diện và giấy tờ đính kèm (CCCD, học bạ...)**
+- [x] **Import danh sách sinh viên hàng loạt từ Excel** - *(Backend Done)* *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Cập nhật trạng thái học tập (đang học, bảo lưu, chuyển ngành, thôi học, tốt nghiệp)** - *(Backend Done)* *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
+- [x] **Quản lý lịch sử lớp học theo từng học kỳ** - *(Backend Done)*
+- [x] **Tra cứu/tìm kiếm sinh viên theo nhiều tiêu chí** - *(Backend Done)* *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Quản lý ảnh đại diện và giấy tờ đính kèm (CCCD, học bạ...)** - *(Backend Done)*
 - [ ] **In thẻ sinh viên/giấy xác nhận**
 
 ### Quản lý Giảng viên
-- [ ] **Tạo hồ sơ giảng viên (thông tin cá nhân, học vị, học hàm)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Quản lý chuyên môn/lĩnh vực giảng dạy**
-- [ ] **Quản lý lịch sử phân công giảng dạy**
-- [ ] **Quản lý hợp đồng/biên chế (cơ hữu, thỉnh giảng)**
-- [ ] **Tra cứu giảng viên theo khoa/bộ môn/chuyên môn** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Tạo hồ sơ giảng viên (thông tin cá nhân, học vị, học hàm)** - *(Backend Done)* *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Quản lý chuyên môn/lĩnh vực giảng dạy** - *(Backend Done)*
+- [x] **Quản lý lịch sử phân công giảng dạy** - *(Backend Done)*
+- [x] **Quản lý hợp đồng/biên chế (cơ hữu, thỉnh giảng)** - *(Backend Done)*
+- [x] **Tra cứu giảng viên theo khoa/bộ môn/chuyên môn** - *(Backend Done)* *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 
 ### Quản lý Cán bộ - Nhân viên
-- [ ] **Tạo hồ sơ nhân viên (giáo vụ, kế toán, thư viện, hành chính)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Phân loại theo bộ phận/phòng ban**
-- [ ] **Quản lý chức vụ, nhiệm vụ phụ trách**
-- [ ] **Tra cứu/tìm kiếm nhân viên** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Tạo hồ sơ nhân viên (giáo vụ, kế toán, thư viện, hành chính)** - *(Backend Done)* *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Phân loại theo bộ phận/phòng ban** - *(Backend Done)*
+- [x] **Quản lý chức vụ, nhiệm vụ phụ trách** - *(Backend Done)*
+- [x] **Tra cứu/tìm kiếm nhân viên** - *(Backend Done)* *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 
 ### Phân công giảng dạy
 - [x] **Gán giảng viên phụ trách cho từng lớp học phần**

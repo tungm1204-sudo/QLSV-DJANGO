@@ -1,52 +1,57 @@
 """
 Curriculum Serializers
-======================
-Chuyển đổi Dữ liệu JSON <-> Model cho Module Đào tạo.
 """
 from rest_framework import serializers
-from .models import Course, TrainingProgram, Prerequisite, EquivalentCourse, TrainingPlan, CourseOffering, Schedule
+from .models import Course, TrainingProgram, Prerequisite, EquivalentCourse
 
-class CourseSerializer(serializers.ModelSerializer):
-    """Serializer cho Môn học"""
+class CourseReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = '__all__'
 
-class TrainingProgramSerializer(serializers.ModelSerializer):
-    """Serializer cho Khung chương trình"""
+class CourseWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class TrainingProgramReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrainingProgram
         fields = '__all__'
 
-class PrerequisiteSerializer(serializers.ModelSerializer):
-    """Serializer cho Môn tiên quyết"""
+class TrainingProgramWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainingProgram
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class PrerequisiteReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Prerequisite
         fields = '__all__'
 
-class EquivalentCourseSerializer(serializers.ModelSerializer):
+class PrerequisiteWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Prerequisite
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class EquivalentCourseReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = EquivalentCourse
         fields = '__all__'
 
-class TrainingPlanSerializer(serializers.ModelSerializer):
-    department_name = serializers.CharField(source='department.name', read_only=True)
-    created_by_name = serializers.CharField(source='created_by.username', read_only=True)
-    
+class EquivalentCourseWriteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TrainingPlan
+        model = EquivalentCourse
         fields = '__all__'
-        read_only_fields = ('status', 'approved_by')
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
+from .models import CourseOffering
 class CourseOfferingSerializer(serializers.ModelSerializer):
-    course_name = serializers.CharField(source='course.name', read_only=True)
-    lecturer_name = serializers.CharField(source='lecturer.get_full_name', read_only=True)
-    
     class Meta:
         model = CourseOffering
         fields = '__all__'
 
-class ScheduleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Schedule
-        fields = '__all__'
+

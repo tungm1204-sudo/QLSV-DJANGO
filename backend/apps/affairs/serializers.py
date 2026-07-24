@@ -1,13 +1,17 @@
 """
 Affairs Serializers
-===================
-Chuyển đổi dữ liệu JSON <-> Model cho CTSV.
 """
 from rest_framework import serializers
 from .models import RewardDisciplineCategory
 
-class RewardDisciplineCategorySerializer(serializers.ModelSerializer):
-    """Serializer cho Khen thưởng/Kỷ luật."""
+class RewardDisciplineCategoryReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = RewardDisciplineCategory
         fields = '__all__'
+
+class RewardDisciplineCategoryWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RewardDisciplineCategory
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+

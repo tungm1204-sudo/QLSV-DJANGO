@@ -1,76 +1,226 @@
 """
 Master Data Services
-====================
-Chứa toàn bộ Business Logic liên quan đến thao tác (Create/Update/Delete) danh mục.
-Tuyệt đối tuân thủ Service Layer: Validate rules, dùng @transaction.atomic để đảm bảo an toàn.
 """
 from django.db import transaction
-from django.core.exceptions import ValidationError
-from .models import Department, Major, Room, PriorityCategory, ExamType, Cohort, Semester
+from .models import EducationSystem, Department, Major, Specialization, Room, PriorityCategory, ExamType, Cohort, AcademicYear, Semester, AdministrativeClass
 
-class DepartmentService:
-    @staticmethod
-    @transaction.atomic
-    def delete_department(department: Department) -> None:
-        """
-        Xóa Khoa/Bộ môn.
-        Why: Đảm bảo không xóa cứng đơn vị nếu đơn vị đó đang có đơn vị con, 
-             hoặc đang quản lý một Ngành học (bảo vệ toàn vẹn dữ liệu).
-        """
-        if department.children.exists():
-            raise ValidationError("Không thể xóa Khoa/Đơn vị đang có đơn vị con.")
-        if department.majors.exists():
-            raise ValidationError("Không thể xóa Khoa/Đơn vị đang quản lý Ngành học.")
-        department.delete()
+@transaction.atomic
+def create_education_system(**data) -> EducationSystem:
+    obj = EducationSystem(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
 
-class MajorService:
-    @staticmethod
-    @transaction.atomic
-    def delete_major(major: Major) -> None:
-        """
-        Xóa Ngành học.
-        Why: Phải kiểm tra ràng buộc xem ngành này đã được gán môn học nào chưa 
-             trước khi cho phép xóa (đảm bảo integrity).
-        """
-        if major.courses.exists():
-            raise ValidationError("Không thể xóa Ngành học đã có Môn học thuộc Chương trình đào tạo.")
-        major.delete()
+@transaction.atomic
+def update_education_system(obj: EducationSystem, **data) -> EducationSystem:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
 
-class RoomService:
-    @staticmethod
-    @transaction.atomic
-    def delete_room(room: Room) -> None:
-        """
-        Xóa Phòng học.
-        Why: Bọc transaction để chuẩn bị cho việc sau này kiểm tra xem phòng 
-             đã được gán vào Thời khóa biểu (schedules) nào chưa.
-        """
-        room.delete()
+@transaction.atomic
+def delete_education_system(obj: EducationSystem):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
 
-class PriorityCategoryService:
-    @staticmethod
-    @transaction.atomic
-    def delete_category(category: PriorityCategory) -> None:
-        """Xóa danh mục Đối tượng ưu tiên."""
-        category.delete()
+@transaction.atomic
+def create_department(**data) -> Department:
+    obj = Department(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
 
-class ExamTypeService:
-    @staticmethod
-    @transaction.atomic
-    def delete_exam_type(exam_type: ExamType) -> None:
-        """Xóa danh mục Hình thức thi."""
-        exam_type.delete()
+@transaction.atomic
+def update_department(obj: Department, **data) -> Department:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
 
-class CohortService:
-    @staticmethod
-    @transaction.atomic
-    def delete_cohort(cohort: Cohort) -> None:
-        """Xóa Khóa học."""
-        cohort.delete()
+@transaction.atomic
+def delete_department(obj: Department):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
 
-class SemesterService:
-    @staticmethod
-    @transaction.atomic
-    def delete_semester(semester: Semester) -> None:
-        """Xóa Học kỳ."""
-        semester.delete()
+@transaction.atomic
+def create_major(**data) -> Major:
+    obj = Major(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_major(obj: Major, **data) -> Major:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_major(obj: Major):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
+
+@transaction.atomic
+def create_specialization(**data) -> Specialization:
+    obj = Specialization(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_specialization(obj: Specialization, **data) -> Specialization:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_specialization(obj: Specialization):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
+
+@transaction.atomic
+def create_room(**data) -> Room:
+    obj = Room(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_room(obj: Room, **data) -> Room:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_room(obj: Room):
+    obj.status = Room.StatusChoices.MAINTENANCE
+    obj.save(update_fields=['status'])
+
+@transaction.atomic
+def create_priority_category(**data) -> PriorityCategory:
+    obj = PriorityCategory(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_priority_category(obj: PriorityCategory, **data) -> PriorityCategory:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_priority_category(obj: PriorityCategory):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
+
+@transaction.atomic
+def create_exam_type(**data) -> ExamType:
+    obj = ExamType(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_exam_type(obj: ExamType, **data) -> ExamType:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_exam_type(obj: ExamType):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
+
+@transaction.atomic
+def create_cohort(**data) -> Cohort:
+    obj = Cohort(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_cohort(obj: Cohort, **data) -> Cohort:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_cohort(obj: Cohort):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
+
+@transaction.atomic
+def create_academic_year(**data) -> AcademicYear:
+    obj = AcademicYear(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_academic_year(obj: AcademicYear, **data) -> AcademicYear:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_academic_year(obj: AcademicYear):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
+
+@transaction.atomic
+def create_semester(**data) -> Semester:
+    obj = Semester(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_semester(obj: Semester, **data) -> Semester:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_semester(obj: Semester):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
+
+@transaction.atomic
+def create_administrative_class(**data) -> AdministrativeClass:
+    obj = AdministrativeClass(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_administrative_class(obj: AdministrativeClass, **data) -> AdministrativeClass:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_administrative_class(obj: AdministrativeClass):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
+

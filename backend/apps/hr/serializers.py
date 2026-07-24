@@ -7,12 +7,16 @@ from rest_framework import serializers
 from .models import Student, Lecturer, Staff
 
 from apps.identity.serializers import UserSerializer
-from apps.master_data.serializers import DepartmentSerializer, MajorSerializer
+from apps.master_data.serializers import DepartmentReadSerializer as DepartmentSerializer, MajorReadSerializer as MajorSerializer
 
 class StudentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     major_detail = MajorSerializer(source='major', read_only=True)
     administrative_class_code = serializers.CharField(source='administrative_class.code', read_only=True)
+
+    email = serializers.EmailField(write_only=True, required=False)
+    password = serializers.CharField(write_only=True, required=False, allow_null=True, allow_blank=True)
+    full_name = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Student
@@ -21,12 +25,16 @@ class StudentSerializer(serializers.ModelSerializer):
             'administrative_class', 'administrative_class_code', 'education_system', 'priority_category',
             'status', 'date_of_birth', 'gender', 'place_of_birth', 'ethnicity', 'religion', 'nationality',
             'personal_email', 'contact_phone', 'address', 'permanent_address', 'id_card_number', 'bank_account', 'health_insurance_number',
-            'parent_info', 'documents', 'created_at', 'updated_at'
+            'parent_info', 'documents', 'created_at', 'updated_at', 'email', 'password', 'full_name'
         ]
 
 class LecturerSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     department_detail = DepartmentSerializer(source='department', read_only=True)
+
+    email = serializers.EmailField(write_only=True, required=False)
+    password = serializers.CharField(write_only=True, required=False, allow_null=True, allow_blank=True)
+    full_name = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Lecturer
@@ -35,12 +43,16 @@ class LecturerSerializer(serializers.ModelSerializer):
             'degree', 'academic_title', 'contract_type', 'teaching_domain', 'join_date', 'status',
             'date_of_birth', 'gender', 'id_card_number', 'place_of_birth', 'ethnicity', 'religion', 'nationality',
             'contact_phone', 'personal_email', 'address', 'bank_account',
-            'created_at', 'updated_at'
+            'created_at', 'updated_at', 'email', 'password', 'full_name'
         ]
 
 class StaffSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     department_detail = DepartmentSerializer(source='department', read_only=True)
+
+    email = serializers.EmailField(write_only=True, required=False)
+    password = serializers.CharField(write_only=True, required=False, allow_null=True, allow_blank=True)
+    full_name = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Staff
@@ -48,5 +60,5 @@ class StaffSerializer(serializers.ModelSerializer):
             'id', 'user', 'staff_code', 'department', 'department_detail',
             'position', 'degree', 'responsibilities', 'join_date', 'status',
             'date_of_birth', 'gender', 'id_card_number', 'contact_phone', 'personal_email', 'address', 'bank_account',
-            'created_at', 'updated_at'
+            'created_at', 'updated_at', 'email', 'password', 'full_name'
         ]

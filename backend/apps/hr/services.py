@@ -1,58 +1,329 @@
 """
 Module HR Services
-Chứa toàn bộ logic nghiệp vụ (Business Logic) cho phân hệ Quản lý Nhân sự.
-Nằm ở Service Layer. Mọi thao tác ghi/sửa/xóa (Write) DB BẮT BUỘC phải nằm ở đây và dùng @transaction.atomic.
+Chứa business logic tạo User và Profile (Student/Lecturer/Staff) một cách nguyên tử.
 """
 from django.db import transaction
-from django.core.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError
 from .models import Student, Lecturer, Staff
-from apps.identity.models import User
+from apps.identity.services import UserService
+from apps.core.services import log_audit
+from apps.identity.models import Role
+from apps.master_data.models import Major, AdministrativeClass, EducationSystem, PriorityCategory, Department
+import openpyxl
+import logging
 
-@transaction.atomic
-def create_student(*, user_id: str, student_code: str, major_id: str = None, administrative_class_id: str = None, **kwargs) -> Student:
-    """
-    WHAT: Tạo hồ sơ sinh viên
-    WHY: Bọc transaction.atomic vì tạo sinh viên có thể cần trigger thêm các bảng phụ.
-    """
-    user = User.objects.get(id=user_id)
-    student = Student.objects.create(
-        user=user,
-        student_code=student_code,
-        major_id=major_id,
-        administrative_class_id=administrative_class_id,
-        **kwargs
-    )
-    return student
+logger = logging.getLogger(__name__)
 
-@transaction.atomic
-def update_student(student: Student, **data) -> Student:
-    """
-    WHAT: Cập nhật thông tin sinh viên
-    WHY: Tách logic update vào service để View và Serializer mỏng, dễ bảo trì.
-    """
-    for field, value in data.items():
-        setattr(student, field, value)
-    student.save()
-    return student
+class StudentService:
+    @staticmethod
+    @transaction.atomic
+    def create_student(validated_data: dict, actor_id: str, ip_address: str = None, user_agent: str = None) -> Student:
+        email = validated_data.pop('email', None)
+        password = validated_data.pop('password', None)
+        full_name = validated_data.pop('full_name', None)
 
-@transaction.atomic
-def create_lecturer(*, user_id: str, lecturer_code: str, department_id: str, **kwargs) -> Lecturer:
-    user = User.objects.get(id=user_id)
-    lecturer = Lecturer.objects.create(
-        user=user,
-        lecturer_code=lecturer_code,
-        department_id=department_id,
-        **kwargs
-    )
-    return lecturer
+        if not email or not password or not full_name:
+            raise ValidationError("email, password và full_name là bắt buộc để tạo tài khoản sinh viên.")
+        
+        # Get role
+        try:
+            student_role = Role.objects.get(name='Sinh viên')
+        except Role.DoesNotExist:
+            raise ValidationError("Vai trò 'Sinh viên' chưa được cấu hình trong hệ thống.")
 
-@transaction.atomic
-def create_staff(*, user_id: str, staff_code: str, department_id: str, **kwargs) -> Staff:
-    user = User.objects.get(id=user_id)
-    staff = Staff.objects.create(
-        user=user,
-        staff_code=staff_code,
-        department_id=department_id,
-        **kwargs
-    )
-    return staff
+        user_data = {
+            'email': email,
+            'password': password,
+            'full_name': full_name,
+            'role': student_role,
+            'status': 'ACTIVE',
+            'is_staff': False
+        }
+
+        # Tạo User Identity
+        user = UserService.create_user(user_data, actor_id, ip_address, user_agent)
+        
+        # Gán user vào profile data
+        validated_data['user'] = user
+
+        student = Student.objects.create(**validated_data)
+        log_audit(actor_id, 'CREATE', 'Student', {'id': str(student.id), 'student_code': student.student_code}, ip_address, user_agent)
+        return student
+
+    @staticmethod
+    @transaction.atomic
+    def update_student(student: Student, validated_data: dict, actor_id: str, ip_address: str = None, user_agent: str = None) -> Student:
+        # Nếu có thông tin email, full_name, password thì update Identity User
+        email = validated_data.pop('email', None)
+        password = validated_data.pop('password', None)
+        full_name = validated_data.pop('full_name', None)
+
+        if email or password or full_name:
+            user_data = {}
+            if email: user_data['email'] = email
+            if password: user_data['password'] = password
+            if full_name: user_data['full_name'] = full_name
+            UserService.update_user(student.user, user_data, actor_id, ip_address, user_agent)
+
+        for key, value in validated_data.items():
+            setattr(student, key, value)
+        student.save()
+        log_audit(actor_id, 'UPDATE', 'Student', {'id': str(student.id), 'student_code': student.student_code}, ip_address, user_agent)
+        return student
+
+    @staticmethod
+    @transaction.atomic
+    def delete_student(student: Student, actor_id: str, ip_address: str = None, user_agent: str = None) -> None:
+        student.status = 'DROPPED_OUT'
+        student.save(update_fields=['status'])
+        
+        # Khóa tài khoản
+        user = student.user
+        user.status = 'LOCKED'
+        user.save(update_fields=['status'])
+
+        log_audit(actor_id, 'DELETE', 'Student', {'id': str(student.id), 'student_code': student.student_code}, ip_address, user_agent)
+
+
+class LecturerService:
+    @staticmethod
+    @transaction.atomic
+    def create_lecturer(validated_data: dict, actor_id: str, ip_address: str = None, user_agent: str = None) -> Lecturer:
+        email = validated_data.pop('email', None)
+        password = validated_data.pop('password', None)
+        full_name = validated_data.pop('full_name', None)
+
+        if not email or not password or not full_name:
+            raise ValidationError("email, password và full_name là bắt buộc.")
+        
+        try:
+            role = Role.objects.get(name='Giảng viên')
+        except Role.DoesNotExist:
+            raise ValidationError("Vai trò 'Giảng viên' chưa được cấu hình.")
+
+        user_data = {
+            'email': email,
+            'password': password,
+            'full_name': full_name,
+            'role': role,
+            'status': 'ACTIVE',
+            'is_staff': True
+        }
+
+        user = UserService.create_user(user_data, actor_id, ip_address, user_agent)
+        validated_data['user'] = user
+
+        lecturer = Lecturer.objects.create(**validated_data)
+        log_audit(actor_id, 'CREATE', 'Lecturer', {'id': str(lecturer.id), 'lecturer_code': lecturer.lecturer_code}, ip_address, user_agent)
+        return lecturer
+
+    @staticmethod
+    @transaction.atomic
+    def update_lecturer(lecturer: Lecturer, validated_data: dict, actor_id: str, ip_address: str = None, user_agent: str = None) -> Lecturer:
+        email = validated_data.pop('email', None)
+        password = validated_data.pop('password', None)
+        full_name = validated_data.pop('full_name', None)
+
+        if email or password or full_name:
+            user_data = {}
+            if email: user_data['email'] = email
+            if password: user_data['password'] = password
+            if full_name: user_data['full_name'] = full_name
+            UserService.update_user(lecturer.user, user_data, actor_id, ip_address, user_agent)
+
+        for key, value in validated_data.items():
+            setattr(lecturer, key, value)
+        lecturer.save()
+        log_audit(actor_id, 'UPDATE', 'Lecturer', {'id': str(lecturer.id), 'lecturer_code': lecturer.lecturer_code}, ip_address, user_agent)
+        return lecturer
+
+    @staticmethod
+    @transaction.atomic
+    def delete_lecturer(lecturer: Lecturer, actor_id: str, ip_address: str = None, user_agent: str = None) -> None:
+        lecturer.status = 'RESIGNED'
+        lecturer.save(update_fields=['status'])
+        
+        user = lecturer.user
+        user.status = 'LOCKED'
+        user.save(update_fields=['status'])
+
+        log_audit(actor_id, 'DELETE', 'Lecturer', {'id': str(lecturer.id), 'lecturer_code': lecturer.lecturer_code}, ip_address, user_agent)
+
+
+class StaffService:
+    @staticmethod
+    @transaction.atomic
+    def create_staff(validated_data: dict, actor_id: str, ip_address: str = None, user_agent: str = None) -> Staff:
+        email = validated_data.pop('email', None)
+        password = validated_data.pop('password', None)
+        full_name = validated_data.pop('full_name', None)
+
+        if not email or not password or not full_name:
+            raise ValidationError("email, password và full_name là bắt buộc.")
+        
+        try:
+            role = Role.objects.get(name='Giáo vụ')
+        except Role.DoesNotExist:
+            raise ValidationError("Vai trò 'Giáo vụ' chưa được cấu hình.")
+
+        user_data = {
+            'email': email,
+            'password': password,
+            'full_name': full_name,
+            'role': role,
+            'status': 'ACTIVE',
+            'is_staff': True
+        }
+
+        user = UserService.create_user(user_data, actor_id, ip_address, user_agent)
+        validated_data['user'] = user
+
+        staff = Staff.objects.create(**validated_data)
+        log_audit(actor_id, 'CREATE', 'Staff', {'id': str(staff.id), 'staff_code': staff.staff_code}, ip_address, user_agent)
+        return staff
+
+    @staticmethod
+    @transaction.atomic
+    def update_staff(staff: Staff, validated_data: dict, actor_id: str, ip_address: str = None, user_agent: str = None) -> Staff:
+        email = validated_data.pop('email', None)
+        password = validated_data.pop('password', None)
+        full_name = validated_data.pop('full_name', None)
+
+        if email or password or full_name:
+            user_data = {}
+            if email: user_data['email'] = email
+            if password: user_data['password'] = password
+            if full_name: user_data['full_name'] = full_name
+            UserService.update_user(staff.user, user_data, actor_id, ip_address, user_agent)
+
+        for key, value in validated_data.items():
+            setattr(staff, key, value)
+        staff.save()
+        log_audit(actor_id, 'UPDATE', 'Staff', {'id': str(staff.id), 'staff_code': staff.staff_code}, ip_address, user_agent)
+        return staff
+
+    @staticmethod
+    @transaction.atomic
+    def delete_staff(staff: Staff, actor_id: str, ip_address: str = None, user_agent: str = None) -> None:
+        staff.status = 'RESIGNED'
+        staff.save(update_fields=['status'])
+        
+        user = staff.user
+        user.status = 'LOCKED'
+        user.save(update_fields=['status'])
+
+        log_audit(actor_id, 'DELETE', 'Staff', {'id': str(staff.id), 'staff_code': staff.staff_code}, ip_address, user_agent)
+
+
+class ImportService:
+    @staticmethod
+    @transaction.atomic
+    def import_students_from_excel(file_obj, actor_id: str, ip_address: str = None, user_agent: str = None):
+        try:
+            wb = openpyxl.load_workbook(file_obj)
+            sheet = wb.active
+            created_count = 0
+            
+            # Giả định cột: 
+            # 0: email, 1: full_name, 2: password, 3: student_code, 4: major_code, 5: class_code, 6: edu_system_code
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                if not row or not row[0]:
+                    continue
+                
+                email, full_name, password, student_code, major_code, class_code, edu_system_code = row[0:7]
+                
+                major = Major.objects.filter(code=major_code).first() if major_code else None
+                admin_class = AdministrativeClass.objects.filter(code=class_code).first() if class_code else None
+                edu_system = EducationSystem.objects.filter(code=edu_system_code).first() if edu_system_code else None
+
+                if not Student.objects.filter(student_code=student_code).exists():
+                    student_data = {
+                        'email': email,
+                        'full_name': full_name,
+                        'password': password,
+                        'student_code': student_code,
+                        'major': major,
+                        'administrative_class': admin_class,
+                        'education_system': edu_system
+                    }
+                    StudentService.create_student(student_data, actor_id, ip_address, user_agent)
+                    created_count += 1
+
+            if created_count > 0:
+                log_audit(actor_id, 'IMPORT_EXCEL', 'Student', {'count': created_count}, ip_address, user_agent)
+            return created_count, None
+        except Exception as e:
+            logger.exception("Import Excel Students failed")
+            return 0, str(e)
+
+    @staticmethod
+    @transaction.atomic
+    def import_lecturers_from_excel(file_obj, actor_id: str, ip_address: str = None, user_agent: str = None):
+        try:
+            wb = openpyxl.load_workbook(file_obj)
+            sheet = wb.active
+            created_count = 0
+            
+            # Giả định cột: 
+            # 0: email, 1: full_name, 2: password, 3: lecturer_code, 4: department_code
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                if not row or not row[0]:
+                    continue
+                
+                email, full_name, password, lecturer_code, department_code = row[0:5]
+                
+                department = Department.objects.filter(code=department_code).first() if department_code else None
+
+                if not Lecturer.objects.filter(lecturer_code=lecturer_code).exists():
+                    lecturer_data = {
+                        'email': email,
+                        'full_name': full_name,
+                        'password': password,
+                        'lecturer_code': lecturer_code,
+                        'department': department,
+                    }
+                    LecturerService.create_lecturer(lecturer_data, actor_id, ip_address, user_agent)
+                    created_count += 1
+
+            if created_count > 0:
+                log_audit(actor_id, 'IMPORT_EXCEL', 'Lecturer', {'count': created_count}, ip_address, user_agent)
+            return created_count, None
+        except Exception as e:
+            logger.exception("Import Excel Lecturers failed")
+            return 0, str(e)
+
+    @staticmethod
+    @transaction.atomic
+    def import_staffs_from_excel(file_obj, actor_id: str, ip_address: str = None, user_agent: str = None):
+        try:
+            wb = openpyxl.load_workbook(file_obj)
+            sheet = wb.active
+            created_count = 0
+            
+            # Giả định cột: 
+            # 0: email, 1: full_name, 2: password, 3: staff_code, 4: department_code
+            for row in sheet.iter_rows(min_row=2, values_only=True):
+                if not row or not row[0]:
+                    continue
+                
+                email, full_name, password, staff_code, department_code = row[0:5]
+                
+                department = Department.objects.filter(code=department_code).first() if department_code else None
+
+                if not Staff.objects.filter(staff_code=staff_code).exists():
+                    staff_data = {
+                        'email': email,
+                        'full_name': full_name,
+                        'password': password,
+                        'staff_code': staff_code,
+                        'department': department,
+                    }
+                    StaffService.create_staff(staff_data, actor_id, ip_address, user_agent)
+                    created_count += 1
+
+            if created_count > 0:
+                log_audit(actor_id, 'IMPORT_EXCEL', 'Staff', {'count': created_count}, ip_address, user_agent)
+            return created_count, None
+        except Exception as e:
+            logger.exception("Import Excel Staffs failed")
+            return 0, str(e)

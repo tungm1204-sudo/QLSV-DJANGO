@@ -1,90 +1,113 @@
 """
 Master Data Selectors
-=====================
-Chứa các function thuần túy để truy vấn (Read-only) dữ liệu từ các bảng danh mục (Master Data).
-Tuân thủ chuẩn Service Layer: Đưa toàn bộ việc filter, select_related vào đây để tái sử dụng.
 """
-from django.db.models import QuerySet
-from .models import (
-    Department, Major, Room, PriorityCategory, ExamType, Cohort, Semester,
-    Specialization, EducationSystem, AcademicYear, AdministrativeClass
-)
+from typing import Iterable
+from .models import EducationSystem, Department, Major, Specialization, Room, PriorityCategory, ExamType, Cohort, AcademicYear, Semester, AdministrativeClass
 
-class DepartmentSelector:
-    @staticmethod
-    def get_departments() -> QuerySet[Department]:
-        """
-        Lấy danh sách Khoa/Bộ môn.
-        Why: Dùng select_related('parent') để chống lỗi N+1 khi FE muốn hiển thị tên đơn vị cha.
-        manager_id là UUIDField nên không thể select_related('manager').
-        """
-        return Department.objects.select_related('parent').order_by('-created_at')
+def get_education_systems(*, is_active: bool = None) -> Iterable[EducationSystem]:
+    qs = EducationSystem.objects.all()
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
 
-class MajorSelector:
-    @staticmethod
-    def get_majors() -> QuerySet[Major]:
-        """
-        Lấy danh sách Ngành học.
-        Why: Dùng select_related('department') để lấy thông tin Khoa trực tiếp cùng 1 query.
-        """
-        return Major.objects.select_related('department').order_by('-created_at')
+def get_education_system_by_id(id: str) -> EducationSystem:
+    return EducationSystem.objects.get(id=id)
 
-class RoomSelector:
-    @staticmethod
-    def get_rooms() -> QuerySet[Room]:
-        """Lấy danh sách Phòng học."""
-        return Room.objects.order_by('-created_at')
+def get_departments(*, is_active: bool = None) -> Iterable[Department]:
+    qs = Department.objects.all()
+    qs = qs.select_related('parent', 'manager')
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
 
-class PriorityCategorySelector:
-    @staticmethod
-    def get_categories() -> QuerySet[PriorityCategory]:
-        """Lấy danh sách Đối tượng ưu tiên."""
-        return PriorityCategory.objects.order_by('-created_at')
+def get_department_by_id(id: str) -> Department:
+    return Department.objects.get(id=id)
 
-class ExamTypeSelector:
-    @staticmethod
-    def get_exam_types() -> QuerySet[ExamType]:
-        """Lấy danh sách Hình thức thi."""
-        return ExamType.objects.order_by('-created_at')
+def get_majors(*, is_active: bool = None) -> Iterable[Major]:
+    qs = Major.objects.all()
+    qs = qs.select_related('department')
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
 
-class CohortSelector:
-    @staticmethod
-    def get_cohorts() -> QuerySet[Cohort]:
-        """Lấy danh sách Khóa học."""
-        return Cohort.objects.order_by('-created_at')
+def get_major_by_id(id: str) -> Major:
+    return Major.objects.get(id=id)
 
-class SemesterSelector:
-    @staticmethod
-    def get_semesters() -> QuerySet[Semester]:
-        """
-        Lấy danh sách Học kỳ.
-        Why: Dùng select_related('academic_year') để lấy thông tin năm học liên kết trong 1 query.
-        """
-        return Semester.objects.select_related('academic_year').order_by('-created_at')
+def get_specializations(*, is_active: bool = None) -> Iterable[Specialization]:
+    qs = Specialization.objects.all()
+    qs = qs.select_related('major')
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
 
-class SpecializationSelector:
-    @staticmethod
-    def get_specializations() -> QuerySet[Specialization]:
-        """
-        Lấy danh sách Chuyên ngành.
-        Why: Dùng select_related('major') để lấy Ngành học cha trong 1 query, chống N+1.
-        """
-        return Specialization.objects.select_related('major').order_by('-created_at')
+def get_specialization_by_id(id: str) -> Specialization:
+    return Specialization.objects.get(id=id)
 
-class EducationSystemSelector:
-    @staticmethod
-    def get_education_systems() -> QuerySet[EducationSystem]:
-        """Lấy danh sách Hệ đào tạo."""
-        return EducationSystem.objects.order_by('-created_at')
+def get_rooms(*, is_active: bool = None) -> Iterable[Room]:
+    qs = Room.objects.all()
+    if is_active is not None:
+        if is_active:
+            qs = qs.filter(status=Room.StatusChoices.ACTIVE)
+        else:
+            qs = qs.filter(status=Room.StatusChoices.MAINTENANCE)
+    return qs
 
-class AcademicYearSelector:
-    @staticmethod
-    def get_academic_years() -> QuerySet[AcademicYear]:
-        """Lấy danh sách Năm học."""
-        return AcademicYear.objects.order_by('-created_at')
+def get_room_by_id(id: str) -> Room:
+    return Room.objects.get(id=id)
 
-class AdministrativeClassSelector:
-    @staticmethod
-    def get_administrative_classes() -> QuerySet[AdministrativeClass]:
-        """Lấy danh sách Lớp hành chính."""
-        return AdministrativeClass.objects.select_related('major', 'cohort').order_by('-created_at')
+def get_priority_categorys(*, is_active: bool = None) -> Iterable[PriorityCategory]:
+    qs = PriorityCategory.objects.all()
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
+
+def get_priority_category_by_id(id: str) -> PriorityCategory:
+    return PriorityCategory.objects.get(id=id)
+
+def get_exam_types(*, is_active: bool = None) -> Iterable[ExamType]:
+    qs = ExamType.objects.all()
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
+
+def get_exam_type_by_id(id: str) -> ExamType:
+    return ExamType.objects.get(id=id)
+
+def get_cohorts(*, is_active: bool = None) -> Iterable[Cohort]:
+    qs = Cohort.objects.all()
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
+
+def get_cohort_by_id(id: str) -> Cohort:
+    return Cohort.objects.get(id=id)
+
+def get_academic_years(*, is_active: bool = None) -> Iterable[AcademicYear]:
+    qs = AcademicYear.objects.all()
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
+
+def get_academic_year_by_id(id: str) -> AcademicYear:
+    return AcademicYear.objects.get(id=id)
+
+def get_semesters(*, is_active: bool = None) -> Iterable[Semester]:
+    qs = Semester.objects.all()
+    qs = qs.select_related('academic_year')
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
+
+def get_semester_by_id(id: str) -> Semester:
+    return Semester.objects.get(id=id)
+
+def get_administrative_classs(*, is_active: bool = None) -> Iterable[AdministrativeClass]:
+    qs = AdministrativeClass.objects.all()
+    qs = qs.select_related('major')
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
+
+def get_administrative_class_by_id(id: str) -> AdministrativeClass:
+    return AdministrativeClass.objects.get(id=id)
+

@@ -1,15 +1,26 @@
 """
 Affairs Services
-================
-Business Logic cho Module CTSV.
 """
 from django.db import transaction
-from django.core.exceptions import ValidationError
 from .models import RewardDisciplineCategory
 
-class RewardDisciplineCategoryService:
-    @staticmethod
-    @transaction.atomic
-    def delete_category(category: RewardDisciplineCategory) -> None:
-        """Xóa danh mục khen thưởng / kỷ luật."""
-        category.delete()
+@transaction.atomic
+def create_reward_discipline_category(**data) -> RewardDisciplineCategory:
+    obj = RewardDisciplineCategory(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_reward_discipline_category(obj: RewardDisciplineCategory, **data) -> RewardDisciplineCategory:
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_reward_discipline_category(obj: RewardDisciplineCategory):
+    obj.is_active = False
+    obj.save(update_fields=['is_active'])
+

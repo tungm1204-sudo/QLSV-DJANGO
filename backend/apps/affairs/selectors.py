@@ -1,13 +1,15 @@
 """
 Affairs Selectors
-=================
-Truy vấn DB cho Module CTSV.
 """
-from django.db.models import QuerySet
+from typing import Iterable
 from .models import RewardDisciplineCategory
 
-class RewardDisciplineCategorySelector:
-    @staticmethod
-    def get_categories() -> QuerySet[RewardDisciplineCategory]:
-        """Lấy toàn bộ danh sách Khen thưởng / Kỷ luật."""
-        return RewardDisciplineCategory.objects.all()
+def get_reward_discipline_categorys(*, is_active: bool = None) -> Iterable[RewardDisciplineCategory]:
+    qs = RewardDisciplineCategory.objects.all()
+    if is_active is not None:
+        qs = qs.filter(is_active=is_active)
+    return qs
+
+def get_reward_discipline_category_by_id(id: str) -> RewardDisciplineCategory:
+    return RewardDisciplineCategory.objects.get(id=id)
+

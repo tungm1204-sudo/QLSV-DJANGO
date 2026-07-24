@@ -1,31 +1,23 @@
 """
 Master Data URLs
-================
-Định tuyến URL cho Module Danh mục Master Data.
-Dùng DefaultRouter để tự sinh ra các RESTful endpoints chuẩn.
 """
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (
-    DepartmentViewSet, MajorViewSet, RoomViewSet, PriorityCategoryViewSet,
-    ExamTypeViewSet, CohortViewSet, SemesterViewSet,
-    SpecializationViewSet, EducationSystemViewSet, AcademicYearViewSet,
-    AdministrativeClassViewSet
-)
+from . import views
 
 router = DefaultRouter()
-router.register(r'departments', DepartmentViewSet, basename='department')
-router.register(r'majors', MajorViewSet, basename='major')
-router.register(r'rooms', RoomViewSet, basename='room')
-router.register(r'priority-categories', PriorityCategoryViewSet, basename='priority-category')
-router.register(r'exam-types', ExamTypeViewSet, basename='exam-type')
-router.register(r'cohorts', CohortViewSet, basename='cohort')
-router.register(r'semesters', SemesterViewSet, basename='semester')
-router.register(r'specializations', SpecializationViewSet, basename='specialization')
-router.register(r'education-systems', EducationSystemViewSet, basename='education-system')
-router.register(r'academic-years', AcademicYearViewSet, basename='academic-year')
-router.register(r'administrative-classes', AdministrativeClassViewSet, basename='administrative-class')
+router.register(r'education-system', views.EducationSystemViewSet, basename='education_system')
+router.register(r'department', views.DepartmentViewSet, basename='department')
+router.register(r'major', views.MajorViewSet, basename='major')
+router.register(r'specialization', views.SpecializationViewSet, basename='specialization')
+router.register(r'room', views.RoomViewSet, basename='room')
+router.register(r'priority-category', views.PriorityCategoryViewSet, basename='priority_category')
+router.register(r'exam-type', views.ExamTypeViewSet, basename='exam_type')
+router.register(r'cohort', views.CohortViewSet, basename='cohort')
+router.register(r'academic-year', views.AcademicYearViewSet, basename='academic_year')
+router.register(r'semester', views.SemesterViewSet, basename='semester')
+router.register(r'administrative-class', views.AdministrativeClassViewSet, basename='administrative_class')
 
 urlpatterns = [
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]

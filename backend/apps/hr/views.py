@@ -1,100 +1,336 @@
 """
 Module HR Views
-Định nghĩa các API endpoints cho phân hệ Quản lý Nhân sự.
-View phải mỏng (Thin View). Không query DB trực tiếp mà gọi Selector. Không ghi DB trực tiếp mà gọi Service.
+Lớp Controller (API endpoints). Mỏng nhất có thể.
+Khởi tạo dữ liệu -> gọi Service -> Trả về Response.
 """
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.filters import SearchFilter
-from django_filters.rest_framework import DjangoFilterBackend
+from apps.core.permissions import IsAdminOrReadOnly
+from apps.core.views import get_client_ip
 from .models import Student, Lecturer, Staff
 from .serializers import StudentSerializer, LecturerSerializer, StaffSerializer
-from . import selectors, services
-from apps.identity.models import User
+from .selectors import StudentSelector, LecturerSelector, StaffSelector
+from .services import StudentService, LecturerService, StaffService, ImportService
 
-class StudentViewSet(viewsets.ModelViewSet):
+
+class StudentViewSet(viewsets.GenericViewSet):
     """
-    WHAT: API Quản lý Sinh viên.
-    WHY: Kế thừa ModelViewSet nhưng ghi đè các hàm create/update để đảm bảo sử dụng Service Layer.
-    Bổ sung SearchFilter và DjangoFilterBackend để hỗ trợ tra cứu/tìm kiếm.
+    ViewSet quản lý Sinh viên.
+    Chỉ Admin mới có quyền POST/PUT/DELETE.
     """
-    queryset = Student.objects.none()
+    permission_classes = [IsAdminOrReadOnly]
     serializer_class = StudentSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields = ['student_code', 'user__full_name', 'user__email']
-    filterset_fields = ['status', 'major_id', 'administrative_class_id']
+    queryset = Student.objects.none()
+    filterset_fields = ['major', 'administrative_class', 'education_system', 'status']
+    search_fields = ['student_code', 'full_name', 'email', 'phone']
 
     def get_queryset(self):
-        # Lấy dữ liệu qua Selector để chống N+1 queries.
-        return selectors.get_students()
+        return StudentSelector.get_students()
 
-    def create(self, request, *args, **kwargs):
-        # WHAT: Xử lý tạo mới Sinh viên.
-        # WHY: Không dùng serializer.save() vì logic tạo có thể phức tạp, đẩy xuống service.
-        user_id = request.data.get('user_id')
-        if not user_id:
-            return Response({'error': 'user_id is required'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        try:
-            student = services.create_student(
-                user_id=user_id,
-                student_code=request.data.get('student_code'),
-                major_id=request.data.get('major_id'),
-                administrative_class_id=request.data.get('administrative_class_id'),
-                status=request.data.get('status', 'ACTIVE'),
-                contact_phone=request.data.get('contact_phone'),
-                address=request.data.get('address'),
-                id_card_number=request.data.get('id_card_number'),
-            )
-            serializer = self.get_serializer(student)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    def list(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
-    def update(self, request, *args, **kwargs):
-        # WHAT: Xử lý cập nhật Sinh viên (PUT).
-        # WHY: Đẩy xuống service update_student để dễ bảo trì.
-        student = self.get_object()
+    def retrieve(self, request, pk=None):
         try:
-            student = services.update_student(student, **request.data)
-            serializer = self.get_serializer(student)
+            student = StudentSelector.get_student(pk)
+            serializer = StudentSerializer(student)
             return Response(serializer.data)
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Student.DoesNotExist:
+            return Response({'detail': 'Sinh viên không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=False, methods=['POST'])
+    def create(self, request):
+        serializer = StudentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        student = StudentService.create_student(
+            validated_data=serializer.validated_data,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        return Response(StudentSerializer(student).data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, pk=None):
+        try:
+            student = StudentSelector.get_student(pk)
+        except Student.DoesNotExist:
+            return Response({'detail': 'Sinh viên không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = StudentSerializer(student, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        updated_student = StudentService.update_student(
+            student=student,
+            validated_data=serializer.validated_data,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        return Response(StudentSerializer(updated_student).data)
+
+    def destroy(self, request, pk=None):
+        try:
+            student = StudentSelector.get_student(pk)
+        except Student.DoesNotExist:
+            return Response({'detail': 'Sinh viên không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        StudentService.delete_student(
+            student=student,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['post'], url_path='import')
     def import_excel(self, request):
-        # TODO: Implement actual Excel logic (Pandas/openpyxl)
-        # WHY: Đã định nghĩa route nhưng chưa code xong lõi parse Excel, ghi nhận là TODO.
-        return Response({'message': 'Import successful'}, status=status.HTTP_200_OK)
+        file_obj = request.FILES.get('file')
+        if not file_obj:
+            return Response({'detail': 'Vui lòng cung cấp file excel (thuộc tính: file).'}, status=status.HTTP_400_BAD_REQUEST)
 
-class LecturerViewSet(viewsets.ModelViewSet):
-    """
-    WHAT: API Quản lý Giảng viên.
-    """
-    queryset = Lecturer.objects.none()
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        count, error = ImportService.import_students_from_excel(
+            file_obj=file_obj,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        
+        if error:
+            return Response({'detail': 'Lỗi import Excel', 'error': error}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({'detail': f'Import thành công {count} sinh viên.'}, status=status.HTTP_200_OK)
+
+
+class LecturerViewSet(viewsets.GenericViewSet):
+    permission_classes = [IsAdminOrReadOnly]
     serializer_class = LecturerSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields = ['lecturer_code', 'user__full_name']
-    filterset_fields = ['department_id', 'contract_type']
+    queryset = Lecturer.objects.none()
+    filterset_fields = ['department', 'status']
+    search_fields = ['lecturer_code', 'full_name', 'email', 'phone']
 
     def get_queryset(self):
-        return selectors.get_lecturers()
+        return LecturerSelector.get_lecturers()
 
-    @action(detail=False, methods=['POST'])
+    def list(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        try:
+            lecturer = LecturerSelector.get_lecturer(pk)
+            serializer = LecturerSerializer(lecturer)
+            return Response(serializer.data)
+        except Lecturer.DoesNotExist:
+            return Response({'detail': 'Giảng viên không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+    def create(self, request):
+        serializer = LecturerSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        lecturer = LecturerService.create_lecturer(
+            validated_data=serializer.validated_data,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        return Response(LecturerSerializer(lecturer).data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, pk=None):
+        try:
+            lecturer = LecturerSelector.get_lecturer(pk)
+        except Lecturer.DoesNotExist:
+            return Response({'detail': 'Giảng viên không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = LecturerSerializer(lecturer, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        updated_lecturer = LecturerService.update_lecturer(
+            lecturer=lecturer,
+            validated_data=serializer.validated_data,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        return Response(LecturerSerializer(updated_lecturer).data)
+
+    def destroy(self, request, pk=None):
+        try:
+            lecturer = LecturerSelector.get_lecturer(pk)
+        except Lecturer.DoesNotExist:
+            return Response({'detail': 'Giảng viên không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        LecturerService.delete_lecturer(
+            lecturer=lecturer,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['post'], url_path='import')
     def import_excel(self, request):
-        return Response({'message': 'Import successful'}, status=status.HTTP_200_OK)
+        file_obj = request.FILES.get('file')
+        if not file_obj:
+            return Response({'detail': 'Vui lòng cung cấp file excel (thuộc tính: file).'}, status=status.HTTP_400_BAD_REQUEST)
 
-class StaffViewSet(viewsets.ModelViewSet):
-    """
-    WHAT: API Quản lý Cán bộ.
-    """
-    queryset = Staff.objects.none()
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        count, error = ImportService.import_lecturers_from_excel(
+            file_obj=file_obj,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        
+        if error:
+            return Response({'detail': 'Lỗi import Excel', 'error': error}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({'detail': f'Import thành công {count} giảng viên.'}, status=status.HTTP_200_OK)
+
+
+class StaffViewSet(viewsets.GenericViewSet):
+    permission_classes = [IsAdminOrReadOnly]
     serializer_class = StaffSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields = ['staff_code', 'user__full_name']
-    filterset_fields = ['department_id']
+    queryset = Staff.objects.none()
+    filterset_fields = ['department', 'status']
+    search_fields = ['staff_code', 'full_name', 'email', 'phone']
 
     def get_queryset(self):
-        return selectors.get_staffs()
+        return StaffSelector.get_staffs()
+
+    def list(self, request):
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        try:
+            staff = StaffSelector.get_staff(pk)
+            serializer = StaffSerializer(staff)
+            return Response(serializer.data)
+        except Staff.DoesNotExist:
+            return Response({'detail': 'Cán bộ không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+    def create(self, request):
+        serializer = StaffSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        staff = StaffService.create_staff(
+            validated_data=serializer.validated_data,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        return Response(StaffSerializer(staff).data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, pk=None):
+        try:
+            staff = StaffSelector.get_staff(pk)
+        except Staff.DoesNotExist:
+            return Response({'detail': 'Cán bộ không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = StaffSerializer(staff, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        updated_staff = StaffService.update_staff(
+            staff=staff,
+            validated_data=serializer.validated_data,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        return Response(StaffSerializer(updated_staff).data)
+
+    def destroy(self, request, pk=None):
+        try:
+            staff = StaffSelector.get_staff(pk)
+        except Staff.DoesNotExist:
+            return Response({'detail': 'Cán bộ không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        StaffService.delete_staff(
+            staff=staff,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['post'], url_path='import')
+    def import_excel(self, request):
+        file_obj = request.FILES.get('file')
+        if not file_obj:
+            return Response({'detail': 'Vui lòng cung cấp file excel (thuộc tính: file).'}, status=status.HTTP_400_BAD_REQUEST)
+
+        actor_id = str(request.user.id)
+        ip_address = get_client_ip(request)
+        user_agent = request.META.get('HTTP_USER_AGENT', '')
+
+        count, error = ImportService.import_staffs_from_excel(
+            file_obj=file_obj,
+            actor_id=actor_id,
+            ip_address=ip_address,
+            user_agent=user_agent
+        )
+        
+        if error:
+            return Response({'detail': 'Lỗi import Excel', 'error': error}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({'detail': f'Import thành công {count} nhân viên.'}, status=status.HTTP_200_OK)
