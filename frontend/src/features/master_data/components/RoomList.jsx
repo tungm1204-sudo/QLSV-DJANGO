@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { Plus, Search, Edit2, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import ConfirmDeleteModal from '../../../components/ui/ConfirmDeleteModal';
-import { roomApi } from '../../../api/masterData';
+import { roomApi, buildingApi } from '../../../api/masterData';
 
 export default function RoomList() {
   const queryClient = useQueryClient();
@@ -22,6 +22,13 @@ export default function RoomList() {
   });
 
   const records = response?.data?.results || response?.data || [];
+
+  // Fetch Buildings for Dropdown
+  const { data: buildingRes } = useQuery({
+    queryKey: ['master-data', 'buildings', 'all'],
+    queryFn: () => buildingApi.getAll({}),
+  });
+  const buildings = buildingRes?.data?.results || buildingRes?.data || [];
 
   // Mutations
   const createMutation = useMutation({
@@ -63,12 +70,13 @@ export default function RoomList() {
         code: data.code,
         name: data.name,
         type: data.type || 'THEORY',
+        building: data.building?.id || data.building || '',
         capacity: data.capacity || 50,
         status: data.status || 'ACTIVE',
       });
     } else {
       setEditingData(null);
-      reset({ code: '', name: '', type: 'THEORY', capacity: 50, status: 'ACTIVE' });
+      reset({ code: '', name: '', type: 'THEORY', building: '', capacity: 50, status: 'ACTIVE' });
     }
     setIsModalOpen(true);
   };
@@ -130,6 +138,7 @@ export default function RoomList() {
               <tr>
                 <th className="px-6 py-4">Mã phòng</th>
                 <th className="px-6 py-4">Tên phòng</th>
+                <th className="px-6 py-4">Tòa nhà</th>
                 <th className="px-6 py-4">Loại</th>
                 <th className="px-6 py-4">Sức chứa</th>
                 <th className="px-6 py-4">Trạng thái</th>
@@ -139,17 +148,20 @@ export default function RoomList() {
             <tbody className="divide-y divide-slate-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">Đang tải dữ liệu...</td>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-500">Đang tải dữ liệu...</td>
                 </tr>
               ) : records.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">Không tìm thấy dữ liệu.</td>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-500">Không tìm thấy dữ liệu.</td>
                 </tr>
               ) : (
                 records.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 font-medium text-slate-900">{item.code}</td>
                     <td className="px-6 py-4">{item.name || '-'}</td>
+                    <td className="px-6 py-4 font-medium text-blue-600">
+                      {item.building_details?.name || item.building || '-'}
+                    </td>
                     <td className="px-6 py-4">
                       {item.type === 'THEORY' ? 'Lý thuyết' : 
                        item.type === 'PRACTICE' ? 'Thực hành' : 
@@ -213,6 +225,20 @@ export default function RoomList() {
                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="VD: Phòng máy Mac"
                   />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Tòa nhà trực thuộc *</label>
+                  <select
+                    {...register('building', { required: 'Vui lòng chọn tòa nhà' })}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- Chọn tòa nhà --</option>
+                    {buildings.map(b => (
+                      <option key={b.id} value={b.id}>{b.name} ({b.campus_details?.name || 'Cơ sở'})</option>
+                    ))}
+                  </select>
+                  {errors.building && <span className="text-xs text-red-500">{errors.building.message}</span>}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

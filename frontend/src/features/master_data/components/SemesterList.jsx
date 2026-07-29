@@ -23,7 +23,7 @@ export default function SemesterList() {
 
   // Fetch Academic Years for Dropdown
   const { data: parentResponse } = useQuery({
-    queryKey: ['master-data', 'academicYears', 'all'],
+    queryKey: ['master-data', 'academic-years', 'all'],
     queryFn: () => academicYearApi.getAll({}), 
   });
 
@@ -68,7 +68,6 @@ export default function SemesterList() {
       setEditingData(data);
       reset({
         code: data.code,
-        name: data.name,
         academic_year: data.academic_year || '',
         season: data.season || 'HK1',
         start_date: data.start_date || '',
@@ -77,7 +76,7 @@ export default function SemesterList() {
       });
     } else {
       setEditingData(null);
-      reset({ code: '', name: '', academic_year: '', season: 'HK1', start_date: '', end_date: '', is_current: false });
+      reset({ code: '', academic_year: '', season: 'HK1', start_date: '', end_date: '', is_current: false });
     }
     setIsModalOpen(true);
   };
@@ -143,27 +142,27 @@ export default function SemesterList() {
             <thead className="bg-slate-50 text-slate-700 font-medium border-b border-slate-200 sticky top-0">
               <tr>
                 <th className="px-6 py-4">Mã học kỳ</th>
-                <th className="px-6 py-4">Tên học kỳ</th>
                 <th className="px-6 py-4">Năm học</th>
+                <th className="px-6 py-4">Mùa</th>
                 <th className="px-6 py-4">Ngày bắt đầu</th>
                 <th className="px-6 py-4">Ngày kết thúc</th>
+                <th className="px-6 py-4">Hiện tại</th>
                 <th className="px-6 py-4 text-right">Thao tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">Đang tải dữ liệu...</td>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-500">Đang tải dữ liệu...</td>
                 </tr>
               ) : records.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">Không tìm thấy dữ liệu.</td>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-500">Không tìm thấy dữ liệu.</td>
                 </tr>
               ) : (
                 records.map((item) => (
                   <tr key={item.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 font-medium text-slate-900">{item.code}</td>
-                    <td className="px-6 py-4 font-medium text-slate-900">{item.name}</td>
                     <td className="px-6 py-4">{item.academic_year_name || '-'}</td>
                     <td className="px-6 py-4">
                       {item.season === 'HK1' ? 'Học kỳ 1' : 
@@ -220,16 +219,6 @@ export default function SemesterList() {
                     placeholder="VD: HK1-2024"
                   />
                   {errors.code && <span className="text-xs text-red-500">{errors.code.message}</span>}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Tên học kỳ *</label>
-                  <input
-                    {...register('name', { required: 'Vui lòng nhập tên' })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="VD: Học kỳ 1 Năm học 2024-2025"
-                  />
-                  {errors.name && <span className="text-xs text-red-500">{errors.name.message}</span>}
                 </div>
 
                 <div>

@@ -1,16 +1,27 @@
 import apiClient from './client';
 
 const ENDPOINTS = {
-  departments: '/master-data/departments/',
-  majors: '/master-data/majors/',
-  rooms: '/master-data/rooms/',
-  priorityCategories: '/master-data/priority-categories/',
-  examTypes: '/master-data/exam-types/',
-  cohorts: '/master-data/cohorts/',
-  semesters: '/master-data/semesters/',
-  specializations: '/master-data/specializations/',
-  educationSystems: '/master-data/education-systems/',
-  academicYears: '/master-data/academic-years/',
+  departments: '/master-data/department/',
+  majors: '/master-data/major/',
+  specializations: '/master-data/specialization/',
+  campuses: '/master-data/campus/',
+  buildings: '/master-data/building/',
+  rooms: '/master-data/room/',
+  priorityCategories: '/master-data/priority-category/',
+  examTypes: '/master-data/exam-type/',
+  cohorts: '/master-data/cohort/',
+  academicYears: '/master-data/academic-year/',
+  semesters: '/master-data/semester/',
+  administrativeClasses: '/master-data/administrative-class/',
+  educationSystems: '/master-data/education-system/',
+  degrees: '/master-data/degree/',
+  academicTitles: '/master-data/academic-title/',
+  admissionTypes: '/master-data/admission-type/',
+  ethnicities: '/master-data/ethnicity/',
+  religions: '/master-data/religion/',
+  nationalities: '/master-data/nationality/',
+  courseTypes: '/master-data/course-type/',
+  positions: '/master-data/position/',
 };
 
 // Generic CRUD API generator
@@ -25,11 +36,22 @@ const createCrudApi = (endpoint) => ({
 
 export const departmentApi = createCrudApi(ENDPOINTS.departments);
 export const majorApi = createCrudApi(ENDPOINTS.majors);
+export const specializationApi = createCrudApi(ENDPOINTS.specializations);
+export const campusApi = createCrudApi(ENDPOINTS.campuses);
+export const buildingApi = createCrudApi(ENDPOINTS.buildings);
 export const roomApi = createCrudApi(ENDPOINTS.rooms);
 export const priorityCategoryApi = createCrudApi(ENDPOINTS.priorityCategories);
 export const examTypeApi = createCrudApi(ENDPOINTS.examTypes);
 export const cohortApi = createCrudApi(ENDPOINTS.cohorts);
-export const semesterApi = createCrudApi(ENDPOINTS.semesters);
-export const specializationApi = createCrudApi(ENDPOINTS.specializations);
-export const educationSystemApi = createCrudApi(ENDPOINTS.educationSystems);
 export const academicYearApi = createCrudApi(ENDPOINTS.academicYears);
+export const semesterApi = createCrudApi(ENDPOINTS.semesters);
+export const administrativeClassApi = createCrudApi(ENDPOINTS.administrativeClasses);
+export const educationSystemApi = createCrudApi(ENDPOINTS.educationSystems);
+export const degreeApi = createCrudApi(ENDPOINTS.degrees);
+export const academicTitleApi = createCrudApi(ENDPOINTS.academicTitles);
+export const admissionTypeApi = createCrudApi(ENDPOINTS.admissionTypes);
+export const ethnicityApi = createCrudApi(ENDPOINTS.ethnicities);
+export const religionApi = createCrudApi(ENDPOINTS.religions);
+export const nationalityApi = createCrudApi(ENDPOINTS.nationalities);
+export const courseTypeApi = createCrudApi(ENDPOINTS.courseTypes);
+export const positionApi = createCrudApi(ENDPOINTS.positions);

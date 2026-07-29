@@ -70,12 +70,14 @@ export default function DepartmentList() {
         code: data.code,
         name: data.name,
         type: data.type,
-        parent: data.parent || '',
+        parent: data.parent?.id || data.parent || '',
+        phone: data.phone || '',
+        email: data.email || '',
         is_active: data.is_active,
       });
     } else {
       setEditingData(null);
-      reset({ code: '', name: '', type: 'FACULTY', parent: '', is_active: true });
+      reset({ code: '', name: '', type: 'FACULTY', parent: '', phone: '', email: '', is_active: true });
     }
     setIsModalOpen(true);
   };
@@ -145,6 +147,7 @@ export default function DepartmentList() {
                 <th className="px-6 py-4">Tên đơn vị</th>
                 <th className="px-6 py-4">Loại</th>
                 <th className="px-6 py-4">Đơn vị cha</th>
+                <th className="px-6 py-4">Liên hệ</th>
                 <th className="px-6 py-4">Trạng thái</th>
                 <th className="px-6 py-4 text-right">Thao tác</th>
               </tr>
@@ -152,11 +155,11 @@ export default function DepartmentList() {
             <tbody className="divide-y divide-slate-200">
               {isLoading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">Đang tải dữ liệu...</td>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-500">Đang tải dữ liệu...</td>
                 </tr>
               ) : records.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-slate-500">Không tìm thấy dữ liệu.</td>
+                  <td colSpan={7} className="px-6 py-8 text-center text-slate-500">Không tìm thấy dữ liệu.</td>
                 </tr>
               ) : (
                 records.map((item) => (
@@ -169,6 +172,13 @@ export default function DepartmentList() {
                        item.type === 'CENTER' ? 'Trung tâm' : 'Khác'}
                     </td>
                     <td className="px-6 py-4">{item.parent_name || '-'}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col text-sm text-slate-500">
+                        {item.phone && <span>📞 {item.phone}</span>}
+                        {item.email && <span>✉️ {item.email}</span>}
+                        {!item.phone && !item.email && '-'}
+                      </div>
+                    </td>
                     <td className="px-6 py-4">
                       {item.is_active ? (
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Hoạt động</span>
@@ -254,6 +264,25 @@ export default function DepartmentList() {
                     ))}
                   </select>
                   <p className="text-xs text-slate-500 mt-1">Dành cho Bộ môn trực thuộc Khoa</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Số điện thoại</label>
+                  <input
+                    {...register('phone')}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="VD: 02431234567"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                  <input
+                    type="email"
+                    {...register('email')}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="VD: khoacntt@qlsv.edu.vn"
+                  />
                 </div>
 
                 <div className="flex items-center gap-2 mt-2">
