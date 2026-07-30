@@ -105,7 +105,7 @@ class Staff(models.Model):
     staff_code = models.CharField(max_length=50, unique=True)
     # Thông tin Công tác
     department = models.ForeignKey(Department, on_delete=models.PROTECT, related_name='staffs')
-    position = models.CharField(max_length=100, null=True, blank=True, help_text="Giáo vụ, Kế toán, Chuyên viên...")
+    position = models.ForeignKey('master_data.Position', on_delete=models.SET_NULL, null=True, blank=True, related_name='staffs', help_text="Chức vụ (Trưởng phòng, Giáo vụ...)")
     degree = models.ForeignKey(Degree, on_delete=models.SET_NULL, null=True, blank=True, related_name='staffs')
     responsibilities = models.TextField(null=True, blank=True, help_text="Nhiệm vụ phụ trách")
     join_date = models.DateField(null=True, blank=True, help_text="Ngày bắt đầu công tác")

@@ -40,9 +40,11 @@ class Department(TimeStampedModel):
     name = models.CharField(max_length=255, help_text="Tên đơn vị")
     type = models.CharField(max_length=50, choices=TypeChoices.choices, help_text="Loại đơn vị (Khoa/Bộ môn...)")
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children', help_text="Đơn vị cha (VD: Bộ môn thuộc Khoa)")
-    manager = models.ForeignKey('hr.Lecturer', on_delete=models.SET_NULL, null=True, blank=True, related_name='managed_departments', help_text="Trưởng đơn vị (Tham chiếu đến Giảng viên)")
+    manager = models.ForeignKey('identity.User', on_delete=models.SET_NULL, null=True, blank=True, related_name='managed_departments', help_text="Trưởng đơn vị (Tham chiếu đến User)")
+    phone = models.CharField(max_length=20, null=True, blank=True, help_text="Số điện thoại")
+    email = models.EmailField(null=True, blank=True, help_text="Email")
+    website = models.URLField(null=True, blank=True, help_text="Website")
     is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
-
     class Meta:
         db_table = 'master_data_departments'
 
@@ -55,9 +57,16 @@ class Major(TimeStampedModel):
     - Phân bổ theo Khoa (Department).
     - Là nền tảng để xây dựng Khung chương trình đào tạo.
     """
+    class LevelChoices(models.TextChoices):
+        UNDERGRAD = 'UNDERGRAD', 'Đại học'
+        POSTGRAD = 'POSTGRAD', 'Thạc sĩ'
+        PHD = 'PHD', 'Tiến sĩ'
+
     code = models.CharField(max_length=50, unique=True, help_text="Mã ngành học (VD: 7480201)")
     name = models.CharField(max_length=255, help_text="Tên ngành học")
     department = models.ForeignKey(Department, on_delete=models.PROTECT, related_name='majors', help_text="Thuộc khoa/đơn vị nào")
+    level = models.CharField(max_length=50, choices=LevelChoices.choices, default=LevelChoices.UNDERGRAD, help_text="Trình độ đào tạo")
+    standard_duration_years = models.DecimalField(max_digits=4, decimal_places=1, default=4.0, help_text="Thời gian đào tạo chuẩn (năm)")
     is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
 
     class Meta:
@@ -103,6 +112,7 @@ class Building(TimeStampedModel):
     code = models.CharField(max_length=50, unique=True, help_text="Mã tòa nhà")
     name = models.CharField(max_length=255, help_text="Tên tòa nhà")
     campus = models.ForeignKey(Campus, on_delete=models.PROTECT, related_name='buildings', help_text="Thuộc cơ sở nào")
+    floor_count = models.IntegerField(default=1, help_text="Số tầng")
     is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
 
     class Meta:
@@ -127,9 +137,11 @@ class Room(TimeStampedModel):
 
     code = models.CharField(max_length=50, unique=True, help_text="Mã phòng (VD: A1-201)")
     name = models.CharField(max_length=255, null=True, blank=True, help_text="Tên/Mô tả phòng")
-    building = models.ForeignKey(Building, on_delete=models.PROTECT, related_name='rooms', null=True, help_text="Thuộc tòa nhà nào")
+    building = models.ForeignKey(Building, on_delete=models.PROTECT, related_name='rooms', help_text="Thuộc tòa nhà nào")
+    floor = models.IntegerField(default=1, help_text="Tầng")
     type = models.CharField(max_length=50, choices=TypeChoices.choices, help_text="Loại phòng (Lý thuyết, Thực hành)")
     capacity = models.IntegerField(help_text="Sức chứa tối đa (số sinh viên)")
+    facilities = models.JSONField(default=dict, blank=True, help_text="Cơ sở vật chất: máy chiếu, máy lạnh...")
     status = models.CharField(max_length=50, choices=StatusChoices.choices, default=StatusChoices.ACTIVE, help_text="Tình trạng phòng")
 
     class Meta:
@@ -146,6 +158,7 @@ class PriorityCategory(TimeStampedModel):
     code = models.CharField(max_length=50, unique=True, help_text="Mã ưu tiên (VD: DT1)")
     name = models.CharField(max_length=255, help_text="Tên đối tượng ưu tiên")
     discount_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.00, help_text="Phần trăm giảm học phí (%)")
+    bonus_score = models.DecimalField(max_digits=4, decimal_places=2, default=0.00, help_text="Điểm cộng ưu tiên")
     is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
 
     class Meta:
@@ -192,6 +205,8 @@ class AcademicYear(TimeStampedModel):
     """
     code = models.CharField(max_length=50, unique=True, help_text="Mã năm học (VD: 2024-2025)")
     name = models.CharField(max_length=255, help_text="Tên năm học (VD: Năm học 2024-2025)")
+    start_date = models.DateField(null=True, blank=True, help_text="Ngày bắt đầu")
+    end_date = models.DateField(null=True, blank=True, help_text="Ngày kết thúc")
     is_current = models.BooleanField(default=False, help_text="Có phải là năm học hiện tại không?")
     is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
 
@@ -217,6 +232,10 @@ class Semester(TimeStampedModel):
     season = models.CharField(max_length=50, choices=SeasonChoices.choices, help_text="Mùa học kỳ (HK1, HK2, Hè)")
     start_date = models.DateField(help_text="Ngày bắt đầu học kỳ")
     end_date = models.DateField(help_text="Ngày kết thúc học kỳ")
+    registration_start_date = models.DateField(null=True, blank=True, help_text="Ngày bắt đầu đăng ký tín chỉ")
+    registration_end_date = models.DateField(null=True, blank=True, help_text="Ngày kết thúc đăng ký tín chỉ")
+    tuition_deadline = models.DateField(null=True, blank=True, help_text="Hạn chót đóng học phí")
+    grade_submission_deadline = models.DateField(null=True, blank=True, help_text="Hạn chót nộp điểm")
     is_current = models.BooleanField(default=False, help_text="Có phải là học kỳ hiện tại không?")
 
     class Meta:
@@ -235,6 +254,8 @@ class AdministrativeClass(TimeStampedModel):
     name = models.CharField(max_length=100)
     major = models.ForeignKey(Major, on_delete=models.PROTECT, related_name='administrative_classes')
     cohort = models.ForeignKey(Cohort, on_delete=models.PROTECT, related_name='administrative_classes')
+    education_system = models.ForeignKey(EducationSystem, on_delete=models.PROTECT, related_name='administrative_classes', null=True)
+    capacity = models.IntegerField(default=50, help_text="Sĩ số")
     advisor = models.ForeignKey('hr.Lecturer', on_delete=models.SET_NULL, null=True, blank=True, related_name='advised_classes', help_text="Giảng viên cố vấn")
     is_active = models.BooleanField(default=True)
     
@@ -325,6 +346,36 @@ class Nationality(TimeStampedModel):
 
     class Meta:
         db_table = 'master_data_nationalities'
+
+    def __str__(self):
+        return self.name
+
+class CourseType(TimeStampedModel):
+    """
+    Model lưu trữ Loại học phần.
+    - VD: Bắt buộc, Tự chọn, Đại cương, Chuyên ngành.
+    """
+    code = models.CharField(max_length=50, unique=True, help_text="Mã loại học phần")
+    name = models.CharField(max_length=255, help_text="Tên loại học phần")
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'master_data_course_types'
+
+    def __str__(self):
+        return self.name
+
+class Position(TimeStampedModel):
+    """
+    Model lưu trữ Chức vụ.
+    - VD: Trưởng phòng, Giáo vụ.
+    """
+    code = models.CharField(max_length=50, unique=True, help_text="Mã chức vụ")
+    name = models.CharField(max_length=255, help_text="Tên chức vụ")
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        db_table = 'master_data_positions'
 
     def __str__(self):
         return self.name

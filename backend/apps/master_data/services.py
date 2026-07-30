@@ -2,7 +2,7 @@
 Master Data Services
 """
 from django.db import transaction
-from .models import EducationSystem, Department, Major, Specialization, Room, PriorityCategory, ExamType, Cohort, AcademicYear, Semester, AdministrativeClass, Campus, Building, Degree, AcademicTitle, AdmissionType, Ethnicity, Religion, Nationality
+from .models import EducationSystem, Department, Major, Specialization, Room, PriorityCategory, ExamType, Cohort, AcademicYear, Semester, AdministrativeClass, Campus, Building, Degree, AcademicTitle, AdmissionType, Ethnicity, Religion, Nationality, CourseType, Position
 
 @transaction.atomic
 def create_education_system(**data) -> EducationSystem:
@@ -319,4 +319,28 @@ def update_nationality(instance: Nationality, **kwargs) -> Nationality:
     return instance
 
 def delete_nationality(instance: Nationality) -> None:
+    instance.delete()
+
+def create_course_type(**kwargs) -> CourseType:
+    return CourseType.objects.create(**kwargs)
+
+def update_course_type(instance: CourseType, **kwargs) -> CourseType:
+    for k, v in kwargs.items():
+        setattr(instance, k, v)
+    instance.save()
+    return instance
+
+def delete_course_type(instance: CourseType) -> None:
+    instance.delete()
+
+def create_position(**kwargs) -> Position:
+    return Position.objects.create(**kwargs)
+
+def update_position(instance: Position, **kwargs) -> Position:
+    for k, v in kwargs.items():
+        setattr(instance, k, v)
+    instance.save()
+    return instance
+
+def delete_position(instance: Position) -> None:
     instance.delete()

@@ -17,6 +17,7 @@ class Course(TimeStampedModel):
     name = models.CharField(max_length=255, help_text="Tên môn học")
     credits = models.IntegerField(help_text="Số tín chỉ (VD: 3)")
     major = models.ForeignKey(Major, on_delete=models.PROTECT, related_name='courses', help_text="Thuộc ngành học nào")
+    course_type = models.ForeignKey('master_data.CourseType', on_delete=models.PROTECT, related_name='courses', null=True, help_text="Loại học phần")
     is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
 
     class Meta:

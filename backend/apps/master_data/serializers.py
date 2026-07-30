@@ -5,7 +5,8 @@ from rest_framework import serializers
 from .models import (
     EducationSystem, Department, Major, Specialization, Room, PriorityCategory, ExamType, 
     Cohort, AcademicYear, Semester, AdministrativeClass,
-    Campus, Building, Degree, AcademicTitle, AdmissionType, Ethnicity, Religion, Nationality
+    Campus, Building, Degree, AcademicTitle, AdmissionType, Ethnicity, Religion, Nationality,
+    CourseType, Position
 )
 
 class EducationSystemReadSerializer(serializers.ModelSerializer):
@@ -20,9 +21,14 @@ class EducationSystemWriteSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class DepartmentReadSerializer(serializers.ModelSerializer):
+    parent_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Department
         fields = '__all__'
+
+    def get_parent_name(self, obj):
+        return obj.parent.name if obj.parent else None
 
 class DepartmentWriteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,9 +37,14 @@ class DepartmentWriteSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class MajorReadSerializer(serializers.ModelSerializer):
+    department_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Major
         fields = '__all__'
+
+    def get_department_name(self, obj):
+        return obj.department.name if obj.department else None
 
 class MajorWriteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,24 +53,18 @@ class MajorWriteSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class SpecializationReadSerializer(serializers.ModelSerializer):
+    major_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Specialization
         fields = '__all__'
+
+    def get_major_name(self, obj):
+        return obj.major.name if obj.major else None
 
 class SpecializationWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Specialization
-        fields = '__all__'
-        read_only_fields = ['id', 'created_at', 'updated_at']
-
-class RoomReadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Room
-        fields = '__all__'
-
-class RoomWriteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Room
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'updated_at']
 
@@ -108,9 +113,14 @@ class AcademicYearWriteSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class SemesterReadSerializer(serializers.ModelSerializer):
+    academic_year_name = serializers.SerializerMethodField()
+
     class Meta:
         model = Semester
         fields = '__all__'
+
+    def get_academic_year_name(self, obj):
+        return obj.academic_year.name if obj.academic_year else None
 
 class SemesterWriteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -119,6 +129,10 @@ class SemesterWriteSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class AdministrativeClassReadSerializer(serializers.ModelSerializer):
+    major_details = MajorReadSerializer(source='major', read_only=True)
+    cohort_details = CohortReadSerializer(source='cohort', read_only=True)
+    education_system_details = EducationSystemReadSerializer(source='education_system', read_only=True)
+
     class Meta:
         model = AdministrativeClass
         fields = '__all__'
@@ -142,6 +156,8 @@ class CampusWriteSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class BuildingReadSerializer(serializers.ModelSerializer):
+    campus_details = CampusReadSerializer(source='campus', read_only=True)
+
     class Meta:
         model = Building
         fields = '__all__'
@@ -218,3 +234,40 @@ class NationalityWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'updated_at']
 
+
+class RoomReadSerializer(serializers.ModelSerializer):
+    building_details = BuildingReadSerializer(source='building', read_only=True)
+
+    class Meta:
+        model = Room
+        fields = '__all__'
+
+class RoomWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+
+
+class CourseTypeReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseType
+        fields = '__all__'
+
+class CourseTypeWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseType
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class PositionReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = '__all__'
+
+class PositionWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']

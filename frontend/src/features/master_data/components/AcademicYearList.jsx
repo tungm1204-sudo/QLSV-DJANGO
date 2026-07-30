@@ -62,12 +62,14 @@ export default function AcademicYearList() {
       reset({
         code: data.code,
         name: data.name,
+        start_date: data.start_date || '',
+        end_date: data.end_date || '',
         is_current: data.is_current || false,
-        is_active: data.is_active,
+        is_active: data.is_active !== undefined ? data.is_active : true,
       });
     } else {
       setEditingData(null);
-      reset({ code: '', name: '', is_current: false, is_active: true });
+      reset({ code: '', name: '', start_date: '', end_date: '', is_current: false, is_active: true });
     }
     setIsModalOpen(true);
   };
@@ -79,10 +81,15 @@ export default function AcademicYearList() {
   };
 
   const onSubmit = (data) => {
+    // nullify empty strings for dates
+    const payload = { ...data };
+    if (!payload.start_date) payload.start_date = null;
+    if (!payload.end_date) payload.end_date = null;
+
     if (editingData) {
-      updateMutation.mutate({ id: editingData.id, data });
+      updateMutation.mutate({ id: editingData.id, data: payload });
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate(payload);
     }
   };
 
@@ -129,6 +136,8 @@ export default function AcademicYearList() {
               <tr>
                 <th className="px-6 py-4">Mã năm học</th>
                 <th className="px-6 py-4">Tên năm học</th>
+                <th className="px-6 py-4">Ngày bắt đầu</th>
+                <th className="px-6 py-4">Ngày kết thúc</th>
                 <th className="px-6 py-4">Năm hiện tại</th>
                 <th className="px-6 py-4">Trạng thái</th>
                 <th className="px-6 py-4 text-right">Thao tác</th>
@@ -148,6 +157,8 @@ export default function AcademicYearList() {
                   <tr key={item.id} className="hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-4 font-medium text-slate-900">{item.code}</td>
                     <td className="px-6 py-4">{item.name}</td>
+                    <td className="px-6 py-4">{item.start_date ? new Date(item.start_date).toLocaleDateString('vi-VN') : '-'}</td>
+                    <td className="px-6 py-4">{item.end_date ? new Date(item.end_date).toLocaleDateString('vi-VN') : '-'}</td>
                     <td className="px-6 py-4">
                       {item.is_current ? (
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Hiện tại</span>
@@ -213,6 +224,25 @@ export default function AcademicYearList() {
                     placeholder="VD: Năm học 2024-2025"
                   />
                   {errors.name && <span className="text-xs text-red-500">{errors.name.message}</span>}
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Ngày bắt đầu</label>
+                    <input
+                      type="date"
+                      {...register('start_date')}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Ngày kết thúc</label>
+                    <input
+                      type="date"
+                      {...register('end_date')}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-2 mt-2">
