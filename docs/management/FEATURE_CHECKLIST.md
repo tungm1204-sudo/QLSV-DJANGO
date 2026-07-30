@@ -161,24 +161,24 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 ### Mở lớp học phần
 - [x] **Tạo lớp học phần từ học phần trong chương trình đào tạo** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
 - [x] **Thiết lập giới hạn sĩ số tối đa/tối thiểu** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
-- [ ] **Thiết lập điều kiện đăng ký (đã học môn tiên quyết...)** - *Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa.*
-- [ ] **Đóng/hủy lớp học phần nếu không đủ sĩ số** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
+- [x] **Thiết lập điều kiện đăng ký (đã học môn tiên quyết...)** - *Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa.*
+- [x] **Đóng/hủy lớp học phần nếu không đủ sĩ số** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
 
 ### Đăng ký học phần
 - [x] **Sinh viên xem danh sách lớp học phần mở trong kỳ**
 - [x] **Đăng ký học phần online**
-- [ ] **Hệ thống tự kiểm tra điều kiện (môn tiên quyết, số tín chỉ tối đa)** - *Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa.*
-- [ ] **Hệ thống tự kiểm tra xung đột lịch học** - *Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL.*
+- [x] **Hệ thống tự kiểm tra điều kiện (môn tiên quyết, số tín chỉ tối đa)** - *Logic: Phải join với bảng KQHT của học kỳ trước để xem sinh viên đã có điểm >= 5.0 (hoặc D) chưa.*
+- [x] **Hệ thống tự kiểm tra xung đột lịch học** - *Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL.*
 - [x] **Xác nhận đăng ký thành công, xem phiếu đăng ký**
 
 ### Đăng ký ngoài kế hoạch
-- [ ] **Đăng ký học lại (môn không đạt)**
-- [ ] **Đăng ký học cải thiện điểm**
-- [ ] **Đăng ký học vượt (vượt tiến độ)**
+- [x] **Đăng ký học lại (môn không đạt)**
+- [x] **Đăng ký học cải thiện điểm**
+- [x] **Đăng ký học vượt (vượt tiến độ)**
 - [x] **Phê duyệt các trường hợp đăng ký đặc biệt**
 
 ### Danh sách lớp chính thức
-- [ ] **Chốt danh sách sinh viên sau thời gian đăng ký/điều chỉnh**
+- [x] **Chốt danh sách sinh viên sau thời gian đăng ký/điều chỉnh**
 - [ ] **Đồng bộ danh sách sang module điểm danh**
 - [x] **Xuất danh sách lớp (file Excel/PDF) cho giảng viên** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
 - [x] **Khóa danh sách, không cho chỉnh sửa sau khi chốt** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
@@ -186,7 +186,7 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 ### Điều chỉnh đăng ký
 - [x] **Hủy đăng ký học phần trong thời gian quy định**
 - [x] **Đổi lớp học phần (chuyển từ lớp này sang lớp khác)**
-- [ ] **Giới hạn thời gian được phép điều chỉnh**
+- [x] **Giới hạn thời gian được phép điều chỉnh**
 - [x] **Lưu lịch sử các lần điều chỉnh**
 
 ### Lập lịch thi

@@ -48,10 +48,37 @@ class EquivalentCourseWriteSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'updated_at']
 
-from .models import CourseOffering
-class CourseOfferingSerializer(serializers.ModelSerializer):
+from .models import CourseOffering, TrainingPlan, Schedule
+
+class TrainingPlanReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainingPlan
+        fields = '__all__'
+
+class TrainingPlanWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainingPlan
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class CourseOfferingReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = CourseOffering
         fields = '__all__'
 
+class CourseOfferingWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CourseOffering
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
+class ScheduleReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Schedule
+        fields = '__all__'
+
+class ScheduleWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Schedule
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']

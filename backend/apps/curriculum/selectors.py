@@ -2,7 +2,7 @@
 Curriculum Selectors
 """
 from typing import Iterable
-from .models import Course, TrainingProgram, Prerequisite, EquivalentCourse
+from .models import Course, TrainingProgram, Prerequisite, EquivalentCourse, TrainingPlan, CourseOffering, Schedule
 
 def get_courses(*, is_active: bool = None) -> Iterable[Course]:
     qs = Course.objects.all()
@@ -40,3 +40,20 @@ def get_equivalent_courses(*, is_active: bool = None) -> Iterable[EquivalentCour
 def get_equivalent_course_by_id(id: str) -> EquivalentCourse:
     return EquivalentCourse.objects.get(id=id)
 
+def get_training_plans() -> Iterable[TrainingPlan]:
+    return TrainingPlan.objects.all().select_related('semester', 'department', 'created_by', 'approved_by')
+
+def get_training_plan_by_id(id: str) -> TrainingPlan:
+    return TrainingPlan.objects.select_related('semester', 'department', 'created_by', 'approved_by').get(id=id)
+
+def get_course_offerings() -> Iterable[CourseOffering]:
+    return CourseOffering.objects.all().select_related('training_plan', 'course', 'semester', 'lecturer')
+
+def get_course_offering_by_id(id: str) -> CourseOffering:
+    return CourseOffering.objects.select_related('training_plan', 'course', 'semester', 'lecturer').get(id=id)
+
+def get_schedules() -> Iterable[Schedule]:
+    return Schedule.objects.all().select_related('course_offering', 'room')
+
+def get_schedule_by_id(id: str) -> Schedule:
+    return Schedule.objects.select_related('course_offering', 'room').get(id=id)

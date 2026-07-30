@@ -148,7 +148,7 @@ class Schedule(TimeStampedModel):
     day_of_week = models.CharField(max_length=20, choices=DAY_CHOICES, help_text="Ngày học trong tuần")
     start_period = models.IntegerField(help_text="Tiết bắt đầu (1-12)")
     end_period = models.IntegerField(help_text="Tiết kết thúc (1-12)")
-    room = models.CharField(max_length=50, help_text="Mã phòng học (nhập tay hoặc map với danh mục phòng học)")
+    room = models.ForeignKey('master_data.Room', on_delete=models.PROTECT, related_name='schedules', help_text="Phòng học")
 
     class Meta:
         db_table = 'curriculum_schedules'

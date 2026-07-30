@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from apps.enrollment.models import Enrollment
-from apps.curriculum.serializers import CourseOfferingSerializer
+from apps.curriculum.serializers import CourseOfferingReadSerializer
 from apps.hr.serializers import StudentSerializer
 
 class EnrollmentReadSerializer(serializers.ModelSerializer):
@@ -9,7 +9,7 @@ class EnrollmentReadSerializer(serializers.ModelSerializer):
     Sử dụng nested serializers để lấy đầy đủ thông tin hiển thị.
     """
     student = StudentSerializer(read_only=True)
-    course_offering = CourseOfferingSerializer(read_only=True)
+    course_offering = CourseOfferingReadSerializer(read_only=True)
 
     class Meta:
         model = Enrollment

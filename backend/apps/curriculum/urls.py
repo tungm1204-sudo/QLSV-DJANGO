@@ -10,7 +10,9 @@ router.register(r'course', views.CourseViewSet, basename='course')
 router.register(r'training-program', views.TrainingProgramViewSet, basename='training_program')
 router.register(r'prerequisite', views.PrerequisiteViewSet, basename='prerequisite')
 router.register(r'equivalent-course', views.EquivalentCourseViewSet, basename='equivalent_course')
-
+router.register(r'training-plan', views.TrainingPlanViewSet, basename='training_plan')
+router.register(r'course-offering', views.CourseOfferingViewSet, basename='course_offering')
+router.register(r'schedule', views.ScheduleViewSet, basename='schedule')
 urlpatterns = [
     path("", include(router.urls)),
 ]

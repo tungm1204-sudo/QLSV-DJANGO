@@ -151,4 +151,137 @@ class EquivalentCourseViewSet(viewsets.ViewSet):
         services.delete_equivalent_course(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+from . import filters
+from rest_framework.decorators import action
 
+class TrainingPlanViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        qs = selectors.get_training_plans()
+        filterset = filters.TrainingPlanFilter(request.query_params, queryset=qs)
+        qs = filterset.qs
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.TrainingPlanReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.TrainingPlanWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        obj = services.create_training_plan(**serializer.validated_data)
+        return Response(serializers.TrainingPlanReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_training_plan_by_id(pk)
+        return Response(serializers.TrainingPlanReadSerializer(obj).data)
+
+    def update(self, request, pk=None):
+        obj = selectors.get_training_plan_by_id(pk)
+        serializer = serializers.TrainingPlanWriteSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_obj = services.update_training_plan(obj, **serializer.validated_data)
+        return Response(serializers.TrainingPlanReadSerializer(updated_obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_training_plan_by_id(pk)
+        services.delete_training_plan(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['post'])
+    def duplicate(self, request, pk=None):
+        plan = selectors.get_training_plan_by_id(pk)
+        new_semester_id = request.data.get('new_semester_id')
+        new_name = request.data.get('new_name')
+        if not new_semester_id or not new_name:
+            return Response({"detail": "Thiếu new_semester_id hoặc new_name"}, status=status.HTTP_400_BAD_REQUEST)
+        new_plan = services.duplicate_training_plan(plan, new_semester_id, new_name, request.user)
+        return Response(serializers.TrainingPlanReadSerializer(new_plan).data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=['post'])
+    def approve(self, request, pk=None):
+        plan = selectors.get_training_plan_by_id(pk)
+        new_status = request.data.get('status')
+        updated_plan = services.approve_training_plan(plan, request.user, new_status)
+        return Response(serializers.TrainingPlanReadSerializer(updated_plan).data)
+
+
+class CourseOfferingViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        qs = selectors.get_course_offerings()
+        filterset = filters.CourseOfferingFilter(request.query_params, queryset=qs)
+        qs = filterset.qs
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.CourseOfferingReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.CourseOfferingWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        obj = services.create_course_offering(**serializer.validated_data)
+        return Response(serializers.CourseOfferingReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_course_offering_by_id(pk)
+        return Response(serializers.CourseOfferingReadSerializer(obj).data)
+
+    def update(self, request, pk=None):
+        obj = selectors.get_course_offering_by_id(pk)
+        serializer = serializers.CourseOfferingWriteSerializer(obj, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        updated_obj = services.update_course_offering(obj, **serializer.validated_data)
+        return Response(serializers.CourseOfferingReadSerializer(updated_obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_course_offering_by_id(pk)
+        services.delete_course_offering(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class ScheduleViewSet(viewsets.ViewSet):
+    pagination_class = CustomPagination
+    permission_classes = [IsAdminOrReadOnly]
+
+    def list(self, request):
+        qs = selectors.get_schedules()
+        filterset = filters.ScheduleFilter(request.query_params, queryset=qs)
+        qs = filterset.qs
+        paginator = self.pagination_class()
+        page = paginator.paginate_queryset(qs, request)
+        serializer = serializers.ScheduleReadSerializer(page, many=True)
+        return paginator.get_paginated_response(serializer.data)
+
+    def create(self, request):
+        serializer = serializers.ScheduleWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Lấy course_offering instance
+        course_offering_id = serializer.validated_data.pop('course_offering', None)
+        if not course_offering_id:
+            return Response({"detail": "Thiếu course_offering"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # CourseOffering is already resolved by serializer if PrimaryKeyRelatedField, wait, DRF ModelSerializer resolves ForeignKey to instance.
+        # So serializer.validated_data['course_offering'] is the instance!
+        # Let me correct that.
+        
+        course_offering = serializer.validated_data.pop('course_offering')
+        
+        from django.core.exceptions import ValidationError as DjangoValidationError
+        try:
+            obj = services.create_schedule(course_offering=course_offering, **serializer.validated_data)
+            return Response(serializers.ScheduleReadSerializer(obj).data, status=status.HTTP_201_CREATED)
+        except DjangoValidationError as e:
+            return Response({"detail": e.messages}, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, pk=None):
+        obj = selectors.get_schedule_by_id(pk)
+        return Response(serializers.ScheduleReadSerializer(obj).data)
+
+    def destroy(self, request, pk=None):
+        obj = selectors.get_schedule_by_id(pk)
+        services.delete_schedule(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)

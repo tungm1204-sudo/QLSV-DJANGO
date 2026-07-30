@@ -51,3 +51,19 @@ def get_course_offering_students(course_offering_id: str) -> QuerySet[Enrollment
         'student__user',
         'student__major'
     )
+
+def get_student_schedule(student_id: str, semester_id: str = None) -> list:
+    """
+    Lấy danh sách các buổi học (Schedule) của sinh viên trong một học kỳ.
+    """
+    enrollments = get_student_enrollments(student_id, semester_id)
+    
+    # Extract schedules from enrolled course offerings
+    schedules = []
+    for enrollment in enrollments:
+        if enrollment.status == 'ENROLLED' or enrollment.status == 'PENDING':
+            # prefetch_related('course_offering__schedules') was used
+            for schedule in enrollment.course_offering.schedules.all():
+                schedules.append(schedule)
+                
+    return schedules
