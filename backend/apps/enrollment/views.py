@@ -60,13 +60,17 @@ class StudentEnrollmentViewSet(viewsets.ViewSet):
         """
         serializer = EnrollmentWriteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        bypass_prerequisite = serializer.validated_data['bypass_prerequisite']
+        if bypass_prerequisite and not getattr(request.user, 'is_staff', False):
+            bypass_prerequisite = False
         
         enrollment = services.enroll_student(
             student=request.user.student_profile,
             course_offering_id=serializer.validated_data['course_offering_id'],
             enrollment_type=serializer.validated_data['enrollment_type'],
             user=request.user,
-            bypass_prerequisite=serializer.validated_data['bypass_prerequisite']
+            bypass_prerequisite=bypass_prerequisite
         )
         
         return Response(
@@ -88,11 +92,15 @@ class StudentEnrollmentViewSet(viewsets.ViewSet):
         except Enrollment.DoesNotExist:
             return Response({"detail": "Không tìm thấy đăng ký."}, status=status.HTTP_404_NOT_FOUND)
             
+        bypass_prerequisite = serializer.validated_data['bypass_prerequisite']
+        if bypass_prerequisite and not getattr(request.user, 'is_staff', False):
+            bypass_prerequisite = False
+
         new_enrollment = services.change_course_offering(
             enrollment_id=pk,
             new_course_offering_id=serializer.validated_data['new_course_offering_id'],
             user=request.user,
-            bypass_prerequisite=serializer.validated_data['bypass_prerequisite']
+            bypass_prerequisite=bypass_prerequisite
         )
         
         return Response(

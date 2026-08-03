@@ -23,7 +23,7 @@ class StudentViewSet(viewsets.GenericViewSet):
     serializer_class = StudentSerializer
     queryset = Student.objects.none()
     filterset_fields = ['major', 'administrative_class', 'education_system', 'status']
-    search_fields = ['student_code', 'full_name', 'email', 'phone']
+    search_fields = ['student_code', 'user__full_name', 'user__email', 'contact_phone']
 
     def get_queryset(self):
         return StudentSelector.get_students()
@@ -129,7 +129,7 @@ class LecturerViewSet(viewsets.GenericViewSet):
     serializer_class = LecturerSerializer
     queryset = Lecturer.objects.none()
     filterset_fields = ['department', 'status']
-    search_fields = ['lecturer_code', 'full_name', 'email', 'phone']
+    search_fields = ['lecturer_code', 'user__full_name', 'user__email', 'contact_phone']
 
     def get_queryset(self):
         return LecturerSelector.get_lecturers()
@@ -235,7 +235,7 @@ class StaffViewSet(viewsets.GenericViewSet):
     serializer_class = StaffSerializer
     queryset = Staff.objects.none()
     filterset_fields = ['department', 'status']
-    search_fields = ['staff_code', 'full_name', 'email', 'phone']
+    search_fields = ['staff_code', 'user__full_name', 'user__email', 'contact_phone']
 
     def get_queryset(self):
         return StaffSelector.get_staffs()

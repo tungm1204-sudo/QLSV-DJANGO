@@ -10,37 +10,39 @@ class StudentSelector:
     @staticmethod
     def get_students() -> QuerySet[Student]:
         return Student.objects.select_related(
-            'user', 'major', 'administrative_class', 'education_system', 'priority_category'
+            'user', 'major', 'administrative_class', 'education_system', 'priority_category',
+            'ethnicity', 'religion', 'nationality'
         ).all()
 
     @staticmethod
     def get_student(student_id: str) -> Student:
         return Student.objects.select_related(
-            'user', 'major', 'administrative_class', 'education_system', 'priority_category'
+            'user', 'major', 'administrative_class', 'education_system', 'priority_category',
+            'ethnicity', 'religion', 'nationality'
         ).get(pk=student_id)
 
 class LecturerSelector:
     @staticmethod
     def get_lecturers() -> QuerySet[Lecturer]:
         return Lecturer.objects.select_related(
-            'user', 'department'
+            'user', 'department', 'degree', 'academic_title', 'ethnicity', 'religion', 'nationality'
         ).all()
 
     @staticmethod
     def get_lecturer(lecturer_id: str) -> Lecturer:
         return Lecturer.objects.select_related(
-            'user', 'department'
+            'user', 'department', 'degree', 'academic_title', 'ethnicity', 'religion', 'nationality'
         ).get(pk=lecturer_id)
 
 class StaffSelector:
     @staticmethod
     def get_staffs() -> QuerySet[Staff]:
         return Staff.objects.select_related(
-            'user', 'department'
+            'user', 'department', 'position', 'degree'
         ).all()
 
     @staticmethod
     def get_staff(staff_id: str) -> Staff:
         return Staff.objects.select_related(
-            'user', 'department'
+            'user', 'department', 'position', 'degree'
         ).get(pk=staff_id)

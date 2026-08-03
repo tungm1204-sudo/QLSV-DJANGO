@@ -61,7 +61,7 @@ def get_student_schedule(student_id: str, semester_id: str = None) -> list:
     # Extract schedules from enrolled course offerings
     schedules = []
     for enrollment in enrollments:
-        if enrollment.status == 'ENROLLED' or enrollment.status == 'PENDING':
+        if enrollment.status in {Enrollment.StatusChoices.APPROVED, Enrollment.StatusChoices.PENDING}:
             # prefetch_related('course_offering__schedules') was used
             for schedule in enrollment.course_offering.schedules.all():
                 schedules.append(schedule)
