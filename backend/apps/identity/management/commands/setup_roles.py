@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand
 from apps.identity.models import Role
+from django.contrib.auth import get_user_model
 
 class Command(BaseCommand):
-    help = 'Tạo các vai trò mặc định ban đầu cho hệ thống'
+    help = 'Tạo các vai trò mặc định ban đầu cho hệ thống và tài khoản Admin'
 
     def handle(self, *args, **kwargs):
         roles = [
@@ -49,6 +50,7 @@ class Command(BaseCommand):
             }
         ]
 
+        admin_role = None
         for role_data in roles:
             role, created = Role.objects.get_or_create(
                 name=role_data['name'],
@@ -57,6 +59,9 @@ class Command(BaseCommand):
                     'permissions': role_data['permissions']
                 }
             )
+            if role.name == 'Administrator':
+                admin_role = role
+
             # FORCE UPDATE permissions for system roles to ensure they are locked
             if not created:
                 role.permissions = role_data['permissions']
@@ -67,3 +72,20 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.SUCCESS(f"Created role: {role.name}"))
 
         self.stdout.write(self.style.SUCCESS("Đã seed các vai trò mặc định thành công!"))
+
+        # Create default admin user
+        User = get_user_model()
+        admin_email = 'admin@school.edu.vn'
+        admin_password = 'Password123!'
+        
+        if not User.objects.filter(email=admin_email).exists():
+            User.objects.create_superuser(
+                email=admin_email,
+                password=admin_password,
+                role=admin_role,
+                first_name='Admin',
+                last_name='System'
+            )
+            self.stdout.write(self.style.SUCCESS(f"Đã tạo tài khoản Admin mặc định: {admin_email} / {admin_password}"))
+        else:
+            self.stdout.write(self.style.WARNING(f"Tài khoản {admin_email} đã tồn tại, bỏ qua tạo mới."))
