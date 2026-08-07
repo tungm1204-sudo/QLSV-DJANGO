@@ -84,6 +84,27 @@ class StudentService:
 
         log_audit(actor_id, 'DELETE', 'Student', {'id': str(student.id), 'student_code': student.student_code}, ip_address, user_agent)
 
+    @staticmethod
+    def generate_id_card(student: Student, actor_id: str, ip_address: str = None, user_agent: str = None):
+        """
+        Sinh nội dung thẻ sinh viên (HTML/PDF mock)
+        """
+        html_content = f"""
+        <html>
+        <head><title>Thẻ sinh viên - {student.student_code}</title></head>
+        <body style="font-family: Arial, sans-serif; text-align: center; border: 1px solid #000; width: 300px; padding: 20px;">
+            <h2>ĐẠI HỌC QLSV</h2>
+            <h3>THẺ SINH VIÊN</h3>
+            <p><strong>Họ tên:</strong> {student.user.full_name}</p>
+            <p><strong>MSSV:</strong> {student.student_code}</p>
+            <p><strong>Lớp:</strong> {student.administrative_class.name if student.administrative_class else 'N/A'}</p>
+            <p><strong>Ngành:</strong> {student.major.name if student.major else 'N/A'}</p>
+        </body>
+        </html>
+        """
+        log_audit(actor_id, 'PRINT_ID_CARD', 'Student', {'student_code': student.student_code}, ip_address, user_agent)
+        return html_content
+
 
 class LecturerService:
     @staticmethod

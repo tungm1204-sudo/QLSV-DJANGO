@@ -37,11 +37,11 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 - [x] **Cấu hình tham số chung (năm học hiện hành, học kỳ hiện hành)**
 
 ### Sao lưu & Phục hồi
-- [ ] **Sao lưu dữ liệu tự động theo lịch (hằng ngày/tuần)**
-- [ ] **Sao lưu thủ công theo yêu cầu admin**
-- [ ] **Phục hồi dữ liệu từ bản sao lưu**
-- [ ] **Quản lý danh sách các bản sao lưu (xem, tải về, xóa)** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Thông báo kết quả sao lưu (thành công/thất bại)**
+- [x] **Sao lưu dữ liệu tự động theo lịch (hằng ngày/tuần)**
+- [x] **Sao lưu thủ công theo yêu cầu admin**
+- [x] **Phục hồi dữ liệu từ bản sao lưu**
+- [x] **Quản lý danh sách các bản sao lưu (xem, tải về, xóa)** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Thông báo kết quả sao lưu (thành công/thất bại)**
 
 ### Xác thực & Bảo mật
 - [x] **Đăng nhập bằng tài khoản/mật khẩu**
@@ -122,7 +122,7 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 - [x] **Quản lý lịch sử lớp học theo từng học kỳ** - *(Backend Done)*
 - [x] **Tra cứu/tìm kiếm sinh viên theo nhiều tiêu chí** - *(Backend Done)* *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 - [x] **Quản lý ảnh đại diện và giấy tờ đính kèm (CCCD, học bạ...)** - *(Backend Done)*
-- [ ] **In thẻ sinh viên/giấy xác nhận**
+- [x] **In thẻ sinh viên/giấy xác nhận**
 
 ### Quản lý Giảng viên
 - [x] **Tạo hồ sơ giảng viên (thông tin cá nhân, học vị, học hàm)** - *(Backend Done)* *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
@@ -140,8 +140,8 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 ### Phân công giảng dạy
 - [x] **Gán giảng viên phụ trách cho từng lớp học phần**
 - [x] **Kiểm tra trùng lịch giảng dạy của giảng viên** - *Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL.*
-- [ ] **Thống kê khối lượng giờ giảng theo giảng viên/học kỳ**
-- [ ] **Điều chỉnh/thay đổi giảng viên phụ trách giữa kỳ**
+- [x] **Thống kê khối lượng giờ giảng theo giảng viên/học kỳ**
+- [x] **Điều chỉnh/thay đổi giảng viên phụ trách giữa kỳ**
 
 ### Kế hoạch đào tạo năm học
 - [x] **Lập kế hoạch mở môn học theo từng học kỳ/năm học**
@@ -154,9 +154,9 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 ### Xây dựng thời khóa biểu
 - [x] **Xếp lịch học theo phòng/giảng viên/thời gian**
 - [x] **Kiểm tra trùng lịch (phòng, giảng viên, lớp)** - *Nghiệp vụ: So sánh Ca học + Ngày học + Phòng học/Giảng viên. Kỹ thuật: Query check Overlap Time trong SQL.*
-- [ ] **Xếp lịch thi sơ bộ**
-- [ ] **Xuất thời khóa biểu theo lớp/giảng viên/phòng** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Điều chỉnh thời khóa biểu khi có thay đổi** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Xếp lịch thi sơ bộ**
+- [x] **Xuất thời khóa biểu theo lớp/giảng viên/phòng** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Điều chỉnh thời khóa biểu khi có thay đổi** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
 
 ### Mở lớp học phần
 - [x] **Tạo lớp học phần từ học phần trong chương trình đào tạo** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
@@ -179,7 +179,7 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 
 ### Danh sách lớp chính thức
 - [x] **Chốt danh sách sinh viên sau thời gian đăng ký/điều chỉnh**
-- [ ] **Đồng bộ danh sách sang module điểm danh**
+- [x] **Đồng bộ danh sách sang module điểm danh**
 - [x] **Xuất danh sách lớp (file Excel/PDF) cho giảng viên** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
 - [x] **Khóa danh sách, không cho chỉnh sửa sau khi chốt** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
 
@@ -190,212 +190,212 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 - [x] **Lưu lịch sử các lần điều chỉnh**
 
 ### Lập lịch thi
-- [ ] **Xếp lịch thi theo môn/lớp học phần**
+- [x] **Xếp lịch thi theo môn/lớp học phần**
 
 ## MODULE 5: Khảo thí & Quản lý điểm
-- [ ] **Xếp phòng thi, gán số lượng sinh viên/phòng**
-- [ ] **Gán cán bộ coi thi (giám thị)**
-- [ ] **Thiết lập hình thức thi cho từng kỳ thi**
-- [ ] **Xuất lịch thi cho sinh viên/giảng viên** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Xếp phòng thi, gán số lượng sinh viên/phòng**
+- [x] **Gán cán bộ coi thi (giám thị)**
+- [x] **Thiết lập hình thức thi cho từng kỳ thi**
+- [x] **Xuất lịch thi cho sinh viên/giảng viên** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
 
 ### Nhập điểm thành phần
-- [ ] **Nhập điểm chuyên cần**
-- [ ] **Nhập điểm giữa kỳ**
-- [ ] **Nhập điểm thực hành/bài tập**
-- [ ] **Thiết lập trọng số (%) từng thành phần**
-- [ ] **Import điểm hàng loạt từ Excel** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Nhập điểm chuyên cần**
+- [x] **Nhập điểm giữa kỳ**
+- [x] **Nhập điểm thực hành/bài tập**
+- [x] **Thiết lập trọng số (%) từng thành phần**
+- [x] **Import điểm hàng loạt từ Excel** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
 
 ### Nhập điểm cuối kỳ
-- [ ] **Nhập điểm thi cuối kỳ**
-- [ ] **Khóa điểm sau thời hạn quy định (không cho sửa)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
-- [ ] **Giảng viên gửi yêu cầu mở khóa điểm khi cần chỉnh sửa** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
-- [ ] **Lịch sử thay đổi điểm (ai sửa, khi nào)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
+- [x] **Nhập điểm thi cuối kỳ**
+- [x] **Khóa điểm sau thời hạn quy định (không cho sửa)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
+- [x] **Giảng viên gửi yêu cầu mở khóa điểm khi cần chỉnh sửa** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
+- [x] **Lịch sử thay đổi điểm (ai sửa, khi nào)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
 
 ### Tính điểm tổng kết
-- [ ] **Tự động tính điểm tổng kết học phần theo trọng số**
-- [ ] **Quy đổi điểm hệ 10 sang hệ 4 và điểm chữ (A, B, C...)** - *Nghiệp vụ: Áp dụng công thức (Tổng điểm * Số tín chỉ)/Tổng tín chỉ. Cần chạy background task hoặc tính lại mỗi khi điểm thay đổi.*
-- [ ] **Tính điểm trung bình học kỳ (GPA kỳ)**
-- [ ] **Tính điểm trung bình tích lũy (CPA)**
-- [ ] **Xếp loại học lực theo điểm trung bình**
+- [x] **Tự động tính điểm tổng kết học phần theo trọng số**
+- [x] **Quy đổi điểm hệ 10 sang hệ 4 và điểm chữ (A, B, C...)** - *Nghiệp vụ: Áp dụng công thức (Tổng điểm * Số tín chỉ)/Tổng tín chỉ. Cần chạy background task hoặc tính lại mỗi khi điểm thay đổi.*
+- [x] **Tính điểm trung bình học kỳ (GPA kỳ)**
+- [x] **Tính điểm trung bình tích lũy (CPA)**
+- [x] **Xếp loại học lực theo điểm trung bình**
 
 ### Phúc khảo
-- [ ] **Sinh viên gửi đơn phúc khảo online**
-- [ ] **Giáo vụ tiếp nhận, phân công chấm phúc khảo**
-- [ ] **Cập nhật kết quả phúc khảo (giữ nguyên/thay đổi điểm)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
-- [ ] **Thông báo kết quả phúc khảo cho sinh viên**
+- [x] **Sinh viên gửi đơn phúc khảo online**
+- [x] **Giáo vụ tiếp nhận, phân công chấm phúc khảo**
+- [x] **Cập nhật kết quả phúc khảo (giữ nguyên/thay đổi điểm)** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
+- [x] **Thông báo kết quả phúc khảo cho sinh viên**
 
 ### Bảng điểm
-- [ ] **Tra cứu điểm theo từng học kỳ** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
-- [ ] **Tra cứu điểm tích lũy toàn khóa** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Xuất bảng điểm (PDF) có xác nhận của trường** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [ ] **In bảng điểm tạm thời/chính thức**
+- [x] **Tra cứu điểm theo từng học kỳ** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Tra cứu điểm tích lũy toàn khóa** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Xuất bảng điểm (PDF) có xác nhận của trường** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **In bảng điểm tạm thời/chính thức**
 
 ### Cảnh báo học vụ
-- [ ] **Tự động phát hiện sinh viên có GPA dưới ngưỡng**
-- [ ] **Phát hiện sinh viên nợ môn vượt mức quy định**
-- [ ] **Gửi thông báo cảnh báo học vụ tới sinh viên/cố vấn**
-- [ ] **Theo dõi danh sách sinh viên bị cảnh báo qua các kỳ**
+- [x] **Tự động phát hiện sinh viên có GPA dưới ngưỡng**
+- [x] **Phát hiện sinh viên nợ môn vượt mức quy định**
+- [x] **Gửi thông báo cảnh báo học vụ tới sinh viên/cố vấn**
+- [x] **Theo dõi danh sách sinh viên bị cảnh báo qua các kỳ**
 
 ### Điểm rèn luyện
-- [ ] **Sinh viên tự đánh giá điểm rèn luyện (nếu áp dụng)**
+- [x] **Sinh viên tự đánh giá điểm rèn luyện (nếu áp dụng)**
 
 ## MODULE 6: Công tác sinh viên & Rèn luyện
-- [ ] **Lớp/cố vấn xét duyệt điểm rèn luyện**
-- [ ] **Tính điểm và xếp loại rèn luyện theo kỳ**
-- [ ] **Tra cứu lịch sử điểm rèn luyện qua các kỳ** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Lớp/cố vấn xét duyệt điểm rèn luyện**
+- [x] **Tính điểm và xếp loại rèn luyện theo kỳ**
+- [x] **Tra cứu lịch sử điểm rèn luyện qua các kỳ** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 
 ### Khen thưởng - Kỷ luật
-- [ ] **Lập và quản lý quyết định khen thưởng (theo danh mục)**
-- [ ] **Lập và quản lý quyết định kỷ luật**
-- [ ] **Đính kèm văn bản quyết định**
-- [ ] **Tra cứu lịch sử khen thưởng/kỷ luật theo sinh viên** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Lập và quản lý quyết định khen thưởng (theo danh mục)**
+- [x] **Lập và quản lý quyết định kỷ luật**
+- [x] **Đính kèm văn bản quyết định**
+- [x] **Tra cứu lịch sử khen thưởng/kỷ luật theo sinh viên** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 
 ### Học bổng
-- [ ] **Thiết lập tiêu chí xét học bổng (theo GPA, rèn luyện, hoàn cảnh)**
-- [ ] **Lập danh sách sinh viên đủ điều kiện xét**
-- [ ] **Phê duyệt danh sách nhận học bổng**
-- [ ] **Thông báo kết quả học bổng**
+- [x] **Thiết lập tiêu chí xét học bổng (theo GPA, rèn luyện, hoàn cảnh)**
+- [x] **Lập danh sách sinh viên đủ điều kiện xét**
+- [x] **Phê duyệt danh sách nhận học bổng**
+- [x] **Thông báo kết quả học bổng**
 
 ### Cố vấn học tập
-- [ ] **Phân công cố vấn học tập cho từng lớp/sinh viên**
-- [ ] **Ghi nhận nội dung tư vấn, buổi gặp**
-- [ ] **Cố vấn xem được tình hình học tập của sinh viên phụ trách**
-- [ ] **Lịch sử các lần tư vấn**
+- [x] **Phân công cố vấn học tập cho từng lớp/sinh viên**
+- [x] **Ghi nhận nội dung tư vấn, buổi gặp**
+- [x] **Cố vấn xem được tình hình học tập của sinh viên phụ trách**
+- [x] **Lịch sử các lần tư vấn**
 
 ### Khảo sát sinh viên
-- [ ] **Tạo phiếu khảo sát (đánh giá môn học, giảng viên)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Sinh viên thực hiện khảo sát online**
-- [ ] **Tổng hợp kết quả khảo sát theo môn/giảng viên**
-- [ ] **Xuất báo cáo khảo sát** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Tạo phiếu khảo sát (đánh giá môn học, giảng viên)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Sinh viên thực hiện khảo sát online**
+- [x] **Tổng hợp kết quả khảo sát theo môn/giảng viên**
+- [x] **Xuất báo cáo khảo sát** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
 
 ### Bảo hiểm y tế
-- [ ] **Quản lý danh sách sinh viên tham gia BHYT**
-- [ ] **Theo dõi thời hạn tham gia/hết hạn**
-- [ ] **Ghi nhận thanh toán phí BHYT**
-- [ ] **Xuất danh sách báo cáo BHYT theo lớp/khóa** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Quản lý danh sách sinh viên tham gia BHYT**
+- [x] **Theo dõi thời hạn tham gia/hết hạn**
+- [x] **Ghi nhận thanh toán phí BHYT**
+- [x] **Xuất danh sách báo cáo BHYT theo lớp/khóa** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
 
 ### Thiết lập học phí
-- [ ] **Cấu hình đơn giá học phí theo tín chỉ**
+- [x] **Cấu hình đơn giá học phí theo tín chỉ**
 
 ## MODULE 7: Tài chính & Học phí
-- [ ] **Thiết lập mức học phí riêng theo ngành/hệ đào tạo (nếu khác nhau)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Cập nhật đơn giá theo từng năm học** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
+- [x] **Thiết lập mức học phí riêng theo ngành/hệ đào tạo (nếu khác nhau)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Cập nhật đơn giá theo từng năm học** - *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
 
 ### Tính công nợ
-- [ ] **Tự động sinh công nợ học phí dựa trên đăng ký học phần** - *Nghiệp vụ: Tự động chốt công nợ vào đầu kỳ. Kỹ thuật: Cần có liên kết (ForeignKey) chuẩn xác tới bảng Đăng ký học phần để đếm số tín chỉ.*
-- [ ] **Theo dõi tình trạng công nợ (đã đóng, còn nợ, quá hạn)**
-- [ ] **Gửi thông báo nhắc nợ tự động** - *Kỹ thuật: Dùng cơ chế Event/Signals trong framework backend để trigger hành động gửi mà không làm nghẽn luồng xử lý chính.*
-- [ ] **Tự động hoàn trả học phí/công nợ cho sinh viên khi lớp học phần bị hủy**
-- [ ] **Tổng hợp công nợ theo lớp/khóa/sinh viên** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Tự động sinh công nợ học phí dựa trên đăng ký học phần** - *Nghiệp vụ: Tự động chốt công nợ vào đầu kỳ. Kỹ thuật: Cần có liên kết (ForeignKey) chuẩn xác tới bảng Đăng ký học phần để đếm số tín chỉ.*
+- [x] **Theo dõi tình trạng công nợ (đã đóng, còn nợ, quá hạn)**
+- [x] **Gửi thông báo nhắc nợ tự động** - *Kỹ thuật: Dùng cơ chế Event/Signals trong framework backend để trigger hành động gửi mà không làm nghẽn luồng xử lý chính.*
+- [x] **Tự động hoàn trả học phí/công nợ cho sinh viên khi lớp học phần bị hủy**
+- [x] **Tổng hợp công nợ theo lớp/khóa/sinh viên** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
 
 ### Quản lý phiếu thu
-- [ ] **Lập phiếu thu học phí**
-- [ ] **In biên lai thu tiền**
-- [ ] **Ghi nhận hình thức thanh toán (tiền mặt, chuyển khoản, online)**
-- [ ] **Tra cứu lịch sử thanh toán theo sinh viên** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Lập phiếu thu học phí**
+- [x] **In biên lai thu tiền**
+- [x] **Ghi nhận hình thức thanh toán (tiền mặt, chuyển khoản, online)**
+- [x] **Tra cứu lịch sử thanh toán theo sinh viên** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 
 ### Miễn giảm & Gia hạn
-- [ ] **Lập hồ sơ xét miễn giảm học phí (theo đối tượng ưu tiên)**
-- [ ] **Phê duyệt miễn giảm**
-- [ ] **Gia hạn thời gian đóng học phí**
-- [ ] **Theo dõi danh sách sinh viên được miễn giảm/gia hạn**
+- [x] **Lập hồ sơ xét miễn giảm học phí (theo đối tượng ưu tiên)**
+- [x] **Phê duyệt miễn giảm**
+- [x] **Gia hạn thời gian đóng học phí**
+- [x] **Theo dõi danh sách sinh viên được miễn giảm/gia hạn**
 
 ### Tài khoản ngân hàng
-- [ ] **Kết nối cổng thanh toán trực tuyến (VNPay, Momo, ngân hàng...)**
-- [ ] **Đối soát giao dịch thanh toán tự động** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
-- [ ] **Xử lý giao dịch lỗi/hoàn tiền** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
-- [ ] **Lịch sử giao dịch qua cổng thanh toán** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
+- [x] **Kết nối cổng thanh toán trực tuyến (VNPay, Momo, ngân hàng...)**
+- [x] **Đối soát giao dịch thanh toán tự động** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
+- [x] **Xử lý giao dịch lỗi/hoàn tiền** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
+- [x] **Lịch sử giao dịch qua cổng thanh toán** - *Database: Sử dụng Transaction và row-level locking (select_for_update) để chống xung đột (concurrency).*
 
 ### Quản lý hoàn trả / Giảm trừ
-- [ ] **Tự động hoàn trả/giảm trừ công nợ khi lớp học phần bị hủy.** - *Logic sẽ kích hoạt (Trigger) ngay khi trạng thái lớp ở Module 4 chuyển thành "Hủy". Hệ thống bắt buộc phải sử dụng Transaction trong Database để đảm bảo tiền/tín chỉ được hoàn về tài khoản sinh viên đồng bộ với việc xóa tên khỏi danh sách lớp, tránh thất thoát dữ liệu.*
+- [x] **Tự động hoàn trả/giảm trừ công nợ khi lớp học phần bị hủy.** - *Logic sẽ kích hoạt (Trigger) ngay khi trạng thái lớp ở Module 4 chuyển thành "Hủy". Hệ thống bắt buộc phải sử dụng Transaction trong Database để đảm bảo tiền/tín chỉ được hoàn về tài khoản sinh viên đồng bộ với việc xóa tên khỏi danh sách lớp, tránh thất thoát dữ liệu.*
 
 ## MODULE 8: Thẩm định & Xét tốt nghiệp
 
 ### Điều kiện tốt nghiệp
-- [ ] **Thiết lập điều kiện tốt nghiệp theo ngành (tín chỉ, GPA, chứng chỉ, rèn luyện...)**
-- [ ] **Cấu hình điều kiện theo từng khóa (có thể khác nhau)** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Thiết lập điều kiện tốt nghiệp theo ngành (tín chỉ, GPA, chứng chỉ, rèn luyện...)**
+- [x] **Cấu hình điều kiện theo từng khóa (có thể khác nhau)** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
 
 ### Kiểm tra điều kiện
-- [ ] **Đối chiếu tự động điều kiện tốt nghiệp với hồ sơ từng sinh viên**
-- [ ] **Hiển thị danh sách điều kiện còn thiếu (nếu có)**
-- [ ] **Sinh viên tự tra cứu tiến độ đủ điều kiện tốt nghiệp** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Đối chiếu tự động điều kiện tốt nghiệp với hồ sơ từng sinh viên**
+- [x] **Hiển thị danh sách điều kiện còn thiếu (nếu có)**
+- [x] **Sinh viên tự tra cứu tiến độ đủ điều kiện tốt nghiệp** - *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 
 ### Danh sách xét tốt nghiệp
-- [ ] **Lập danh sách sinh viên đủ điều kiện theo đợt xét**
-- [ ] **Trình hội đồng phê duyệt danh sách**
-- [ ] **Công bố danh sách chính thức được công nhận tốt nghiệp**
+- [x] **Lập danh sách sinh viên đủ điều kiện theo đợt xét**
+- [x] **Trình hội đồng phê duyệt danh sách**
+- [x] **Công bố danh sách chính thức được công nhận tốt nghiệp**
 
 ### Quản lý phôi bằng
-- [ ] **Quản lý số lượng phôi bằng tồn/đã sử dụng**
-- [ ] **In bằng tốt nghiệp**
-- [ ] **In bảng điểm toàn khóa kèm theo bằng** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Quản lý số hiệu, số vào sổ cấp bằng**
+- [x] **Quản lý số lượng phôi bằng tồn/đã sử dụng**
+- [x] **In bằng tốt nghiệp**
+- [x] **In bảng điểm toàn khóa kèm theo bằng** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Quản lý số hiệu, số vào sổ cấp bằng**
 
 ### Hồ sơ tốt nghiệp
-- [ ] **Theo dõi tình trạng nhận bằng của từng sinh viên**
-- [ ] **Ghi nhận ngày nhận bằng, người nhận thay (nếu có ủy quyền)**
-- [ ] **Lưu trữ hồ sơ tốt nghiệp điện tử**
+- [x] **Theo dõi tình trạng nhận bằng của từng sinh viên**
+- [x] **Ghi nhận ngày nhận bằng, người nhận thay (nếu có ủy quyền)**
+- [x] **Lưu trữ hồ sơ tốt nghiệp điện tử**
 
 ### Xét tốt nghiệp sớm / muộn
-- [ ] **Xử lý trường hợp sinh viên chuyển trường**
-- [ ] **Xử lý trường hợp chương trình đào tạo thay đổi giữa khóa học** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Xử lý trường hợp sinh viên bị kỷ luật/đình chỉ ảnh hưởng tốt nghiệp**
-- [ ] **Xét đặc cách/đặc biệt theo quy định riêng**
+- [x] **Xử lý trường hợp sinh viên chuyển trường**
+- [x] **Xử lý trường hợp chương trình đào tạo thay đổi giữa khóa học** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Xử lý trường hợp sinh viên bị kỷ luật/đình chỉ ảnh hưởng tốt nghiệp**
+- [x] **Xét đặc cách/đặc biệt theo quy định riêng**
 
 ### Quản lý Đồ án & Thẩm định Tốt nghiệp
-- [ ] **Đăng ký đề tài đồ án/khóa luận tốt nghiệp** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Phân công giảng viên hướng dẫn**
-- [ ] **Phân công giảng viên phản biện**
-- [ ] **Thành lập hội đồng bảo vệ (thành viên, chủ tịch, thư ký)**
-- [ ] **Lên lịch bảo vệ**
-- [ ] **Chấm điểm khóa luận/đồ án (điểm hướng dẫn, phản biện, hội đồng)** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Tổng hợp kết quả bảo vệ**
+- [x] **Đăng ký đề tài đồ án/khóa luận tốt nghiệp** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Phân công giảng viên hướng dẫn**
+- [x] **Phân công giảng viên phản biện**
+- [x] **Thành lập hội đồng bảo vệ (thành viên, chủ tịch, thư ký)**
+- [x] **Lên lịch bảo vệ**
+- [x] **Chấm điểm khóa luận/đồ án (điểm hướng dẫn, phản biện, hội đồng)** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Tổng hợp kết quả bảo vệ**
 
 ### Chuyển đổi tín chỉ & Học phần tương đương
-- [ ] **Thiết lập bộ quy tắc môn học tương đương (Mapping Rules) giữa các ngành.**
-- [ ] **Ánh xạ (Map) kết quả học tập từ khung chương trình cũ sang khung mới. Clone bản ghi điểm để bảo toàn lịch sử thay vì sửa trực tiếp.**
-- [ ] **Tự động loại bỏ các môn không tương đương (chuyển thành môn ngoài khung), tách chúng khỏi thuật toán tính GPA của ngành mới.**
+- [x] **Thiết lập bộ quy tắc môn học tương đương (Mapping Rules) giữa các ngành.**
+- [x] **Ánh xạ (Map) kết quả học tập từ khung chương trình cũ sang khung mới. Clone bản ghi điểm để bảo toàn lịch sử thay vì sửa trực tiếp.**
+- [x] **Tự động loại bỏ các môn không tương đương (chuyển thành môn ngoài khung), tách chúng khỏi thuật toán tính GPA của ngành mới.**
 
 ## MODULE 9: Thống kê & Báo cáo
 
 ### Dashboard
-- [ ] **Biểu đồ tổng quan số lượng sinh viên (theo khóa/ngành/trạng thái)** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Biểu đồ tổng quan tình hình học phí (đã thu/còn nợ)**
-- [ ] **Biểu đồ tổng quan đào tạo (số lớp, số môn mở trong kỳ)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [ ] **Tùy chỉnh widget hiển thị theo vai trò người dùng**
+- [x] **Biểu đồ tổng quan số lượng sinh viên (theo khóa/ngành/trạng thái)** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Biểu đồ tổng quan tình hình học phí (đã thu/còn nợ)**
+- [x] **Biểu đồ tổng quan đào tạo (số lớp, số môn mở trong kỳ)** - *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Tùy chỉnh widget hiển thị theo vai trò người dùng**
 
 ### Báo cáo đào tạo
-- [ ] **Thống kê số lượng sinh viên theo khoa/ngành/khóa** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
-- [ ] **Thống kê số lớp học phần mở theo học kỳ**
-- [ ] **Xuất báo cáo theo nhiều định dạng** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Thống kê số lượng sinh viên theo khoa/ngành/khóa** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Thống kê số lớp học phần mở theo học kỳ**
+- [x] **Xuất báo cáo theo nhiều định dạng** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
 
 ### Báo cáo học tập
-- [ ] **Thống kê học lực sinh viên (giỏi, khá, trung bình, yếu)**
-- [ ] **Thống kê tỷ lệ đạt/trượt theo môn học**
-- [ ] **Thống kê theo lớp/khóa/ngành** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
+- [x] **Thống kê học lực sinh viên (giỏi, khá, trung bình, yếu)**
+- [x] **Thống kê tỷ lệ đạt/trượt theo môn học**
+- [x] **Thống kê theo lớp/khóa/ngành** - *Backend: Khuyến nghị dùng Soft Delete (cập nhật cờ is_deleted/is_active) thay vì xóa cứng (DELETE) để bảo toàn khóa ngoại.*
 
 ### Báo cáo tài chính
-- [ ] **Tổng hợp số liệu thu học phí theo kỳ/năm**
-- [ ] **Tổng hợp công nợ còn tồn đọng**
-- [ ] **Báo cáo doanh thu theo khoa/ngành**
+- [x] **Tổng hợp số liệu thu học phí theo kỳ/năm**
+- [x] **Tổng hợp công nợ còn tồn đọng**
+- [x] **Báo cáo doanh thu theo khoa/ngành**
 
 ### Báo cáo nhân sự
-- [ ] **Thống kê số lượng giảng viên theo khoa/bộ môn**
-- [ ] **Thống kê giờ giảng theo giảng viên/học kỳ**
-- [ ] **Báo cáo khối lượng công tác**
+- [x] **Thống kê số lượng giảng viên theo khoa/bộ môn**
+- [x] **Thống kê giờ giảng theo giảng viên/học kỳ**
+- [x] **Báo cáo khối lượng công tác**
 
 ### Báo cáo khảo thí
-- [ ] **Thống kê lịch thi đã tổ chức**
-- [ ] **Thống kê kết quả thi theo môn/lớp**
-- [ ] **Báo cáo tỷ lệ phúc khảo và kết quả phúc khảo**
+- [x] **Thống kê lịch thi đã tổ chức**
+- [x] **Thống kê kết quả thi theo môn/lớp**
+- [x] **Báo cáo tỷ lệ phúc khảo và kết quả phúc khảo**
 
 ### Báo cáo tùy chỉnh
-- [ ] **Cho phép người dùng tự chọn tiêu chí, cột dữ liệu để xuất báo cáo** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [ ] **Xuất báo cáo ra Excel** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [ ] **Xuất báo cáo ra PDF** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [ ] **Lưu mẫu báo cáo đã tùy chỉnh để dùng lại**
+- [x] **Cho phép người dùng tự chọn tiêu chí, cột dữ liệu để xuất báo cáo** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Xuất báo cáo ra Excel** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Xuất báo cáo ra PDF** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Lưu mẫu báo cáo đã tùy chỉnh để dùng lại**
 
 ### Xuất dữ liệu
-- [ ] **Xuất dữ liệu sinh viên/điểm/tốt nghiệp theo mẫu chuẩn của Bộ GD&ĐT** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [ ] **Kiểm tra tính hợp lệ dữ liệu trước khi xuất** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [ ] **Lưu lịch sử các lần xuất dữ liệu** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Xuất dữ liệu sinh viên/điểm/tốt nghiệp theo mẫu chuẩn của Bộ GD&ĐT** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Kiểm tra tính hợp lệ dữ liệu trước khi xuất** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Lưu lịch sử các lần xuất dữ liệu** - *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*

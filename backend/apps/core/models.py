@@ -44,3 +44,26 @@ class AuditLog(models.Model):
     class Meta:
         db_table = 'core_audit_logs'
         ordering = ['-created_at']
+
+class SystemBackup(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    file_name = models.CharField(max_length=255, help_text="Tên file backup")
+    file_path = models.CharField(max_length=500, help_text="Đường dẫn file trên server")
+    file_size = models.BigIntegerField(help_text="Kích thước file (bytes)")
+    created_by = models.ForeignKey(
+        'identity.User', on_delete=models.SET_NULL, null=True, blank=True, related_name='created_backups'
+    )
+    status = models.CharField(max_length=20, choices=[
+        ('PENDING', 'Đang xử lý'),
+        ('SUCCESS', 'Thành công'),
+        ('FAILED', 'Thất bại')
+    ], default='PENDING')
+    error_message = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'core_system_backups'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.file_name

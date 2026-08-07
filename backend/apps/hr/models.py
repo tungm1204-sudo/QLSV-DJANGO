@@ -128,3 +128,33 @@ class Staff(models.Model):
 
     def __str__(self):
         return f"{self.staff_code} - {self.user.full_name}"
+
+class StudentCertificate(models.Model):
+    """
+    Chứng chỉ của Sinh viên (Ngoại ngữ, Tin học, Giáo dục quốc phòng, etc.)
+    Dùng cho việc xét điều kiện tốt nghiệp hoặc khen thưởng.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='certificates')
+    certificate_type = models.CharField(max_length=100, help_text="Loại chứng chỉ (VD: TOEIC, IELTS, MOS, GDQP)")
+    certificate_name = models.CharField(max_length=255, help_text="Tên cụ thể (VD: TOEIC 600, IELTS 6.5)")
+    issue_date = models.DateField(help_text="Ngày cấp")
+    expiration_date = models.DateField(null=True, blank=True, help_text="Ngày hết hạn (nếu có)")
+    score = models.CharField(max_length=50, null=True, blank=True, help_text="Điểm hoặc Xếp loại")
+    provider = models.CharField(max_length=255, null=True, blank=True, help_text="Tổ chức cấp")
+    file_proof = models.FileField(upload_to='certificates/', null=True, blank=True, help_text="Minh chứng (Ảnh/PDF)")
+    
+    status = models.CharField(max_length=20, choices=[
+        ('PENDING', 'Chờ duyệt'),
+        ('APPROVED', 'Đã duyệt'),
+        ('REJECTED', 'Từ chối')
+    ], default='PENDING')
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'hr_student_certificates'
+        
+    def __str__(self):
+        return f"{self.student.student_code} - {self.certificate_name}"

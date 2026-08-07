@@ -101,6 +101,22 @@ class StudentViewSet(viewsets.GenericViewSet):
         )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=True, methods=['get'], url_path='print-id-card')
+    def print_id_card(self, request, pk=None):
+        from django.http import HttpResponse
+        try:
+            student = StudentSelector.get_student(pk)
+        except Student.DoesNotExist:
+            return Response({'detail': 'Sinh viên không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
+
+        html_content = StudentService.generate_id_card(
+            student=student,
+            actor_id=str(request.user.id),
+            ip_address=get_client_ip(request),
+            user_agent=request.META.get('HTTP_USER_AGENT', '')
+        )
+        return HttpResponse(html_content, content_type='text/html')
+
     @action(detail=False, methods=['post'], url_path='import')
     def import_excel(self, request):
         file_obj = request.FILES.get('file')

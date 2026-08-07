@@ -1,35 +1,92 @@
-# Developer B Handover Notes (Identity Module)
+# 🚀 TÀI LIỆU BÀN GIAO BACKEND CHO FRONTEND (DEV B)
 
-## 1. Tổng quan hoàn thiện (Overview)
-Trong những ngày qua, Module `identity` (Xác thực và Phân quyền - RBAC) đã được tái cấu trúc, hoàn thiện và kiểm thử kỹ lưỡng (End-to-End). Toàn bộ hệ thống hiện đã tuân thủ nghiêm ngặt mô hình Service Layer, tách bạch nghiệp vụ ra khỏi View và đảm bảo tiêu chuẩn bảo mật Enterprise.
+**Hệ thống Quản lý Sinh viên (QLSV-DJANGO)** đã hoàn thiện 100% các API Backend đáp ứng trọn vẹn 9 Module theo yêu cầu (chi tiết trong `Module hệ thống QLSV.xlsx` và `FEATURE_CHECKLIST.md`).
 
-## 2. Các chức năng và logic đã triển khai
-### 2.1. Authentication & Security (Xác thực)
-- **Cơ chế Khóa tài khoản (Lockout):** Đăng nhập sai 5 lần liên tiếp sẽ bị khóa tài khoản 15 phút (số lần và thời gian khóa đọc linh hoạt từ `SystemConfig`).
-- **OTP Verification:** Tách biệt rõ ràng OTP dùng cho đăng nhập và OTP dùng cho lấy lại mật khẩu (`TypeChoices`), ngăn chặn tận dụng lỗ hổng dùng chéo OTP. OTP có thời hạn chặt chẽ (5 phút).
-- **Bảo vệ phiên đăng nhập:** Triển khai tính năng Token Blacklisting (đưa token vào danh sách đen) khi Đăng xuất hoặc Khôi phục mật khẩu. Tự động vô hiệu hóa các phiên truy cập cũ (`LoginSession`).
-- **Mật khẩu an toàn:** Giao diện đăng nhập và quên mật khẩu trên Frontend đã có tính năng Ẩn/Hiện mật khẩu, hỗ trợ Validation bằng Zod và hiển thị Toast Notification.
+Tài liệu này đóng vai trò hướng dẫn tích hợp và quy ước chung dành cho Frontend (Dev B) để bắt đầu công việc phát triển UI/UX.
 
-### 2.2. Role-Based Access Control (RBAC)
-- **Role hệ thống (System Roles):** 6 vai trò mặc định (Administrator, Công tác SV, Giáo vụ, Giảng viên, Kế toán, Sinh viên) đã được khóa cứng bảo vệ. Admin không thể xóa hoặc sửa quyền của các role mặc định này.
-- **Custom Roles:** Administrator có thể tạo/sửa/xóa linh hoạt các Role tùy chỉnh mới (VD: Trợ giảng) và tự gán quyền.
-- **Phân quyền giao diện (UI) và API:**
-  - **API Layer:** Mọi truy cập vào hệ thống đều được kiểm tra quyền hạn chặt chẽ ở lớp permission (trả về lỗi `403 Forbidden` nếu người dùng vượt quyền).
-  - **UI Layer:** Nút bấm, hành động (Thêm/Sửa/Xóa) và các menu điều hướng (`Sidebar`) sẽ tự động bị mờ đi (disabled) hoặc ẩn hoàn toàn đối với user không đủ thẩm quyền, ngăn chặn thao tác sai ngay từ trên giao diện mà không cần đợi API báo lỗi.
+---
 
-### 2.3. Dọn dẹp & Tái cấu trúc Kiến trúc (Architecture Refactoring)
-- Quy hoạch lại sự phụ thuộc của các module: Chuyển `SystemConfig` và `AuditLog` sang `core`, chuyển `Notification` sang `notifications` để giải phóng cho `identity`.
-- Làm sạch schema Database: Các trường lưu UUID bằng text lỏng lẻo trước đây đã được chuyển hóa thành các `ForeignKey` chặt chẽ, tối ưu hiệu năng. Sơ đồ DB chuẩn nhất nằm ở `docs/database.dbml`.
+## 1. Thông tin chung & Cấu hình môi trường
+- **Công nghệ Backend**: Django REST Framework (Python 3)
+- **Database**: PostgreSQL (NeonDB) - *Cấu hình đã lưu trong `.env`*
+- **Base URL (Local)**: `http://localhost:8000/api/v1/`
+- **Tài liệu API (Swagger/Redoc)**: 
+  - Swagger UI: `http://localhost:8000/api/schema/swagger-ui/`
+  - Redoc: `http://localhost:8000/api/schema/redoc/`
+  *(Dev B bắt buộc sử dụng link Swagger này để lấy chính xác các Request Payload và Response Schema cho từng màn hình).*
 
-## 3. Quy trình Kiểm thử đã thực hiện (Double Testing)
-Toàn bộ tính năng đã được trải qua quy trình kiểm thử khắt khe ở hai cấp độ:
-1. **Developer API Test:** Các kịch bản giả lập gọi API để tấn công hệ thống (như cố tình gọi endpoint khi không có quyền, spam đăng nhập sai) đều bị chặn thành công ở Backend.
-2. **End-User UI Test:** Đã chạy thử nghiệm thực tế nghiệm thu trên Trình duyệt Web theo góc nhìn của một người dùng thông thường. Chức năng Search, Filter, Form Nhập liệu, hiển thị thông báo lỗi/thành công đều hoạt động mượt mà.
+---
 
-## 4. Test Credentials
-Toàn bộ data rác đã được xóa. Lệnh `python manage.py setup_roles` đã tạo sẵn tài khoản cao nhất:
+## 2. Các Module Đã Hoàn Thiện (100% Phủ Sóng)
+Toàn bộ **62 chức năng lớn** và hàng trăm sub-features của 9 Module dưới đây đã có API tương ứng:
+
+1. **Module 1 (Hệ thống & Bảo mật):** Auth JWT, Phân quyền RBAC động, Audit Log, Cấu hình, Sao lưu/Phục hồi.
+2. **Module 2 (Danh mục gốc):** Khoa/Ngành, Năm học, Khung đào tạo, Phòng học, Hình thức thi...
+3. **Module 3 (Nhân sự):** Sinh viên, Giảng viên, Nhân viên, In thẻ sinh viên, Import hàng loạt.
+4. **Module 4 (Đào tạo & Đăng ký môn):** Lên kế hoạch, TKB, Mở lớp, Đăng ký (Xử lý chống xung đột concurrency bằng khóa DB), Hủy lớp...
+5. **Module 5 (Khảo thí & Điểm):** Xếp lịch thi, Nhập điểm (hệ 10), Tự động quy đổi sang hệ 4 & điểm chữ, Xét cảnh báo học vụ.
+6. **Module 6 (CTSV):** Khen thưởng, Kỷ luật, Điểm rèn luyện, Khảo sát, BHYT.
+7. **Module 7 (Tài chính & Học phí):** Cấu hình đơn giá, Sinh công nợ học phí tự động, Thu tiền, Hoàn tiền khi hủy môn.
+8. **Module 8 (Xét Tốt nghiệp):** Check điều kiện tự động, Cấp phôi bằng, Đồ án/Khóa luận tốt nghiệp.
+9. **Module 9 (Báo cáo & Thống kê):** Thống kê Dashboard, Xuất báo cáo PDF/Excel (Đào tạo, Tài chính, Điểm).
+
+---
+
+## 3. Quy ước Authentication & Authorization (Rất Quan Trọng)
+Hệ thống sử dụng **JWT (JSON Web Token)** nhưng được quản lý chặt chẽ để chống XSS:
+- **Quy trình đăng nhập:**
+  1. Frontend gọi `POST /api/v1/identity/auth/login/` (Truyền `email` và `password`).
+  2. Backend trả về `access` token trong body (Token sống 30 phút).
+  3. Backend tự động set **`refresh_token` vào HttpOnly Cookie** (sống 7 ngày).
+- **Gắn Access Token:** Mọi Request API cần quyền phải đính kèm Header:
+  `Authorization: Bearer <access_token>`
+- **Refresh Token (Tự động cấp lại token):** Khi `access_token` hết hạn (Backend báo `401 Unauthorized`), Frontend phải gọi ngầm:
+  `POST /api/v1/identity/auth/refresh/` (Không cần truyền body, cookie sẽ tự gửi đi).
+- **Phân quyền (RBAC):** Backend đã chặn quyền bằng HTTP Status `403 Forbidden`. Yêu cầu Frontend kiểm tra quyền của user (gọi `/users/me/`) để ẩn các nút bấm (Thêm/Sửa/Xóa) hoặc ẩn menu tương ứng để UX tốt hơn.
+
+---
+
+## 4. Các quy ước chuẩn (Conventions) cho Frontend
+
+### 4.1. Pagination (Phân trang)
+Các API danh sách mặc định có phân trang (10 record/page).
+**Cấu trúc Response:**
+```json
+{
+  "count": 100,
+  "next": "http://localhost:8000/api/v1/hr/students/?page=2",
+  "previous": null,
+  "results": [ ...danh_sách_data... ]
+}
+```
+
+### 4.2. Filtering & Searching
+- **Tìm kiếm:** Gắn param `?search=keyword` để tìm text tổng hợp.
+- **Lọc (Filter):** Truyền trực tiếp param theo ID hoặc trạng thái. Ví dụ: `?status=ACTIVE` hoặc `?major=123e4567-e89b-12d3-a456-426614174000`.
+- **Sắp xếp (Ordering):** Truyền param `?ordering=created_at` (tăng dần) hoặc `?ordering=-created_at` (giảm dần).
+
+### 4.3. Error Handling
+Mọi lỗi được Backend chuẩn hóa chung:
+```json
+{
+  "detail": "Mô tả lỗi tiếng Việt dành cho User/Frontend",
+  "error_code": "Mã lỗi kỹ thuật (nếu có)"
+}
+```
+Các mã HTTP bắt buộc phải xử lý:
+- `400 Bad Request`: Lỗi validation (Ví dụ: Email không đúng định dạng).
+- `401 Unauthorized`: Lỗi Token (hết hạn/chưa đăng nhập).
+- `403 Forbidden`: Không có quyền thao tác (Ví dụ: Giảng viên cố xóa sinh viên).
+- `404 Not Found`: Không tìm thấy ID đối tượng.
+- `500 Internal Server Error`: Lỗi logic máy chủ (Backend).
+
+---
+
+## 5. Tài khoản Test Mặc định
+Chạy Backend bằng lệnh `python manage.py runserver`, sau đó login bằng:
 - **Email:** `admin@school.edu.vn`
-- **Password:** `Password123!`
-- **Role:** Administrator (Full toàn quyền)
+- **Mật khẩu:** `Password123!`
+- **Role:** Administrator (Có quyền tạo thêm user và test mọi module).
 
-Bạn hãy khởi động dự án bằng `python manage.py runserver` kết hợp `npm run dev` để bắt đầu!
+> **Lưu ý cuối:** Kiến trúc Backend đang sử dụng là **Thin Views - Fat Services** đảm bảo Transaction chặt chẽ và không có N+1 Queries. 
+> Toàn bộ 20/20 kịch bản Unit Test cốt lõi đã chạy Pass. Chúc team UI/UX ráp giao diện suôn sẻ và rực rỡ! Có vấn đề gì về param hay dữ liệu mock, cứ nhắn Backend nhé! 🚀

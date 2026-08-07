@@ -18,6 +18,10 @@ urlpatterns = [
     path('api/v1/curriculum/', include('apps.curriculum.urls')),
     path('api/v1/affairs/', include('apps.affairs.urls')),
     path('api/v1/enrollment/', include('apps.enrollment.urls')),
+    path('api/v1/exams/', include('apps.exams.urls')),
+    path('api/v1/finance/', include('apps.finance.urls')),
+    path('api/v1/graduation/', include('apps.graduation.urls')),
+    path('api/v1/reports/', include('apps.reports.urls')),
     
     # Swagger API Docs
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),

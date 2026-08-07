@@ -65,9 +65,10 @@ INSTALLED_APPS = [
     'apps.notifications',
     # 'apps.students',
     'apps.enrollment',
-    # 'apps.grading',
-    # 'apps.scheduling',
-    # 'apps.finance',
+    'apps.exams',
+    'apps.finance',
+    'apps.graduation',
+    'apps.reports',
     # 'apps.reporting',
 ]
 
