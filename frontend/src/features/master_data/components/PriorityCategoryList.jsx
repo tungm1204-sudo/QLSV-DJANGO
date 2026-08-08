@@ -3,8 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Plus, Search, Edit2, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
-import ConfirmDeleteModal from '../../../components/ui/ConfirmDeleteModal';
-import { priorityCategoryApi } from '../../../api/masterData';
+import ConfirmModal from '../../../components/ui/ConfirmModal';
+import { priorityCategoryApi } from '../api/masterDataApi';
+import { useMasterDataCrud } from '../hooks/useMasterDataCrud';
 
 export default function PriorityCategoryList() {
   const queryClient = useQueryClient();
@@ -80,9 +81,9 @@ export default function PriorityCategoryList() {
 
   const onSubmit = (data) => {
     if (editingData) {
-      updateMutation.mutate({ id: editingData.id, data });
+      updateMutation.mutate({ id: editingData.id, data }, { onSuccess: closeModal });
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate(data, { onSuccess: closeModal });
     }
   };
 
@@ -92,7 +93,7 @@ export default function PriorityCategoryList() {
 
   const confirmDelete = () => {
     if (deleteModal.id) {
-      deleteMutation.mutate(deleteModal.id);
+      deleteMutation.mutate(deleteModal.id, { onSuccess: () => setDeleteModal({ isOpen: false, id: null }) });
     }
   };
 
@@ -250,11 +251,12 @@ export default function PriorityCategoryList() {
         </div>
       )}
 
-      <ConfirmDeleteModal
+      <ConfirmModal
+        isDanger={true}
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, id: null })}
         onConfirm={confirmDelete}
-        isDeleting={deleteMutation.isPending}
+        
         message="Bạn có chắc chắn muốn xóa bản ghi này không? Hành động này không thể hoàn tác."
       />
     </div>

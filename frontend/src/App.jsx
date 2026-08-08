@@ -1,57 +1,50 @@
+import { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
+
+// Configs
+import { queryClient } from './lib/queryClient';
+import { routes } from './routes';
 
 // Layout & Guards
 import DashboardLayout from './components/layout/DashboardLayout';
 import AuthGuard from './routes/AuthGuard';
 
-// Pages
-import LoginPage from './features/auth/LoginPage';
-import DashboardPage from './features/dashboard/DashboardPage';
-import RolesPage from './features/roles/RolesPage';
-import UsersPage from './features/users/UsersPage';
-import AuditLogsPage from './features/audit_logs/AuditLogsPage';
-import SystemConfigsPage from './features/configs/SystemConfigsPage';
-import MasterDataPage from './features/master_data/MasterDataPage';
-
-// QueryClient: cấu hình mặc định cho toàn bộ ứng dụng
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // Data "tươi" trong 5 phút
-      retry: 1,
-    },
-  },
-});
+const GlobalLoading = () => (
+  <div className="flex h-screen w-screen items-center justify-center">
+    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+  </div>
+);
 
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Routes>
-          {/* Route công khai (không cần đăng nhập) */}
-          <Route path="/login" element={<LoginPage />} />
+        <Suspense fallback={<GlobalLoading />}>
+          <Routes>
+            {/* Public Routes */}
+            {routes.public.map((route) => (
+              <Route key={route.path} path={route.path} element={<route.component />} />
+            ))}
 
-          {/* Route được bảo vệ - phải đăng nhập mới vào được */}
-          <Route element={<AuthGuard />}>
-            <Route element={<DashboardLayout />}>
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/master-data" element={<MasterDataPage />} />
-              <Route path="/users" element={<UsersPage />} />
-              <Route path="/roles" element={<RolesPage />} />
-              <Route path="/audit-logs" element={<AuditLogsPage />} />
-              <Route path="/notifications" element={<div className="p-6">Đang phát triển: Thông báo</div>} />
-              <Route path="/system-config" element={<SystemConfigsPage />} />
-              
-              {/* Nếu nhập sai URL khi đã đăng nhập -> về dashboard */}
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
+            {/* Protected Routes */}
+            <Route element={<AuthGuard />}>
+              <Route element={<DashboardLayout />}>
+                {routes.protected.map((route) => (
+                  <Route key={route.path} path={route.path} element={<route.component />} />
+                ))}
+                
+                {/* Fallbacks in protected layout */}
+                <Route path="/notifications" element={<div className="p-6">Đang phát triển: Thông báo</div>} />
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Mọi đường dẫn không khớp ở ngoài (chưa đăng nhập) -> về /login */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
+            {/* Global Fallback */}
+            <Route path="*" element={<Navigate to="/login" replace />} />
+          </Routes>
+        </Suspense>
         <Toaster position="top-right" richColors />
       </BrowserRouter>
     </QueryClientProvider>

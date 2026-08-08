@@ -1,4 +1,4 @@
-import apiClient from './client';
+import apiClient from '../../../api/client';
 
 export const getSystemConfigsApi = () => apiClient.get('/core/system-configs/');
 export const createSystemConfigApi = (data) => apiClient.post('/core/system-configs/', data);

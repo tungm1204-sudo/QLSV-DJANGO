@@ -1,15 +1,16 @@
 import React from 'react';
-import { AlertTriangle, X } from 'lucide-react';
-import { cn } from '../../utils';
+import { AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 export default function ConfirmModal({ isOpen, onClose, onConfirm, title, message, isDanger = true }) {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="p-6">
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) onClose();
+    }}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
           <div className="flex items-start gap-4">
             <div className={cn(
               "p-3 rounded-full shrink-0",
@@ -18,33 +19,33 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
               <AlertTriangle size={24} />
             </div>
             <div className="flex-1 pt-1">
-              <h3 className="text-lg font-bold text-slate-900 mb-2">{title}</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">{message}</p>
+              <DialogTitle className="text-lg font-bold text-slate-900 mb-2">{title}</DialogTitle>
+              <DialogDescription className="text-slate-500 text-sm leading-relaxed">
+                {message}
+              </DialogDescription>
             </div>
           </div>
-        </div>
-        
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
-          <button 
+        </DialogHeader>
+        <DialogFooter className="sm:justify-end gap-2">
+          <Button 
+            type="button" 
+            variant="outline"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-colors"
           >
             Hủy bỏ
-          </button>
-          <button 
+          </Button>
+          <Button 
+            type="button"
+            variant={isDanger ? "destructive" : "default"}
             onClick={() => {
               onConfirm();
               onClose();
             }}
-            className={cn(
-              "px-4 py-2 rounded-xl text-sm font-semibold text-white transition-colors shadow-sm",
-              isDanger ? "bg-red-600 hover:bg-red-700 shadow-red-600/20" : "bg-blue-600 hover:bg-blue-700 shadow-blue-600/20"
-            )}
           >
             Xác nhận
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -28,7 +28,7 @@ import {
   ethnicityApi,
   religionApi,
   nationalityApi
-} from '../../api/masterData';
+} from './api/masterDataApi';
 
 const GROUPS = [
   {

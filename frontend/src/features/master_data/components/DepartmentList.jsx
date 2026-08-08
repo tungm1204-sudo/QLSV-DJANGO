@@ -2,12 +2,11 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Plus, Search, Edit2, Trash2, X } from 'lucide-react';
-import { toast } from 'sonner';
-import ConfirmDeleteModal from '../../../components/ui/ConfirmDeleteModal';
-import { departmentApi } from '../../../api/masterData';
+import ConfirmModal from '../../../components/ui/ConfirmModal';
+import { departmentApi } from '../api/masterDataApi';
+import { useMasterDataCrud } from '../hooks/useMasterDataCrud';
 
 export default function DepartmentList() {
-  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingData, setEditingData] = useState(null);
@@ -15,10 +14,18 @@ export default function DepartmentList() {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
-  // Fetch Departments
-  const { data: response, isLoading } = useQuery({
-    queryKey: ['master-data', 'departments', searchTerm],
-    queryFn: () => departmentApi.getAll({ search: searchTerm }),
+  // Dùng generic hook cho CRUD chính
+  const {
+    records,
+    isLoading,
+    createMutation,
+    updateMutation,
+    deleteMutation,
+  } = useMasterDataCrud({
+    api: departmentApi,
+    queryKey: 'departments',
+    title: 'Đơn vị',
+    searchTerm
   });
 
   // Fetch All Departments for Parent Dropdown (no pagination/search)
@@ -27,41 +34,7 @@ export default function DepartmentList() {
     queryFn: () => departmentApi.getAll({}),
   });
 
-  const records = response?.data?.results || response?.data || [];
   const parentOptions = parentResponse?.data?.results || parentResponse?.data || [];
-
-  // Mutations
-  const createMutation = useMutation({
-    mutationFn: (data) => departmentApi.create(data),
-    onSuccess: () => {
-      toast.success('Thêm đơn vị thành công');
-      queryClient.invalidateQueries({ queryKey: ['master-data', 'departments'] });
-      setDeleteModal({ isOpen: false, id: null });
-      closeModal();
-    },
-    onError: () => toast.error('Có lỗi xảy ra khi thêm đơn vị'),
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => departmentApi.update(id, data),
-    onSuccess: () => {
-      toast.success('Cập nhật đơn vị thành công');
-      queryClient.invalidateQueries({ queryKey: ['master-data', 'departments'] });
-      setDeleteModal({ isOpen: false, id: null });
-      closeModal();
-    },
-    onError: () => toast.error('Có lỗi xảy ra khi cập nhật đơn vị'),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id) => departmentApi.delete(id),
-    onSuccess: () => {
-      toast.success('Xóa đơn vị thành công');
-      queryClient.invalidateQueries({ queryKey: ['master-data', 'departments'] });
-      setDeleteModal({ isOpen: false, id: null });
-    },
-    onError: () => toast.error('Không thể xóa vì đơn vị này đang chứa dữ liệu khác'),
-  });
 
   const openModal = (data = null) => {
     if (data) {
@@ -96,9 +69,9 @@ export default function DepartmentList() {
     };
 
     if (editingData) {
-      updateMutation.mutate({ id: editingData.id, data: payload });
+      updateMutation.mutate({ id: editingData.id, data: payload }, { onSuccess: closeModal });
     } else {
-      createMutation.mutate(payload);
+      createMutation.mutate(payload, { onSuccess: closeModal });
     }
   };
 
@@ -108,7 +81,9 @@ export default function DepartmentList() {
 
   const confirmDelete = () => {
     if (deleteModal.id) {
-      deleteMutation.mutate(deleteModal.id);
+      deleteMutation.mutate(deleteModal.id, {
+        onSuccess: () => setDeleteModal({ isOpen: false, id: null })
+      });
     }
   };
 
@@ -313,11 +288,12 @@ export default function DepartmentList() {
         </div>
       )}
 
-      <ConfirmDeleteModal
+      <ConfirmModal
+        isDanger={true}
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, id: null })}
         onConfirm={confirmDelete}
-        isDeleting={deleteMutation.isPending}
+        
         message="Bạn có chắc chắn muốn xóa bản ghi này không? Hành động này không thể hoàn tác."
       />
     </div>

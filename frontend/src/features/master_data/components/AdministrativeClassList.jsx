@@ -3,13 +3,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Plus, Search, Edit2, Trash2, X, Users, BookOpen, GraduationCap, Award } from 'lucide-react';
 import { toast } from 'sonner';
-import ConfirmDeleteModal from '../../../components/ui/ConfirmDeleteModal';
+import ConfirmModal from '../../../components/ui/ConfirmModal';
 import { 
   administrativeClassApi, 
   majorApi, 
   cohortApi, 
   educationSystemApi 
-} from '../../../api/masterData';
+} from '../api/masterDataApi';
 
 export default function AdministrativeClassList() {
   const queryClient = useQueryClient();
@@ -116,7 +116,7 @@ export default function AdministrativeClassList() {
 
   const confirmDelete = () => {
     if (deleteModal.id) {
-      deleteMutation.mutate(deleteModal.id);
+      deleteMutation.mutate(deleteModal.id, { onSuccess: () => setDeleteModal({ isOpen: false, id: null }) });
     }
   };
 
@@ -336,13 +336,14 @@ export default function AdministrativeClassList() {
         </div>
       )}
 
-      <ConfirmDeleteModal
+      <ConfirmModal
+        isDanger={true}
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, id: null })}
         onConfirm={confirmDelete}
         title="Xóa lớp hành chính"
         message="Bạn có chắc chắn muốn xóa lớp hành chính này? Hành động này không thể hoàn tác."
-        isDeleting={deleteMutation.isPending}
+        
       />
     </div>
   );

@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import useAuthStore from '../features/auth/store/useAuthStore';
-import { getMeApi } from '../api/auth';
+import useAuthStore from '../stores/useAuthStore';
+import { getMeApi } from '../features/auth/api/authApi';
 import { toast } from 'sonner';
 
 /**

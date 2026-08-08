@@ -24,6 +24,7 @@ class SystemConfig(models.Model):
 
     class Meta:
         db_table = 'core_system_configs'
+        ordering = ['key']
 
     def __str__(self):
         return self.key

@@ -1,4 +1,4 @@
-import useAuthStore from '../features/auth/store/useAuthStore';
+import useAuthStore from '../stores/useAuthStore';
 
 /**
  * usePermissions - Custom hook tập trung logic đọc quyền hạn của user hiện tại.

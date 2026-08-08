@@ -3,8 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Plus, Search, Edit2, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
-import ConfirmDeleteModal from '../../../components/ui/ConfirmDeleteModal';
-import { academicYearApi } from '../../../api/masterData';
+import ConfirmModal from '../../../components/ui/ConfirmModal';
+import { academicYearApi } from '../api/masterDataApi';
+import { useMasterDataCrud } from '../hooks/useMasterDataCrud';
 
 export default function AcademicYearList() {
   const queryClient = useQueryClient();
@@ -99,7 +100,7 @@ export default function AcademicYearList() {
 
   const confirmDelete = () => {
     if (deleteModal.id) {
-      deleteMutation.mutate(deleteModal.id);
+      deleteMutation.mutate(deleteModal.id, { onSuccess: () => setDeleteModal({ isOpen: false, id: null }) });
     }
   };
 
@@ -283,11 +284,12 @@ export default function AcademicYearList() {
         </div>
       )}
 
-      <ConfirmDeleteModal
+      <ConfirmModal
+        isDanger={true}
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, id: null })}
         onConfirm={confirmDelete}
-        isDeleting={deleteMutation.isPending}
+        
         message="Bạn có chắc chắn muốn xóa bản ghi này không? Hành động này không thể hoàn tác."
       />
     </div>

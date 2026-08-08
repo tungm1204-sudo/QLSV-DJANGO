@@ -1,55 +1,22 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Plus, Search, Edit2, Trash2, X } from 'lucide-react';
-import { toast } from 'sonner';
-import ConfirmDeleteModal from '../../../components/ui/ConfirmDeleteModal';
+import ConfirmModal from '../../../components/ui/ConfirmModal';
+import { useMasterDataCrud } from '../hooks/useMasterDataCrud';
 
 export default function GenericDataList({ api, title }) {
-  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingData, setEditingData] = useState(null);
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
 
-  // Lấy dữ liệu
-  const { data: response, isLoading } = useQuery({
-    queryKey: ['master-data', title, searchTerm],
-    queryFn: () => api.getAll({ search: searchTerm }),
-  });
-
-  const records = response?.data?.results || response?.data || [];
-
-  // Mutations
-  const createMutation = useMutation({
-    mutationFn: (data) => api.create(data),
-    onSuccess: () => {
-      toast.success(`Thêm ${title.toLowerCase()} thành công`);
-      queryClient.invalidateQueries({ queryKey: ['master-data', title] });
-      closeModal();
-    },
-    onError: () => toast.error(`Có lỗi xảy ra khi thêm ${title.toLowerCase()}`),
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => api.update(id, data),
-    onSuccess: () => {
-      toast.success(`Cập nhật ${title.toLowerCase()} thành công`);
-      queryClient.invalidateQueries({ queryKey: ['master-data', title] });
-      closeModal();
-    },
-    onError: () => toast.error(`Có lỗi xảy ra khi cập nhật ${title.toLowerCase()}`),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id) => api.delete(id),
-    onSuccess: () => {
-      toast.success(`Xóa ${title.toLowerCase()} thành công`);
-      queryClient.invalidateQueries({ queryKey: ['master-data', title] });
-      setDeleteModal({ isOpen: false, id: null });
-    },
-    onError: () => toast.error(`Không thể xóa ${title.toLowerCase()} vì dữ liệu đang được sử dụng`),
-  });
+  const {
+    records,
+    isLoading,
+    createMutation,
+    updateMutation,
+    deleteMutation,
+  } = useMasterDataCrud({ api, queryKey: title, title, searchTerm });
 
   // Modal State
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
@@ -77,9 +44,9 @@ export default function GenericDataList({ api, title }) {
 
   const onSubmit = (data) => {
     if (editingData) {
-      updateMutation.mutate({ id: editingData.id, data });
+      updateMutation.mutate({ id: editingData.id, data }, { onSuccess: closeModal });
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate(data, { onSuccess: closeModal });
     }
   };
 
@@ -89,7 +56,9 @@ export default function GenericDataList({ api, title }) {
 
   const confirmDelete = () => {
     if (deleteModal.id) {
-      deleteMutation.mutate(deleteModal.id);
+      deleteMutation.mutate(deleteModal.id, {
+        onSuccess: () => setDeleteModal({ isOpen: false, id: null })
+      });
     }
   };
 
@@ -244,11 +213,12 @@ export default function GenericDataList({ api, title }) {
         </div>
       )}
 
-      <ConfirmDeleteModal
+      <ConfirmModal
+        isDanger={true}
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, id: null })}
         onConfirm={confirmDelete}
-        isDeleting={deleteMutation.isPending}
+        
         message={`Bạn có chắc chắn muốn xóa ${title.toLowerCase()} này không?`}
       />
     </div>

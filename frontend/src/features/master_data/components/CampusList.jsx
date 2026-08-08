@@ -3,8 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Plus, Search, Edit2, Trash2, X, MapPin } from 'lucide-react';
 import { toast } from 'sonner';
-import ConfirmDeleteModal from '../../../components/ui/ConfirmDeleteModal';
-import { campusApi } from '../../../api/masterData';
+import ConfirmModal from '../../../components/ui/ConfirmModal';
+import { campusApi } from '../api/masterDataApi';
+import { useMasterDataCrud } from '../hooks/useMasterDataCrud';
 
 export default function CampusList() {
   const queryClient = useQueryClient();
@@ -76,15 +77,15 @@ export default function CampusList() {
 
   const onSubmit = (data) => {
     if (editingData) {
-      updateMutation.mutate({ id: editingData.id, data });
+      updateMutation.mutate({ id: editingData.id, data }, { onSuccess: closeModal });
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate(data, { onSuccess: closeModal });
     }
   };
 
   const confirmDelete = () => {
     if (deleteModal.id) {
-      deleteMutation.mutate(deleteModal.id);
+      deleteMutation.mutate(deleteModal.id, { onSuccess: () => setDeleteModal({ isOpen: false, id: null }) });
     }
   };
 
@@ -252,13 +253,14 @@ export default function CampusList() {
         </div>
       )}
 
-      <ConfirmDeleteModal
+      <ConfirmModal
+        isDanger={true}
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, id: null })}
         onConfirm={confirmDelete}
         title="Xóa cơ sở"
         message="Bạn có chắc chắn muốn xóa cơ sở này? Hành động này không thể hoàn tác và có thể ảnh hưởng đến các tòa nhà trực thuộc."
-        isDeleting={deleteMutation.isPending}
+        
       />
     </div>
   );

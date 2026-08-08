@@ -3,8 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { Plus, Search, Edit2, Trash2, X, Building } from 'lucide-react';
 import { toast } from 'sonner';
-import ConfirmDeleteModal from '../../../components/ui/ConfirmDeleteModal';
-import { buildingApi, campusApi } from '../../../api/masterData';
+import ConfirmModal from '../../../components/ui/ConfirmModal';
+import { buildingApi, campusApi } from '../api/masterDataApi';
+import { useMasterDataCrud } from '../hooks/useMasterDataCrud';
 
 export default function BuildingList() {
   const queryClient = useQueryClient();
@@ -56,7 +57,7 @@ export default function BuildingList() {
       queryClient.invalidateQueries({ queryKey: ['master-data', 'buildings'] });
       setDeleteModal({ isOpen: false, id: null });
     },
-    onError: () => toast.error('Không thể xóa vì tòa nhà đang chứa phòng học'),
+    onError: (error) => toast.error(error.response?.data?.detail || 'Không thể xóa tòa nhà này'),
   });
 
   const openModal = (data = null) => {
@@ -97,7 +98,7 @@ export default function BuildingList() {
 
   const confirmDelete = () => {
     if (deleteModal.id) {
-      deleteMutation.mutate(deleteModal.id);
+      deleteMutation.mutate(deleteModal.id, { onSuccess: () => setDeleteModal({ isOpen: false, id: null }) });
     }
   };
 
@@ -281,13 +282,14 @@ export default function BuildingList() {
         </div>
       )}
 
-      <ConfirmDeleteModal
+      <ConfirmModal
+        isDanger={true}
         isOpen={deleteModal.isOpen}
         onClose={() => setDeleteModal({ isOpen: false, id: null })}
         onConfirm={confirmDelete}
         title="Xóa tòa nhà"
         message="Bạn có chắc chắn muốn xóa tòa nhà này? Hành động này không thể hoàn tác."
-        isDeleting={deleteMutation.isPending}
+        
       />
     </div>
   );

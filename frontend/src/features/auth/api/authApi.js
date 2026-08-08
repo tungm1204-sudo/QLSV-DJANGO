@@ -1,4 +1,4 @@
-import apiClient from './client';
+import apiClient from '../../../api/client';
 
 /**
  * auth.js - Tập hợp tất cả các hàm gọi API liên quan đến Xác thực.

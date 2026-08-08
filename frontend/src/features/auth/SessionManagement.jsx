@@ -1,30 +1,12 @@
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { MonitorSmartphone, X, Laptop, Smartphone, MapPin, Globe, Loader2, AlertCircle } from 'lucide-react';
-import { getSessionsApi, revokeSessionApi } from '../../api/auth';
 import { cn } from '../../utils';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { useSessionManagement } from './hooks/useSessionManagement';
 
 export default function SessionManagement({ isOpen, onClose }) {
-  const queryClient = useQueryClient();
+  const { data, isLoading, isError, error, revokeMutation } = useSessionManagement(isOpen);
 
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: ['login-sessions'],
-    queryFn: async () => {
-      const res = await getSessionsApi();
-      return res.data;
-    },
-    enabled: isOpen,
-  });
-
-  const revokeMutation = useMutation({
-    mutationFn: (sessionId) => revokeSessionApi(sessionId),
-    onSuccess: () => {
-      // Refresh the session list
-      queryClient.invalidateQueries(['login-sessions']);
-    },
-  });
 
   if (!isOpen) return null;
 

@@ -1,29 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bell, Search, Menu, User, LogOut, Settings, MonitorSmartphone, CheckCircle2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
-import useAuthStore from '../../features/auth/store/useAuthStore';
-import { logoutApi } from '../../api/auth';
+import useAuthStore from '../../stores/useAuthStore';
+import { useLogout } from '../../features/auth/hooks/useAuth';
 import SessionManagement from '../../features/auth/SessionManagement';
 import { cn } from '../../utils/index';
 
 export default function Header() {
-  const navigate = useNavigate();
-  const { user, clearAuth } = useAuthStore();
+  const { user } = useAuthStore();
+  const { logoutMutation } = useLogout();
   const [isNotifOpen, setIsNotifOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSessions, setShowSessions] = useState(false);
   const [visibleCount, setVisibleCount] = useState(2);
   const notifRef = useRef(null);
   const userMenuRef = useRef(null);
-
-  const logoutMutation = useMutation({
-    mutationFn: () => logoutApi(),
-    onSettled: () => {
-      clearAuth();
-      navigate('/login', { replace: true });
-    },
-  });
 
   useEffect(() => {
     function handleClickOutside(event) {

@@ -20,9 +20,8 @@ def update_education_system(obj: EducationSystem, **data) -> EducationSystem:
     return obj
 
 @transaction.atomic
-def delete_education_system(obj: EducationSystem):
-    obj.is_active = False
-    obj.save(update_fields=['is_active'])
+def delete_education_system(obj):
+    obj.delete()
 
 @transaction.atomic
 def create_department(**data) -> Department:
@@ -40,9 +39,8 @@ def update_department(obj: Department, **data) -> Department:
     return obj
 
 @transaction.atomic
-def delete_department(obj: Department):
-    obj.is_active = False
-    obj.save(update_fields=['is_active'])
+def delete_department(obj):
+    obj.delete()
 
 @transaction.atomic
 def create_major(**data) -> Major:
@@ -60,9 +58,8 @@ def update_major(obj: Major, **data) -> Major:
     return obj
 
 @transaction.atomic
-def delete_major(obj: Major):
-    obj.is_active = False
-    obj.save(update_fields=['is_active'])
+def delete_major(obj):
+    obj.delete()
 
 @transaction.atomic
 def create_specialization(**data) -> Specialization:
@@ -80,9 +77,8 @@ def update_specialization(obj: Specialization, **data) -> Specialization:
     return obj
 
 @transaction.atomic
-def delete_specialization(obj: Specialization):
-    obj.is_active = False
-    obj.save(update_fields=['is_active'])
+def delete_specialization(obj):
+    obj.delete()
 
 @transaction.atomic
 def create_room(**data) -> Room:
@@ -101,8 +97,7 @@ def update_room(obj: Room, **data) -> Room:
 
 @transaction.atomic
 def delete_room(obj: Room):
-    obj.status = Room.StatusChoices.MAINTENANCE
-    obj.save(update_fields=['status'])
+    obj.delete()
 
 @transaction.atomic
 def create_priority_category(**data) -> PriorityCategory:
@@ -120,9 +115,8 @@ def update_priority_category(obj: PriorityCategory, **data) -> PriorityCategory:
     return obj
 
 @transaction.atomic
-def delete_priority_category(obj: PriorityCategory):
-    obj.is_active = False
-    obj.save(update_fields=['is_active'])
+def delete_priority_category(obj):
+    obj.delete()
 
 @transaction.atomic
 def create_exam_type(**data) -> ExamType:
@@ -140,9 +134,8 @@ def update_exam_type(obj: ExamType, **data) -> ExamType:
     return obj
 
 @transaction.atomic
-def delete_exam_type(obj: ExamType):
-    obj.is_active = False
-    obj.save(update_fields=['is_active'])
+def delete_exam_type(obj):
+    obj.delete()
 
 @transaction.atomic
 def create_cohort(**data) -> Cohort:
@@ -160,9 +153,8 @@ def update_cohort(obj: Cohort, **data) -> Cohort:
     return obj
 
 @transaction.atomic
-def delete_cohort(obj: Cohort):
-    obj.is_active = False
-    obj.save(update_fields=['is_active'])
+def delete_cohort(obj):
+    obj.delete()
 
 @transaction.atomic
 def create_academic_year(**data) -> AcademicYear:
@@ -180,9 +172,8 @@ def update_academic_year(obj: AcademicYear, **data) -> AcademicYear:
     return obj
 
 @transaction.atomic
-def delete_academic_year(obj: AcademicYear):
-    obj.is_active = False
-    obj.save(update_fields=['is_active'])
+def delete_academic_year(obj):
+    obj.delete()
 
 @transaction.atomic
 def create_semester(**data) -> Semester:
@@ -200,9 +191,8 @@ def update_semester(obj: Semester, **data) -> Semester:
     return obj
 
 @transaction.atomic
-def delete_semester(obj: Semester):
-    obj.is_active = False
-    obj.save(update_fields=['is_active'])
+def delete_semester(obj):
+    obj.delete()
 
 @transaction.atomic
 def create_administrative_class(**data) -> AdministrativeClass:
@@ -220,9 +210,8 @@ def update_administrative_class(obj: AdministrativeClass, **data) -> Administrat
     return obj
 
 @transaction.atomic
-def delete_administrative_class(obj: AdministrativeClass):
-    obj.is_active = False
-    obj.save(update_fields=['is_active'])
+def delete_administrative_class(obj):
+    obj.delete()
 
 
 def create_campus(**kwargs) -> Campus:
