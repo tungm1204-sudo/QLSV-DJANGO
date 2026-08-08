@@ -1,0 +1,173 @@
+# 🔍 Báo cáo Phân tích Module 3: Quản lý Nhân sự (HR)
+
+> **Phạm vi:** So sánh code Backend thực tế (`apps/hr/`) với `FEATURE_CHECKLIST.md` và đánh giá tính sát thực tế quản lý nhân sự đại học.
+
+---
+
+## PHẦN A: LỖI CODE THỰC TẾ (Bug / Technical Debt)
+
+### 🔴 A1. `StudentSerializer` thiếu field `admission_type` 
+
+| File | Vấn đề |
+|---|---|
+| [serializers.py](file:///d:/antigravity/project/QLSV-DJANGO/backend/apps/hr/serializers.py#L22-L29) | Field `admission_type` có trên Model (dòng 25 models.py) nhưng **KHÔNG** nằm trong `fields` của `StudentSerializer` |
+
+**Hậu quả:** Frontend không thể đọc/ghi thông tin "Loại hình tuyển sinh" (Xét tuyển, Thi tuyển, Liên thông...) của sinh viên. Dữ liệu lưu vào DB nhưng API không trả ra.
+
+---
+
+### 🔴 A2. `StudentSelector` thiếu `select_related('admission_type')`
+
+| File | Vấn đề |
+|---|---|
+| [selectors.py](file:///d:/antigravity/project/QLSV-DJANGO/backend/apps/hr/selectors.py#L10-L22) | `get_students()` và `get_student()` đều **thiếu** `'admission_type'` trong `.select_related()` |
+
+**Hậu quả:** Nếu sau này bổ sung `admission_type` vào serializer mà quên bổ sung ở selector → dính N+1 Query.
+
+---
+
+### 🔴 A3. `StudentCertificate` có Model nhưng không có API
+
+| File | Vấn đề |
+|---|---|
+| [models.py](file:///d:/antigravity/project/QLSV-DJANGO/backend/apps/hr/models.py#L132-L161) | DevA tạo model `StudentCertificate` (migration 0005) nhưng **chưa tạo** Serializer, Selector, Service, View, URL |
+
+**Hậu quả:** Model "chết" — có bảng trong DB nhưng không có cách nào thao tác từ API/Frontend.
+
+---
+
+### 🔴 A4. `StaffService.create_staff` hardcode vai trò `'Giáo vụ'`
+
+| File | Dòng | Vấn đề |
+|---|---|---|
+| [services.py](file:///d:/antigravity/project/QLSV-DJANGO/backend/apps/hr/services.py#L186) | 186 | `Role.objects.get(name='Giáo vụ')` — Mọi cán bộ tạo mới đều bị gán cứng là Giáo vụ |
+
+**Hậu quả:** Không thể tạo nhân viên Kế toán, Thư viện, Hành chính... vì vai trò luôn bị ép thành "Giáo vụ".
+
+**Cách sửa:** Nhận `role_name` từ request hoặc cho phép truyền `role_id` vào `validated_data`.
+
+---
+
+### 🟡 A5. Thiếu `ordering` trong Meta của 3 model HR
+
+| Model | Vấn đề |
+|---|---|
+| `Student` | `class Meta` thiếu `ordering` → `UnorderedObjectListWarning` khi phân trang |
+| `Lecturer` | Tương tự |
+| `Staff` | Tương tự |
+
+---
+
+### 🟡 A6. `StaffSelector` thiếu FK trong `select_related`
+
+| File | Vấn đề |
+|---|---|
+| [selectors.py](file:///d:/antigravity/project/QLSV-DJANGO/backend/apps/hr/selectors.py#L37-L48) | `StaffSelector` chỉ có `'user', 'department', 'position', 'degree'` — thiếu `'ethnicity'`, `'religion'`, `'nationality'` nếu bổ sung cho Staff sau này |
+
+> Hiện tại Staff model thực sự thiếu các FK này (xem Phần B), nhưng nếu bổ sung thì selector cũng phải cập nhật theo.
+
+---
+
+## PHẦN B: SO SÁNH VỚI THỰC TẾ NGHIỆP VỤ ĐẠI HỌC
+
+### 🔴 B1. Model `Staff` thiếu thông tin nhân khẩu so với `Lecturer`
+
+Trong thực tế quản lý nhân sự đại học, hồ sơ cán bộ hành chính (giáo vụ, kế toán, thư viện) cần đầy đủ thông tin y như giảng viên — phục vụ báo cáo BHXH, kê khai thuế TNCN, báo cáo nhân sự gửi Bộ GD&ĐT.
+
+| Field | Lecturer ✅ | Staff ❌ | Ghi chú |
+|---|---|---|---|
+| `place_of_birth` | Có | **Thiếu** | Cần cho hồ sơ nhân sự |
+| `ethnicity` (FK) | Có | **Thiếu** | Bắt buộc báo cáo Bộ |
+| `religion` (FK) | Có | **Thiếu** | Bắt buộc báo cáo Bộ |
+| `nationality` (FK) | Có | **Thiếu** | Bắt buộc báo cáo Bộ |
+| `personal_email` | Có | Có | OK |
+
+---
+
+### 🔴 B2. Model `Student` thiếu field `enrollment_date` (Ngày nhập học)
+
+Trong thực tế, "Ngày nhập học" là thông tin **bắt buộc** trên hồ sơ sinh viên:
+- Dùng để tính thời gian đào tạo tối đa (VD: 6 năm cho chương trình 4 năm)
+- Quyết định đợt xét tốt nghiệp
+- In trên Thẻ sinh viên
+
+Hiện tại model `Student` **không có** field `enrollment_date`.
+
+---
+
+### 🔴 B3. Model `Student` thiếu liên kết `cohort` (Khóa tuyển sinh)
+
+DBML thiết kế `hr_students` **không có** FK tới `master_data_cohorts`. Trong khi:
+- `AdministrativeClass` có `cohort_id` — tức SV gián tiếp thuộc khóa qua lớp
+- Nhưng thực tế, SV có thể **chuyển lớp** mà vẫn thuộc cùng một khóa tuyển sinh
+
+> Thiếu `cohort` FK trực tiếp trên `Student` sẽ gây khó khăn khi:
+> - Lọc sinh viên theo khóa tuyển sinh
+> - Xét tốt nghiệp theo đợt (VD: K20 ra trường 2024)
+> - Báo cáo quy mô tuyển sinh theo năm
+
+---
+
+### 🟡 B4. Model `Lecturer` thiếu field `academic_title` trên DBML nhưng code lại có
+
+Đây là điều **tốt** — code thực tế (models.py dòng 69) đã bổ sung `academic_title` FK mà DBML ban đầu thiếu. Cho thấy dev đã tự nhận ra và bổ sung.
+
+---
+
+### 🟡 B5. Thẻ sinh viên (`print-id-card`) quá đơn giản
+
+Tính năng in thẻ sinh viên hiện tại chỉ render 1 đoạn HTML thô gồm 4 dòng thông tin (Tên, MSSV, Lớp, Ngành). Thẻ sinh viên thực tế đại học cần thêm:
+- Ngày sinh, Giới tính
+- Ảnh đại diện (avatar)
+- Khóa học / Niên khóa
+- Mã vạch / QR Code
+- Ngày cấp thẻ
+
+---
+
+## PHẦN C: SO SÁNH VỚI FEATURE_CHECKLIST.md
+
+### 🔴 C1. Checklist đánh dấu `[x]` nhưng thực tế chưa triển khai
+
+| Dòng Checklist | Tính năng | Trạng thái thực tế |
+|---|---|---|
+| 124 | **Quản lý ảnh đại diện và giấy tờ đính kèm** | Model có `documents` (JSONField URLs) nhưng **không có API upload file thực tế**. Avatar nằm ở `User.avatar` (URLField) nhưng cũng **không có upload endpoint** |
+| 125 | **In thẻ sinh viên / giấy xác nhận** | Chỉ có thẻ SV (HTML thô). **Không có** giấy xác nhận (xác nhận đang học, xác nhận hoàn thành...) |
+| 130 | **Quản lý lịch sử phân công giảng dạy** | Model `Lecturer` **không có** bảng history phân công. Logic này nằm ở module `curriculum` (`CourseOffering.lecturer`), nhưng không có API riêng xem history theo GV |
+| 131 | **Quản lý hợp đồng/biên chế** | Chỉ có field `contract_type` (CharField) — **không có bảng riêng** để lưu lịch sử hợp đồng (ngày bắt đầu, ngày kết thúc, loại hợp đồng, file đính kèm) |
+| 120 | **Import danh sách SV hàng loạt từ Excel** | ✅ Có (tuy nhiên chỉ import 7 cột cơ bản, thiếu ngày sinh, giới tính, CCCD...) |
+
+---
+
+### 🟡 C2. Thiếu tính năng Export
+
+`FEATURE_CHECKLIST.md` nhiều chỗ ghi *"Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab)"* nhưng module HR **hoàn toàn không có API export** nào cho:
+- Xuất danh sách Sinh viên ra Excel
+- Xuất danh sách Giảng viên ra Excel
+- Xuất danh sách Cán bộ ra Excel
+
+---
+
+### 🟡 C3. Cấu trúc Checklist bị lộn section
+
+Các tính năng ở **dòng 119-125** (Import SV, trạng thái học tập, tra cứu SV, ảnh đại diện, in thẻ) bị xếp vào **"MODULE 3: Quản lý nhân sự"** nhưng nằm ngoài header `### Quản lý Sinh viên` (dòng 116-117). Điều này gây nhầm lẫn khi đọc scope.
+
+---
+
+## PHẦN D: TỔNG KẾT
+
+| Hạng mục | Mức độ | Số lượng |
+|---|---|---|
+| 🔴 Lỗi Code / Bug thực sự | Nghiêm trọng | **4** (A1-A4) |
+| 🟡 Technical Debt / Warning | Trung bình | **2** (A5-A6) |
+| 🔴 Thiếu so với thực tế nghiệp vụ | Nghiêm trọng | **3** (B1-B3) |
+| 🟡 Tốt / Đã tự bổ sung | Tích cực | **1** (B4) |
+| 🔴 Checklist đánh `[x]` nhưng chưa làm xong | Nghiêm trọng | **4** (C1) |
+| 🟡 Thiếu tính năng Export | Trung bình | **1** (C2) |
+
+### Đánh giá tổng thể: **65/100** ⚠️
+
+Module HR có **khung sườn kiến trúc tốt** (Service Layer, transaction.atomic, select_related) nhưng **thiếu chiều sâu nghiệp vụ**: nhiều field quan trọng bị bỏ sót, một số tính năng đánh dấu hoàn thành trong checklist nhưng thực tế chưa triển khai đầy đủ, và `StudentCertificate` được tạo model nhưng hoàn toàn không có API.
+
+> [!IMPORTANT]
+> Các lỗi A1 (thiếu `admission_type` trong Serializer), A3 (StudentCertificate không có API), A4 (hardcode role Giáo vụ) là các lỗi **sẽ gây crash/sai logic khi dùng thực tế** và cần ưu tiên sửa trước.

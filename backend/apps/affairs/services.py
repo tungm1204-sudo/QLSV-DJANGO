@@ -67,3 +67,20 @@ def calculate_final_training_score(student_id: str, semester_id: str) -> Trainin
     score_record.faculty_assessment = final
     score_record.save()
     return score_record
+
+
+class SurveyService:
+    @staticmethod
+    @transaction.atomic
+    def create_survey_response(validated_data, actor_id=None, ip_address=None, user_agent=None):
+        from apps.affairs.models import SurveyResponse, SurveyAnswer
+        answers_data = validated_data.pop("answers", [])
+        response = SurveyResponse.objects.create(**validated_data)
+        
+        survey_answers = [
+            SurveyAnswer(response=response, **answer_data)
+            for answer_data in answers_data
+        ]
+        SurveyAnswer.objects.bulk_create(survey_answers)
+        
+        return response

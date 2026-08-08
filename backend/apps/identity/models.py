@@ -133,6 +133,7 @@ class OTPToken(models.Model):
 
     class Meta:
         db_table = 'identity_otp_tokens'
+        ordering = ['-created_at']
         indexes = [
             models.Index(fields=['user', 'code', 'type', 'is_used']),
         ]

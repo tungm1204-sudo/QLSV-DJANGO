@@ -19,5 +19,5 @@ class AuthSelector:
 class UserSelector:
     @staticmethod
     def get_user_by_email(email):
-        return User.objects.filter(email=email).first()
+        return User.objects.select_related('role').filter(email=email).first()
 

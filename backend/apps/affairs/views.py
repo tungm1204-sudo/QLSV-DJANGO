@@ -232,3 +232,23 @@ class SurveyResponseViewSet(viewsets.ModelViewSet):
     serializer_class = SurveyResponseSerializer
     permission_classes = [permissions.IsAuthenticated]
     filterset_fields = ['survey_id', 'student_id']
+
+    def create(self, request, *args, **kwargs):
+        from apps.affairs.services import SurveyService
+        from rest_framework import status
+        
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Call service layer
+        response_obj = SurveyService.create_survey_response(
+            serializer.validated_data,
+            actor_id=request.user.id,
+            ip_address=request.META.get('REMOTE_ADDR'),
+            user_agent=request.META.get('HTTP_USER_AGENT', '')
+        )
+        
+        return Response(
+            self.get_serializer(response_obj).data,
+            status=status.HTTP_201_CREATED
+        )

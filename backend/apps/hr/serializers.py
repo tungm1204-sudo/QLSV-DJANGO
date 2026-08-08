@@ -4,7 +4,7 @@ Module HR Serializers
 Nằm ở tầng giao tiếp (Presentation Layer), chỉ validate format, KHÔNG chứa logic nghiệp vụ.
 """
 from rest_framework import serializers
-from .models import Student, Lecturer, Staff
+from .models import Student, Lecturer, Staff, StudentCertificate
 
 from apps.identity.serializers import UserSerializer
 from apps.master_data.serializers import DepartmentReadSerializer as DepartmentSerializer, MajorReadSerializer as MajorSerializer
@@ -25,6 +25,7 @@ class StudentSerializer(serializers.ModelSerializer):
             'administrative_class', 'administrative_class_code', 'education_system', 'priority_category',
             'status', 'date_of_birth', 'gender', 'place_of_birth', 'ethnicity', 'religion', 'nationality',
             'personal_email', 'contact_phone', 'address', 'permanent_address', 'id_card_number', 'bank_account', 'health_insurance_number',
+            'admission_type', 'cohort', 'enrollment_date',
             'parent_info', 'documents', 'created_at', 'updated_at', 'email', 'password', 'full_name'
         ]
 
@@ -59,6 +60,16 @@ class StaffSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'user', 'staff_code', 'department', 'department_detail',
             'position', 'degree', 'responsibilities', 'join_date', 'status',
-            'date_of_birth', 'gender', 'id_card_number', 'contact_phone', 'personal_email', 'address', 'bank_account',
+            'date_of_birth', 'gender', 'id_card_number', 'place_of_birth', 'ethnicity', 'religion', 'nationality',
+            'contact_phone', 'personal_email', 'address', 'bank_account',
             'created_at', 'updated_at', 'email', 'password', 'full_name'
         ]
+
+class StudentCertificateSerializer(serializers.ModelSerializer):
+    student_code = serializers.CharField(source='student.student_code', read_only=True)
+    student_name = serializers.CharField(source='student.user.full_name', read_only=True)
+    
+    class Meta:
+        model = StudentCertificate
+        fields = '__all__'
+

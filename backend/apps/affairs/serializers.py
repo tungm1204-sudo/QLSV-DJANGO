@@ -90,10 +90,3 @@ class SurveyResponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = SurveyResponse
         fields = ['id', 'survey', 'student', 'student_code', 'created_at', 'answers']
-        
-    def create(self, validated_data):
-        answers_data = validated_data.pop('answers')
-        response = SurveyResponse.objects.create(**validated_data)
-        for answer_data in answers_data:
-            SurveyAnswer.objects.create(response=response, **answer_data)
-        return response

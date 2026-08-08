@@ -21,6 +21,7 @@ class CustomReportTemplate(models.Model):
     class Meta:
         db_table = 'reports_custom_templates'
         verbose_name = 'Custom Report Template'
+        ordering = ['-created_at']
 
 class DataExportHistory(models.Model):
     """

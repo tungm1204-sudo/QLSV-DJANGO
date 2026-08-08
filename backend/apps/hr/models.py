@@ -8,7 +8,8 @@ from django.db import models
 from apps.identity.models import User
 from apps.master_data.models import (
     Department, Major, AdministrativeClass, EducationSystem, PriorityCategory,
-    Degree, AcademicTitle, AdmissionType, Ethnicity, Religion, Nationality
+    Degree, AcademicTitle, AdmissionType, Ethnicity, Religion, Nationality,
+    Cohort
 )
 
 class Student(models.Model):
@@ -24,10 +25,12 @@ class Student(models.Model):
     education_system = models.ForeignKey(EducationSystem, on_delete=models.PROTECT, related_name='students', null=True, blank=True, help_text="Hệ đào tạo")
     admission_type = models.ForeignKey(AdmissionType, on_delete=models.SET_NULL, null=True, blank=True, related_name='students', help_text="Loại hình tuyển sinh")
     priority_category = models.ForeignKey(PriorityCategory, on_delete=models.SET_NULL, null=True, blank=True, related_name='students', help_text="Đối tượng ưu tiên")
+    cohort = models.ForeignKey(Cohort, on_delete=models.PROTECT, related_name='students', null=True, blank=True, help_text="Khóa tuyển sinh")
     
     status = models.CharField(max_length=50, default='ACTIVE', help_text="ACTIVE, PAUSED, GRADUATED, DROPPED_OUT")
     
     # Thông tin Nhân khẩu học & Liên hệ
+    enrollment_date = models.DateField(null=True, blank=True, help_text="Ngày nhập học")
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=20, choices=[('MALE', 'Nam'), ('FEMALE', 'Nữ'), ('OTHER', 'Khác')], null=True, blank=True)
     place_of_birth = models.CharField(max_length=255, null=True, blank=True, help_text="Nơi sinh / Quê quán")
@@ -51,6 +54,7 @@ class Student(models.Model):
 
     class Meta:
         db_table = 'hr_students'
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.student_code} - {self.user.full_name}"
@@ -91,6 +95,7 @@ class Lecturer(models.Model):
 
     class Meta:
         db_table = 'hr_lecturers'
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.lecturer_code} - {self.user.full_name}"
@@ -115,6 +120,10 @@ class Staff(models.Model):
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=20, choices=[('MALE', 'Nam'), ('FEMALE', 'Nữ'), ('OTHER', 'Khác')], null=True, blank=True)
     id_card_number = models.CharField(max_length=50, null=True, blank=True)
+    place_of_birth = models.CharField(max_length=255, null=True, blank=True)
+    ethnicity = models.ForeignKey(Ethnicity, on_delete=models.SET_NULL, null=True, blank=True, related_name='staffs')
+    religion = models.ForeignKey(Religion, on_delete=models.SET_NULL, null=True, blank=True, related_name='staffs')
+    nationality = models.ForeignKey(Nationality, on_delete=models.SET_NULL, null=True, blank=True, related_name='staffs')
     contact_phone = models.CharField(max_length=20, null=True, blank=True)
     personal_email = models.EmailField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
@@ -125,6 +134,7 @@ class Staff(models.Model):
 
     class Meta:
         db_table = 'hr_staffs'
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"{self.staff_code} - {self.user.full_name}"
@@ -155,6 +165,7 @@ class StudentCertificate(models.Model):
     
     class Meta:
         db_table = 'hr_student_certificates'
+        ordering = ['-created_at']
         
     def __str__(self):
         return f"{self.student.student_code} - {self.certificate_name}"

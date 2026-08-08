@@ -4,7 +4,7 @@ Chứa business logic tạo User và Profile (Student/Lecturer/Staff) một các
 """
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
-from .models import Student, Lecturer, Staff
+from .models import Student, Lecturer, Staff, StudentCertificate
 from apps.identity.services import UserService
 from apps.core.services import log_audit
 from apps.identity.models import Role
@@ -97,8 +97,12 @@ class StudentService:
             <h3>THẺ SINH VIÊN</h3>
             <p><strong>Họ tên:</strong> {student.user.full_name}</p>
             <p><strong>MSSV:</strong> {student.student_code}</p>
+            <p><strong>Ngày sinh:</strong> {student.date_of_birth.strftime('%d/%m/%Y') if student.date_of_birth else 'N/A'}</p>
+            <p><strong>Giới tính:</strong> {dict(student._meta.get_field('gender').choices).get(student.gender, 'N/A')}</p>
+            <p><strong>Khóa:</strong> {student.cohort.code if student.cohort else 'N/A'}</p>
             <p><strong>Lớp:</strong> {student.administrative_class.name if student.administrative_class else 'N/A'}</p>
             <p><strong>Ngành:</strong> {student.major.name if student.major else 'N/A'}</p>
+            <p><strong>Ngày nhập học:</strong> {student.enrollment_date.strftime('%d/%m/%Y') if student.enrollment_date else 'N/A'}</p>
         </body>
         </html>
         """
@@ -182,10 +186,11 @@ class StaffService:
         if not email or not password or not full_name:
             raise ValidationError("email, password và full_name là bắt buộc.")
         
+        role_name = validated_data.pop('role_name', 'Giáo vụ')
         try:
-            role = Role.objects.get(name='Giáo vụ')
+            role = Role.objects.get(name=role_name)
         except Role.DoesNotExist:
-            raise ValidationError("Vai trò 'Giáo vụ' chưa được cấu hình.")
+            raise ValidationError(f"Vai trò '{role_name}' chưa được cấu hình.")
 
         user_data = {
             'email': email,
@@ -348,3 +353,58 @@ class ImportService:
         except Exception as e:
             logger.exception("Import Excel Staffs failed")
             return 0, str(e)
+
+class StudentCertificateService:
+    @staticmethod
+    @transaction.atomic
+    def create_certificate(validated_data: dict, actor_id: str, ip_address: str = None, user_agent: str = None) -> StudentCertificate:
+        certificate = StudentCertificate.objects.create(**validated_data)
+        log_audit(actor_id, 'CREATE', 'StudentCertificate', {'id': str(certificate.id)}, ip_address, user_agent)
+        return certificate
+
+    @staticmethod
+    @transaction.atomic
+    def update_certificate(certificate: StudentCertificate, validated_data: dict, actor_id: str, ip_address: str = None, user_agent: str = None) -> StudentCertificate:
+        for key, value in validated_data.items():
+            setattr(certificate, key, value)
+        certificate.save()
+        log_audit(actor_id, 'UPDATE', 'StudentCertificate', {'id': str(certificate.id)}, ip_address, user_agent)
+        return certificate
+
+    @staticmethod
+    @transaction.atomic
+    def delete_certificate(certificate: StudentCertificate, actor_id: str, ip_address: str = None, user_agent: str = None) -> None:
+        certificate.delete()
+        log_audit(actor_id, 'DELETE', 'StudentCertificate', {'id': str(certificate.id)}, ip_address, user_agent)
+
+import io
+from openpyxl import Workbook
+from django.db.models import QuerySet
+
+class ExportService:
+    @staticmethod
+    def export_queryset_to_excel(queryset: QuerySet, columns: list, title: str):
+        wb = Workbook()
+        ws = wb.active
+        ws.title = title
+
+        # Write header
+        ws.append([col[0] for col in columns])
+
+        # Write data
+        for obj in queryset:
+            row = []
+            for col in columns:
+                field_getter = col[1]
+                try:
+                    val = field_getter(obj)
+                except Exception:
+                    val = ''
+                row.append(str(val) if val is not None else '')
+            ws.append(row)
+
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+        return buffer.getvalue()
+

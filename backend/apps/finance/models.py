@@ -17,6 +17,7 @@ class TuitionRule(models.Model):
     class Meta:
         db_table = 'tuition_rules'
         unique_together = ('academic_year', 'major')
+        ordering = ['-created_at']
 
 class TuitionExemption(models.Model):
     STATUS_CHOICES = (
@@ -38,6 +39,7 @@ class TuitionExemption(models.Model):
 
     class Meta:
         db_table = 'tuition_exemptions'
+        ordering = ['-created_at']
 
 class TuitionExtension(models.Model):
     STATUS_CHOICES = (
@@ -59,6 +61,7 @@ class TuitionExtension(models.Model):
 
     class Meta:
         db_table = 'tuition_extensions'
+        ordering = ['-created_at']
 
 class StudentDebt(models.Model):
     STATUS_CHOICES = (
@@ -88,6 +91,7 @@ class StudentDebt(models.Model):
     class Meta:
         db_table = 'student_debts'
         unique_together = ('student', 'semester')
+        ordering = ['-created_at']
 
 class Receipt(models.Model):
     PAYMENT_METHOD_CHOICES = (
@@ -119,3 +123,4 @@ class Receipt(models.Model):
 
     class Meta:
         db_table = 'receipts'
+        ordering = ['-payment_date']
