@@ -7,12 +7,31 @@ from rest_framework import serializers
 from .models import Student, Lecturer, Staff, StudentCertificate
 
 from apps.identity.serializers import UserSerializer
-from apps.master_data.serializers import DepartmentReadSerializer as DepartmentSerializer, MajorReadSerializer as MajorSerializer
+from apps.master_data.serializers import (
+    DepartmentReadSerializer as DepartmentSerializer, 
+    MajorReadSerializer as MajorSerializer,
+    AdministrativeClassReadSerializer as AdministrativeClassSerializer,
+    EducationSystemReadSerializer as EducationSystemSerializer,
+    AdmissionTypeReadSerializer as AdmissionTypeSerializer,
+    CohortReadSerializer as CohortSerializer,
+    PriorityCategoryReadSerializer as PriorityCategorySerializer,
+    EthnicityReadSerializer as EthnicitySerializer,
+    ReligionReadSerializer as ReligionSerializer,
+    NationalityReadSerializer as NationalitySerializer
+)
 
 class StudentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     major_detail = MajorSerializer(source='major', read_only=True)
     administrative_class_code = serializers.CharField(source='administrative_class.code', read_only=True)
+    administrative_class_detail = AdministrativeClassSerializer(source='administrative_class', read_only=True)
+    education_system_detail = EducationSystemSerializer(source='education_system', read_only=True)
+    admission_type_detail = AdmissionTypeSerializer(source='admission_type', read_only=True)
+    cohort_detail = CohortSerializer(source='cohort', read_only=True)
+    priority_category_detail = PriorityCategorySerializer(source='priority_category', read_only=True)
+    ethnicity_detail = EthnicitySerializer(source='ethnicity', read_only=True)
+    religion_detail = ReligionSerializer(source='religion', read_only=True)
+    nationality_detail = NationalitySerializer(source='nationality', read_only=True)
 
     email = serializers.EmailField(write_only=True, required=False)
     password = serializers.CharField(write_only=True, required=False, allow_null=True, allow_blank=True)
@@ -22,10 +41,17 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = [
             'id', 'user', 'student_code', 'major', 'major_detail',
-            'administrative_class', 'administrative_class_code', 'education_system', 'priority_category',
-            'status', 'date_of_birth', 'gender', 'place_of_birth', 'ethnicity', 'religion', 'nationality',
+            'administrative_class', 'administrative_class_code', 'administrative_class_detail',
+            'education_system', 'education_system_detail', 
+            'priority_category', 'priority_category_detail',
+            'status', 'date_of_birth', 'gender', 'place_of_birth', 
+            'ethnicity', 'ethnicity_detail', 
+            'religion', 'religion_detail', 
+            'nationality', 'nationality_detail',
             'personal_email', 'contact_phone', 'address', 'permanent_address', 'id_card_number', 'bank_account', 'health_insurance_number',
-            'admission_type', 'cohort', 'enrollment_date',
+            'admission_type', 'admission_type_detail', 
+            'cohort', 'cohort_detail', 
+            'enrollment_date',
             'parent_info', 'documents', 'created_at', 'updated_at', 'email', 'password', 'full_name'
         ]
 

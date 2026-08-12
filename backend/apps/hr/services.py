@@ -250,17 +250,57 @@ class ImportService:
             sheet = wb.active
             created_count = 0
             
-            # Giả định cột: 
-            # 0: email, 1: full_name, 2: password, 3: student_code, 4: major_code, 5: class_code, 6: edu_system_code
+            # Format Cột: 
+            # 0: email, 1: full_name, 2: password, 3: student_code, 4: major_code, 5: class_code, 6: edu_system_code,
+            # 7: admission_type_code, 8: cohort_code, 9: priority_code, 10: status, 
+            # 11: enrollment_date, 12: date_of_birth, 13: gender, 14: place_of_birth,
+            # 15: ethnicity_code, 16: religion_code, 17: nationality_code,
+            # 18: contact_phone, 19: address, 20: id_card_number, 21: health_insurance_number
             for row in sheet.iter_rows(min_row=2, values_only=True):
                 if not row or not row[0]:
                     continue
                 
-                email, full_name, password, student_code, major_code, class_code, edu_system_code = row[0:7]
+                # Trích xuất dữ liệu, fallback None nếu file ngắn hơn
+                def get_val(idx):
+                    return row[idx] if len(row) > idx else None
+
+                email = get_val(0)
+                full_name = get_val(1)
+                password = get_val(2)
+                student_code = get_val(3)
+                major_code = get_val(4)
+                class_code = get_val(5)
+                edu_system_code = get_val(6)
                 
+                admission_type_code = get_val(7)
+                cohort_code = get_val(8)
+                priority_code = get_val(9)
+                status = get_val(10) or 'ACTIVE'
+                
+                enrollment_date = get_val(11)
+                date_of_birth = get_val(12)
+                gender = get_val(13)
+                place_of_birth = get_val(14)
+                
+                ethnicity_code = get_val(15)
+                religion_code = get_val(16)
+                nationality_code = get_val(17)
+                
+                contact_phone = get_val(18)
+                address = get_val(19)
+                id_card_number = get_val(20)
+                health_insurance_number = get_val(21)
+
                 major = Major.objects.filter(code=major_code).first() if major_code else None
                 admin_class = AdministrativeClass.objects.filter(code=class_code).first() if class_code else None
                 edu_system = EducationSystem.objects.filter(code=edu_system_code).first() if edu_system_code else None
+                admission_type = AdmissionType.objects.filter(code=admission_type_code).first() if admission_type_code else None
+                cohort = Cohort.objects.filter(code=cohort_code).first() if cohort_code else None
+                priority = PriorityCategory.objects.filter(code=priority_code).first() if priority_code else None
+                
+                ethnicity = Ethnicity.objects.filter(code=ethnicity_code).first() if ethnicity_code else None
+                religion = Religion.objects.filter(code=religion_code).first() if religion_code else None
+                nationality = Nationality.objects.filter(code=nationality_code).first() if nationality_code else None
 
                 if not Student.objects.filter(student_code=student_code).exists():
                     student_data = {
@@ -270,7 +310,22 @@ class ImportService:
                         'student_code': student_code,
                         'major': major,
                         'administrative_class': admin_class,
-                        'education_system': edu_system
+                        'education_system': edu_system,
+                        'admission_type': admission_type,
+                        'cohort': cohort,
+                        'priority_category': priority,
+                        'status': status,
+                        'enrollment_date': enrollment_date,
+                        'date_of_birth': date_of_birth,
+                        'gender': gender,
+                        'place_of_birth': place_of_birth,
+                        'ethnicity': ethnicity,
+                        'religion': religion,
+                        'nationality': nationality,
+                        'contact_phone': contact_phone,
+                        'address': address,
+                        'id_card_number': id_card_number,
+                        'health_insurance_number': health_insurance_number,
                     }
                     StudentService.create_student(student_data, actor_id, ip_address, user_agent)
                     created_count += 1

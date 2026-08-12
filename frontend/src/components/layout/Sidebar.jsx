@@ -7,7 +7,8 @@ import { cn } from '../../utils/index';
 const menuItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Tổng quan' },
   { path: '/master-data', icon: Database, label: 'Danh mục gốc', requiredPerm: null }, // Mọi người đều có thể xem tạm thời
-  { path: '/users', icon: Users, label: 'Người dùng', requiredPerm: 'USERS_VIEW' },
+  { path: '/hr', icon: Users, label: 'Nhân sự', requiredPerm: 'HR_VIEW' },
+  { path: '/users', icon: Shield, label: 'Người dùng', requiredPerm: 'USERS_VIEW' },
   { path: '/roles', icon: Shield, label: 'Phân quyền', requiredPerm: 'ROLES_VIEW' },
   { path: '/audit-logs', icon: FileText, label: 'Nhật ký', requiredPerm: 'AUDIT_VIEW' },
   { path: '/notifications', icon: Bell, label: 'Thông báo', requiredPerm: 'NOTIF_VIEW' },

@@ -114,15 +114,15 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 - [x] **Thiết lập mức độ kỷ luật (khiển trách, cảnh cáo, đình chỉ, buộc thôi học)**
 
 ### Quản lý Sinh viên
-- [x] **Tạo hồ sơ sinh viên (thông tin cá nhân, liên hệ, gia đình)** - *(Backend Done)* *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Tạo hồ sơ sinh viên (thông tin cá nhân, liên hệ, gia đình)** - *(Hoàn thành Fullstack)* *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
 
 ## MODULE 3: Quản lý nhân sự
-- [x] **Import danh sách sinh viên hàng loạt từ Excel** - *(Backend Done)* *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
-- [x] **Cập nhật trạng thái học tập (đang học, bảo lưu, chuyển ngành, thôi học, tốt nghiệp)** - *(Backend Done)* *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
+- [x] **Import danh sách sinh viên hàng loạt từ Excel** - *(Hoàn thành Fullstack)* *Backend: Sử dụng thư viện xuất file (vd: pandas, reportlab) để trả về file từ query DB.*
+- [x] **Cập nhật trạng thái học tập (đang học, bảo lưu, chuyển ngành, thôi học, tốt nghiệp)** - *(Hoàn thành Fullstack)* *Frontend: Form edit với dữ liệu cũ fill sẵn. Backend: Validate và update (PUT/PATCH) vào CSDL.*
 - [x] **Quản lý lịch sử lớp học theo từng học kỳ** - *(Backend Done)*
-- [x] **Tra cứu/tìm kiếm sinh viên theo nhiều tiêu chí** - *(Backend Done)* *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Tra cứu/tìm kiếm sinh viên theo nhiều tiêu chí** - *(Hoàn thành Fullstack)* *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 - [x] **Quản lý ảnh đại diện và giấy tờ đính kèm (CCCD, học bạ...)** - *(Backend Done)*
-- [x] **In thẻ sinh viên/giấy xác nhận**
+- [x] **In thẻ sinh viên/giấy xác nhận** - *(Chưa làm UI In thẻ)*
 
 ### Quản lý Giảng viên
 - [x] **Tạo hồ sơ giảng viên (thông tin cá nhân, học vị, học hàm)** - *(Backend Done)* *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*

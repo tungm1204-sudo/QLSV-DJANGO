@@ -62,12 +62,18 @@ class StudentViewSet(viewsets.GenericViewSet):
         return Response(StudentSerializer(student).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk=None):
+        return self._perform_update(request, pk, partial=False)
+
+    def partial_update(self, request, pk=None):
+        return self._perform_update(request, pk, partial=True)
+
+    def _perform_update(self, request, pk=None, partial=False):
         try:
             student = StudentSelector.get_student(pk)
         except Student.DoesNotExist:
             return Response({'detail': 'Sinh viên không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = StudentSerializer(student, data=request.data, partial=True)
+        serializer = StudentSerializer(student, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
         actor_id = str(request.user.id)

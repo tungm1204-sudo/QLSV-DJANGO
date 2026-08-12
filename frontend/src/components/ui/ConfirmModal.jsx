@@ -4,10 +4,22 @@ import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
-export default function ConfirmModal({ isOpen, onClose, onConfirm, title, message, isDanger = true }) {
+export default function ConfirmModal({ 
+  isOpen, 
+  onClose, 
+  onCancel, // Alias for onClose
+  onConfirm, 
+  title, 
+  message, 
+  content, // Alias for message
+  isDanger = true,
+  isLoading = false 
+}) {
+  const handleClose = onClose || onCancel;
+  const displayMessage = message || content;
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
-      if (!open) onClose();
+      if (!open && handleClose) handleClose();
     }}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
@@ -21,7 +33,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
             <div className="flex-1 pt-1">
               <DialogTitle className="text-lg font-bold text-slate-900 mb-2">{title}</DialogTitle>
               <DialogDescription className="text-slate-500 text-sm leading-relaxed">
-                {message}
+                {displayMessage}
               </DialogDescription>
             </div>
           </div>
@@ -30,19 +42,24 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
           <Button 
             type="button" 
             variant="outline"
-            onClick={onClose}
+            onClick={handleClose}
+            disabled={isLoading}
           >
             Hủy bỏ
           </Button>
           <Button 
             type="button"
             variant={isDanger ? "destructive" : "default"}
+            disabled={isLoading}
             onClick={() => {
               onConfirm();
-              onClose();
+              // Nếu không có isLoading (dùng theo kiểu cũ), đóng modal ngay lập tức
+              if (!isLoading && handleClose) {
+                handleClose();
+              }
             }}
           >
-            Xác nhận
+            {isLoading ? 'Đang xử lý...' : 'Xác nhận'}
           </Button>
         </DialogFooter>
       </DialogContent>

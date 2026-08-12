@@ -31,6 +31,10 @@ export const routes = {
     {
       path: '/system-config',
       component: lazy(() => import('../features/configs/SystemConfigsPage')),
+    },
+    {
+      path: '/hr/*',
+      component: lazy(() => import('../features/hr/HrPage')),
     }
   ]
 };
