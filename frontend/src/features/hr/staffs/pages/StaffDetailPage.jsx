@@ -5,16 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import StatusBadge from '@/components/ui/StatusBadge';
-import { useLecturerDetail } from '../hooks/useLecturers';
+import { useStaffDetail } from '../hooks/useStaffs';
 
-export default function LecturerDetailPage() {
+export default function StaffDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Lecturer Data
-  const { data: lecturer, isLoading: isLoadingLecturer } = useLecturerDetail(id);
+  // Staff Data
+  const { data: staff, isLoading: isLoadingStaff } = useStaffDetail(id);
 
-  if (isLoadingLecturer) {
+  if (isLoadingStaff) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
@@ -26,11 +26,11 @@ export default function LecturerDetailPage() {
     );
   }
 
-  if (!lecturer) {
+  if (!staff) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-xl font-semibold text-slate-700">Không tìm thấy giảng viên</h2>
-        <Button variant="link" onClick={() => navigate('/hr/lecturers')}>Quay lại danh sách</Button>
+        <h2 className="text-xl font-semibold text-slate-700">Không tìm thấy cán bộ/nhân viên</h2>
+        <Button variant="link" onClick={() => navigate('/hr/staffs')}>Quay lại danh sách</Button>
       </div>
     );
   }
@@ -43,47 +43,44 @@ export default function LecturerDetailPage() {
           <Button 
             variant="outline" 
             size="icon" 
-            onClick={() => navigate('/hr/lecturers')} 
+            onClick={() => navigate('/hr/staffs')} 
             className="rounded-full bg-white hover:bg-slate-100"
           >
             <ArrowLeft size={18} />
           </Button>
           <div className="flex items-center gap-4">
             <img 
-              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(lecturer.user?.full_name || 'GV')}&background=e0e7ff&color=4f46e5&size=64`} 
-              alt={lecturer.user?.full_name}
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(staff.user?.full_name || 'NV')}&background=e0e7ff&color=4f46e5&size=64`} 
+              alt={staff.user?.full_name}
               className="w-16 h-16 rounded-full border-2 border-white shadow-sm"
             />
             <div>
               <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-3">
-                {lecturer.user?.full_name || 'N/A'}
-                <StatusBadge status={lecturer.status} />
+                {staff.user?.full_name || 'N/A'}
+                <StatusBadge status={staff.status} />
               </h1>
               <p className="text-sm text-slate-500 mt-1 flex items-center gap-2">
-                <span>{lecturer.lecturer_code}</span>
+                <span>{staff.staff_code}</span>
                 <span>•</span>
-                <span>{lecturer.user?.email}</span>
+                <span>{staff.user?.email}</span>
                 <span>•</span>
-                <span className="font-medium text-slate-700">{lecturer.department_detail?.name || 'Chưa phân Khoa/Bộ môn'}</span>
+                <span className="font-medium text-slate-700">{staff.department_detail?.name || 'Chưa phân Phòng ban'}</span>
               </p>
             </div>
           </div>
         </div>
         
         <div className="flex gap-2">
-          <Button onClick={() => navigate(`/hr/lecturers/${id}/edit`)}>
+          <Button onClick={() => navigate(`/hr/staffs/${id}/edit`)}>
             Cập nhật hồ sơ
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="general" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 max-w-[600px] mb-6">
+        <TabsList className="grid w-full grid-cols-2 max-w-[400px] mb-6">
           <TabsTrigger value="general" className="flex gap-2">
             <User size={16} /> Thông tin chung
-          </TabsTrigger>
-          <TabsTrigger value="teaching" disabled className="flex gap-2">
-            <Briefcase size={16} /> Chuyên môn giảng dạy
           </TabsTrigger>
           <TabsTrigger value="history" disabled className="flex gap-2">
             <Award size={16} /> Lịch sử công tác
@@ -95,42 +92,37 @@ export default function LecturerDetailPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
               <h3 className="font-semibold text-slate-900 border-b pb-2 mb-4">Thông tin Công tác</h3>
-              <InfoRow label="Mã giảng viên" value={lecturer.lecturer_code} />
-              <InfoRow label="Loại hợp đồng" value={
-                lecturer.contract_type === 'FULL_TIME' ? 'Cơ hữu' :
-                lecturer.contract_type === 'VISITING' ? 'Thỉnh giảng' :
-                lecturer.contract_type === 'GUEST' ? 'Khách mời' : 'Khác'
-              } />
-              <InfoRow label="Khoa / Bộ môn" value={lecturer.department_detail?.name} />
-              <InfoRow label="Học vị" value={lecturer.degree_detail?.name} />
-              <InfoRow label="Học hàm" value={lecturer.academic_title_detail?.name} />
-              <InfoRow label="Lĩnh vực giảng dạy" value={lecturer.teaching_domain} />
-              <InfoRow label="Ngày vào trường" value={lecturer.join_date ? new Date(lecturer.join_date).toLocaleDateString('vi-VN') : 'N/A'} />
+              <InfoRow label="Mã Cán bộ/NV" value={staff.staff_code} />
+              <InfoRow label="Phòng ban" value={staff.department_detail?.name} />
+              <InfoRow label="Trình độ" value={staff.degree_detail?.name} />
+              <InfoRow label="Chức vụ" value={staff.position_detail?.name} />
+              <InfoRow label="Nhiệm vụ phụ trách" value={staff.responsibilities} />
+              <InfoRow label="Ngày vào trường" value={staff.join_date ? new Date(staff.join_date).toLocaleDateString('vi-VN') : 'N/A'} />
               <InfoRow label="Trạng thái" value={
-                lecturer.status === 'ACTIVE' ? 'Đang làm việc' : 
-                lecturer.status === 'RESIGNED' ? 'Đã nghỉ việc' :
-                lecturer.status === 'RETIRED' ? 'Đã nghỉ hưu' :
-                lecturer.status === 'SUSPENDED' ? 'Tạm đình chỉ' : 'N/A'
+                staff.status === 'ACTIVE' ? 'Đang làm việc' : 
+                staff.status === 'RESIGNED' ? 'Đã nghỉ việc' :
+                staff.status === 'RETIRED' ? 'Đã nghỉ hưu' :
+                staff.status === 'SUSPENDED' ? 'Tạm đình chỉ' : 'N/A'
               } />
             </div>
 
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
               <h3 className="font-semibold text-slate-900 border-b pb-2 mb-4">Thông tin Cá nhân</h3>
-              <InfoRow label="Ngày sinh" value={lecturer.date_of_birth ? new Date(lecturer.date_of_birth).toLocaleDateString('vi-VN') : 'N/A'} />
-              <InfoRow label="Giới tính" value={lecturer.gender === 'MALE' ? 'Nam' : lecturer.gender === 'FEMALE' ? 'Nữ' : lecturer.gender === 'OTHER' ? 'Khác' : 'N/A'} />
-              <InfoRow label="Số CMND/CCCD" value={lecturer.id_card_number} />
-              <InfoRow label="Nơi sinh" value={lecturer.place_of_birth} />
-              <InfoRow label="Dân tộc" value={lecturer.ethnicity_detail?.name} />
-              <InfoRow label="Tôn giáo" value={lecturer.religion_detail?.name} />
-              <InfoRow label="Quốc tịch" value={lecturer.nationality_detail?.name} />
+              <InfoRow label="Ngày sinh" value={staff.date_of_birth ? new Date(staff.date_of_birth).toLocaleDateString('vi-VN') : 'N/A'} />
+              <InfoRow label="Giới tính" value={staff.gender === 'MALE' ? 'Nam' : staff.gender === 'FEMALE' ? 'Nữ' : staff.gender === 'OTHER' ? 'Khác' : 'N/A'} />
+              <InfoRow label="Số CMND/CCCD" value={staff.id_card_number} />
+              <InfoRow label="Nơi sinh" value={staff.place_of_birth} />
+              <InfoRow label="Dân tộc" value={staff.ethnicity_detail?.name} />
+              <InfoRow label="Tôn giáo" value={staff.religion_detail?.name} />
+              <InfoRow label="Quốc tịch" value={staff.nationality_detail?.name} />
             </div>
 
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
               <h3 className="font-semibold text-slate-900 border-b pb-2 mb-4">Thông tin Liên hệ</h3>
-              <InfoRow label="SĐT di động" value={lecturer.contact_phone} />
-              <InfoRow label="Email cá nhân" value={lecturer.personal_email} />
-              <InfoRow label="Địa chỉ" value={lecturer.address} />
-              <InfoRow label="Tài khoản ngân hàng" value={lecturer.bank_account} />
+              <InfoRow label="SĐT di động" value={staff.contact_phone} />
+              <InfoRow label="Email cá nhân" value={staff.personal_email} />
+              <InfoRow label="Địa chỉ" value={staff.address} />
+              <InfoRow label="Tài khoản ngân hàng" value={staff.bank_account} />
             </div>
           </div>
         </TabsContent>

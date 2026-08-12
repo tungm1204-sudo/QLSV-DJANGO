@@ -208,12 +208,18 @@ class LecturerViewSet(viewsets.GenericViewSet):
         return Response(LecturerSerializer(lecturer).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk=None):
+        return self._perform_update(request, pk, partial=False)
+
+    def partial_update(self, request, pk=None):
+        return self._perform_update(request, pk, partial=True)
+
+    def _perform_update(self, request, pk=None, partial=False):
         try:
             lecturer = LecturerSelector.get_lecturer(pk)
         except Lecturer.DoesNotExist:
             return Response({'detail': 'Giảng viên không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = LecturerSerializer(lecturer, data=request.data, partial=True)
+        serializer = LecturerSerializer(lecturer, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
         actor_id = str(request.user.id)
@@ -330,12 +336,18 @@ class StaffViewSet(viewsets.GenericViewSet):
         return Response(StaffSerializer(staff).data, status=status.HTTP_201_CREATED)
 
     def update(self, request, pk=None):
+        return self._perform_update(request, pk, partial=False)
+
+    def partial_update(self, request, pk=None):
+        return self._perform_update(request, pk, partial=True)
+
+    def _perform_update(self, request, pk=None, partial=False):
         try:
             staff = StaffSelector.get_staff(pk)
         except Staff.DoesNotExist:
             return Response({'detail': 'Cán bộ không tồn tại.'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = StaffSerializer(staff, data=request.data, partial=True)
+        serializer = StaffSerializer(staff, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
 
         actor_id = str(request.user.id)

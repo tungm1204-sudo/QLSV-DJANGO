@@ -51,7 +51,7 @@ export const useLecturerMutations = (onSuccessCallback) => {
     mutationFn: createLecturerApi,
     onSuccess: () => {
       toast.success('Thêm giảng viên thành công');
-      queryClient.invalidateQueries(['lecturers']);
+      queryClient.invalidateQueries({ queryKey: ['lecturers'] });
       if (onSuccessCallback) onSuccessCallback();
     },
     onError: handleError
@@ -61,8 +61,8 @@ export const useLecturerMutations = (onSuccessCallback) => {
     mutationFn: updateLecturerApi,
     onSuccess: (data, variables) => {
       toast.success('Cập nhật giảng viên thành công');
-      queryClient.invalidateQueries(['lecturers']);
-      queryClient.invalidateQueries(['lecturers', variables.id]);
+      queryClient.invalidateQueries({ queryKey: ['lecturers'] });
+      queryClient.invalidateQueries({ queryKey: ['lecturers', variables.id] });
       if (onSuccessCallback) onSuccessCallback();
     },
     onError: handleError
@@ -72,7 +72,7 @@ export const useLecturerMutations = (onSuccessCallback) => {
     mutationFn: deleteLecturerApi,
     onSuccess: () => {
       toast.success('Xóa giảng viên thành công');
-      queryClient.invalidateQueries(['lecturers']);
+      queryClient.invalidateQueries({ queryKey: ['lecturers'] });
       if (onSuccessCallback) onSuccessCallback();
     },
     onError: handleError
@@ -92,7 +92,7 @@ export const useLecturerImport = () => {
     mutationFn: importLecturersApi,
     onSuccess: (res) => {
       toast.success(res.data?.detail || 'Import thành công');
-      queryClient.invalidateQueries(['lecturers']);
+      queryClient.invalidateQueries({ queryKey: ['lecturers'] });
     },
     onError: handleError
   });

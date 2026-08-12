@@ -8,6 +8,9 @@ import StudentDetailPage from './students/pages/StudentDetailPage';
 import LecturerListPage from './lecturers/pages/LecturerListPage';
 import LecturerFormPage from './lecturers/pages/LecturerFormPage';
 import LecturerDetailPage from './lecturers/pages/LecturerDetailPage';
+import StaffListPage from './staffs/pages/StaffListPage';
+import StaffFormPage from './staffs/pages/StaffFormPage';
+import StaffDetailPage from './staffs/pages/StaffDetailPage';
 
 // Tạm thời các Page chưa implement, ta sẽ dùng placeholder
 const Placeholder = ({ title }) => (
@@ -87,8 +90,10 @@ export default function HrPage() {
           <Route path="lecturers/:id/edit" element={<LecturerFormPage />} />
           <Route path="lecturers/:id" element={<LecturerDetailPage />} />
           
-          <Route path="staffs" element={<Placeholder title="Danh sách Cán bộ" />} />
-          <Route path="staffs/:id" element={<Placeholder title="Chi tiết Cán bộ" />} />
+          <Route path="staffs" element={<StaffListPage />} />
+          <Route path="staffs/new" element={<StaffFormPage />} />
+          <Route path="staffs/:id/edit" element={<StaffFormPage />} />
+          <Route path="staffs/:id" element={<StaffDetailPage />} />
           
           <Route path="*" element={<Navigate to="/hr/students" replace />} />
         </Routes>

@@ -19,7 +19,8 @@ from apps.master_data.serializers import (
     ReligionReadSerializer as ReligionSerializer,
     NationalityReadSerializer as NationalitySerializer,
     DegreeReadSerializer as DegreeSerializer,
-    AcademicTitleReadSerializer as AcademicTitleSerializer
+    AcademicTitleReadSerializer as AcademicTitleSerializer,
+    PositionReadSerializer as PositionSerializer
 )
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -86,6 +87,11 @@ class LecturerSerializer(serializers.ModelSerializer):
 class StaffSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     department_detail = DepartmentSerializer(source='department', read_only=True)
+    position_detail = PositionSerializer(source='position', read_only=True)
+    degree_detail = DegreeSerializer(source='degree', read_only=True)
+    ethnicity_detail = EthnicitySerializer(source='ethnicity', read_only=True)
+    religion_detail = ReligionSerializer(source='religion', read_only=True)
+    nationality_detail = NationalitySerializer(source='nationality', read_only=True)
 
     email = serializers.EmailField(write_only=True, required=False)
     password = serializers.CharField(write_only=True, required=False, allow_null=True, allow_blank=True)
@@ -95,8 +101,11 @@ class StaffSerializer(serializers.ModelSerializer):
         model = Staff
         fields = [
             'id', 'user', 'staff_code', 'department', 'department_detail',
-            'position', 'degree', 'responsibilities', 'join_date', 'status',
-            'date_of_birth', 'gender', 'id_card_number', 'place_of_birth', 'ethnicity', 'religion', 'nationality',
+            'position', 'position_detail', 'degree', 'degree_detail', 'responsibilities', 'join_date', 'status',
+            'date_of_birth', 'gender', 'id_card_number', 'place_of_birth', 
+            'ethnicity', 'ethnicity_detail', 
+            'religion', 'religion_detail', 
+            'nationality', 'nationality_detail',
             'contact_phone', 'personal_email', 'address', 'bank_account',
             'created_at', 'updated_at', 'email', 'password', 'full_name'
         ]

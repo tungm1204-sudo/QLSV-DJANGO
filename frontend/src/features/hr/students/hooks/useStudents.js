@@ -52,7 +52,7 @@ export const useStudentMutations = (onSuccessCallback) => {
     mutationFn: createStudentApi,
     onSuccess: () => {
       toast.success('Thêm sinh viên thành công');
-      queryClient.invalidateQueries(['students']);
+      queryClient.invalidateQueries({ queryKey: ['students'] });
       if (onSuccessCallback) onSuccessCallback();
     },
     onError: handleError
@@ -62,8 +62,8 @@ export const useStudentMutations = (onSuccessCallback) => {
     mutationFn: updateStudentApi,
     onSuccess: (data, variables) => {
       toast.success('Cập nhật sinh viên thành công');
-      queryClient.invalidateQueries(['students']);
-      queryClient.invalidateQueries(['students', variables.id]);
+      queryClient.invalidateQueries({ queryKey: ['students'] });
+      queryClient.invalidateQueries({ queryKey: ['students', variables.id] });
       if (onSuccessCallback) onSuccessCallback();
     },
     onError: handleError
@@ -73,7 +73,7 @@ export const useStudentMutations = (onSuccessCallback) => {
     mutationFn: deleteStudentApi,
     onSuccess: () => {
       toast.success('Xóa sinh viên thành công');
-      queryClient.invalidateQueries(['students']);
+      queryClient.invalidateQueries({ queryKey: ['students'] });
       if (onSuccessCallback) onSuccessCallback();
     },
     onError: handleError
@@ -93,7 +93,7 @@ export const useStudentImport = () => {
     mutationFn: importStudentsApi,
     onSuccess: (res) => {
       toast.success(res.data?.detail || 'Import thành công');
-      queryClient.invalidateQueries(['students']);
+      queryClient.invalidateQueries({ queryKey: ['students'] });
     },
     onError: handleError
   });

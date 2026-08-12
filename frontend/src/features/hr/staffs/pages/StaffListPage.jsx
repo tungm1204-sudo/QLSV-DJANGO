@@ -2,9 +2,9 @@ import React, { useState, useRef } from 'react';
 import { Plus, Search, FileDown, FileUp, Filter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { useLecturers, useLecturerMutations, useLecturerImport } from '../hooks/useLecturers';
-import { exportLecturersApi } from '../api/lecturerApi';
-import LecturerTable from '../components/LecturerTable';
+import { useStaffs, useStaffMutations, useImportStaffs } from '../hooks/useStaffs';
+import { staffApi } from '../api/staffApi';
+import StaffTable from '../components/StaffTable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ConfirmModal from '@/components/ui/ConfirmModal';
@@ -27,9 +27,10 @@ import { Label } from '@/components/ui/label';
 import { 
   useDepartmentOptions, 
   useDegreeOptions,
+  usePositionOptions
 } from '../../../master_data/hooks/useMasterDataOptions';
 
-export default function LecturerListPage() {
+export default function StaffListPage() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [deleteConfig, setDeleteConfig] = useState({ isOpen: false, id: null });
@@ -41,17 +42,18 @@ export default function LecturerListPage() {
     status: '',
     department: '',
     degree: '',
-    contract_type: '',
+    position: '',
   });
   const [tempFilters, setTempFilters] = useState(filters);
   
-  const { data: response, isLoading } = useLecturers({ search: searchTerm, ...filters });
-  const lecturers = response?.results || response || [];
-  const { deleteMutation } = useLecturerMutations();
-  const importMutation = useLecturerImport();
+  const { data: response, isLoading } = useStaffs({ search: searchTerm, ...filters });
+  const staffs = response?.results || response || [];
+  const { deleteMutation } = useStaffMutations();
+  const importMutation = useImportStaffs();
 
   const { data: departments = [] } = useDepartmentOptions();
   const { data: degrees = [] } = useDegreeOptions();
+  const { data: positions = [] } = usePositionOptions();
   
   // Handlers
   const handleImport = (e) => {
@@ -68,11 +70,11 @@ export default function LecturerListPage() {
   const handleExport = async () => {
     try {
       setIsExporting(true);
-      const res = await exportLecturersApi({ search: searchTerm, ...filters });
+      const res = await staffApi.exportExcel({ search: searchTerm, ...filters });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `danh-sach-giang-vien.xlsx`);
+      link.setAttribute('download', `danh-sach-can-bo-nhan-vien.xlsx`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -90,7 +92,7 @@ export default function LecturerListPage() {
   };
 
   const clearFilters = () => {
-    const empty = { status: '', department: '', degree: '', contract_type: '' };
+    const empty = { status: '', department: '', degree: '', position: '' };
     setTempFilters(empty);
     setFilters(empty);
     setIsFilterOpen(false);
@@ -125,7 +127,7 @@ export default function LecturerListPage() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Bộ lọc giảng viên</DialogTitle>
+              <DialogTitle>Bộ lọc nhân viên</DialogTitle>
             </DialogHeader>
             <div className="py-4">
               <div className="grid gap-4">
@@ -151,10 +153,10 @@ export default function LecturerListPage() {
                 </div>
                 
                 <div className="grid gap-2">
-                  <Label htmlFor="department">Khoa / Bộ môn</Label>
+                  <Label htmlFor="department">Phòng ban</Label>
                   <Select value={tempFilters.department} onValueChange={(val) => setTempFilters({...tempFilters, department: val})}>
                     <SelectTrigger id="department">
-                      <SelectValue placeholder="Tất cả khoa/bộ môn">
+                      <SelectValue placeholder="Tất cả phòng ban">
                         {tempFilters.department && departments.find(d => d.value === tempFilters.department) ? departments.find(d => d.value === tempFilters.department).label : undefined}
                       </SelectValue>
                     </SelectTrigger>
@@ -168,10 +170,10 @@ export default function LecturerListPage() {
                 </div>
                 
                 <div className="grid gap-2">
-                  <Label htmlFor="degree">Học vị</Label>
+                  <Label htmlFor="degree">Trình độ</Label>
                   <Select value={tempFilters.degree} onValueChange={(val) => setTempFilters({...tempFilters, degree: val})}>
                     <SelectTrigger id="degree">
-                      <SelectValue placeholder="Tất cả học vị">
+                      <SelectValue placeholder="Tất cả trình độ">
                          {tempFilters.degree && degrees.find(d => d.value === tempFilters.degree) ? degrees.find(d => d.value === tempFilters.degree).label : undefined}
                       </SelectValue>
                     </SelectTrigger>
@@ -185,20 +187,18 @@ export default function LecturerListPage() {
                 </div>
 
                 <div className="grid gap-2">
-                  <Label htmlFor="contract_type">Loại hợp đồng</Label>
-                  <Select value={tempFilters.contract_type} onValueChange={(val) => setTempFilters({...tempFilters, contract_type: val})}>
-                    <SelectTrigger id="contract_type">
-                      <SelectValue placeholder="Tất cả hợp đồng">
-                        {tempFilters.contract_type === 'FULL_TIME' ? 'Cơ hữu' : 
-                         tempFilters.contract_type === 'VISITING' ? 'Thỉnh giảng' : 
-                         tempFilters.contract_type === 'GUEST' ? 'Khách mời' : undefined}
+                  <Label htmlFor="position">Chức vụ</Label>
+                  <Select value={tempFilters.position} onValueChange={(val) => setTempFilters({...tempFilters, position: val})}>
+                    <SelectTrigger id="position">
+                      <SelectValue placeholder="Tất cả chức vụ">
+                         {tempFilters.position && positions.find(p => p.value === tempFilters.position) ? positions.find(p => p.value === tempFilters.position).label : undefined}
                       </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="">Tất cả</SelectItem>
-                      <SelectItem value="FULL_TIME">Cơ hữu</SelectItem>
-                      <SelectItem value="VISITING">Thỉnh giảng</SelectItem>
-                      <SelectItem value="GUEST">Khách mời</SelectItem>
+                      {positions.map(pos => (
+                        <SelectItem key={pos.value} value={pos.value}>{pos.label}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -240,15 +240,15 @@ export default function LecturerListPage() {
             <FileDown className="h-4 w-4 mr-2" /> 
             {isExporting ? 'Đang Export...' : 'Export'}
           </Button>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => navigate('/hr/lecturers/new')}>
-            <Plus className="h-4 w-4 mr-2" /> Thêm Giảng viên
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => navigate('/hr/staffs/new')}>
+            <Plus className="h-4 w-4 mr-2" /> Thêm Nhân viên
           </Button>
         </div>
       </div>
 
       {/* Data Table */}
-      <LecturerTable 
-        lecturers={lecturers} 
+      <StaffTable 
+        staffs={staffs} 
         isLoading={isLoading} 
         canUpdate={true} 
         canDelete={true} 
@@ -257,15 +257,14 @@ export default function LecturerListPage() {
 
       <ConfirmModal 
         isOpen={deleteConfig.isOpen}
-        title="Xóa giảng viên"
-        content="Bạn có chắc chắn muốn xóa giảng viên này? Hành động này không thể hoàn tác."
+        title="Xóa nhân viên"
+        content="Bạn có chắc chắn muốn xóa nhân viên này? Hành động này không thể hoàn tác."
         onConfirm={() => {
           deleteMutation.mutate(deleteConfig.id, {
             onSettled: () => setDeleteConfig({ isOpen: false, id: null })
           });
         }}
         onCancel={() => setDeleteConfig({ isOpen: false, id: null })}
-        isLoading={deleteMutation.isPending}
       />
     </div>
   );

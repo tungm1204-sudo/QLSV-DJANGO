@@ -134,10 +134,10 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 - [x] **Tra cứu giảng viên theo khoa/bộ môn/chuyên môn** - *(Backend Done)* *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 
 ### Quản lý Cán bộ - Nhân viên
-- [x] **Tạo hồ sơ nhân viên (giáo vụ, kế toán, thư viện, hành chính)** - *(Backend Done)* *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
-- [x] **Phân loại theo bộ phận/phòng ban** - *(Backend Done)*
-- [x] **Quản lý chức vụ, nhiệm vụ phụ trách** - *(Backend Done)*
-- [x] **Tra cứu/tìm kiếm nhân viên** - *(Backend Done)* *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
+- [x] **Tạo hồ sơ nhân viên (giáo vụ, kế toán, thư viện, hành chính)** - *(Hoàn thành Fullstack)* *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+- [x] **Phân loại theo bộ phận/phòng ban** - *(Hoàn thành Fullstack)*
+- [x] **Quản lý chức vụ, nhiệm vụ phụ trách** - *(Hoàn thành Fullstack)*
+- [x] **Tra cứu/tìm kiếm nhân viên** - *(Hoàn thành Fullstack)* *Backend: Xây dựng API hỗ trợ query params (GET), kết hợp phân trang (Pagination).*
 
 ### Phân công giảng dạy
 - [x] **Gán giảng viên phụ trách cho từng lớp học phần**
