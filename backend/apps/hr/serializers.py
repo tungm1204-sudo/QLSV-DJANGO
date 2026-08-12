@@ -17,7 +17,9 @@ from apps.master_data.serializers import (
     PriorityCategoryReadSerializer as PriorityCategorySerializer,
     EthnicityReadSerializer as EthnicitySerializer,
     ReligionReadSerializer as ReligionSerializer,
-    NationalityReadSerializer as NationalitySerializer
+    NationalityReadSerializer as NationalitySerializer,
+    DegreeReadSerializer as DegreeSerializer,
+    AcademicTitleReadSerializer as AcademicTitleSerializer
 )
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -58,6 +60,11 @@ class StudentSerializer(serializers.ModelSerializer):
 class LecturerSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     department_detail = DepartmentSerializer(source='department', read_only=True)
+    degree_detail = DegreeSerializer(source='degree', read_only=True)
+    academic_title_detail = AcademicTitleSerializer(source='academic_title', read_only=True)
+    ethnicity_detail = EthnicitySerializer(source='ethnicity', read_only=True)
+    religion_detail = ReligionSerializer(source='religion', read_only=True)
+    nationality_detail = NationalitySerializer(source='nationality', read_only=True)
 
     email = serializers.EmailField(write_only=True, required=False)
     password = serializers.CharField(write_only=True, required=False, allow_null=True, allow_blank=True)
@@ -67,8 +74,11 @@ class LecturerSerializer(serializers.ModelSerializer):
         model = Lecturer
         fields = [
             'id', 'user', 'lecturer_code', 'department', 'department_detail',
-            'degree', 'academic_title', 'contract_type', 'teaching_domain', 'join_date', 'status',
-            'date_of_birth', 'gender', 'id_card_number', 'place_of_birth', 'ethnicity', 'religion', 'nationality',
+            'degree', 'degree_detail', 'academic_title', 'academic_title_detail', 'contract_type', 'teaching_domain', 'join_date', 'status',
+            'date_of_birth', 'gender', 'id_card_number', 'place_of_birth', 
+            'ethnicity', 'ethnicity_detail', 
+            'religion', 'religion_detail', 
+            'nationality', 'nationality_detail',
             'contact_phone', 'personal_email', 'address', 'bank_account',
             'created_at', 'updated_at', 'email', 'password', 'full_name'
         ]

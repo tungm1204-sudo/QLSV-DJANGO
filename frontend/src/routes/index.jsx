@@ -24,6 +24,7 @@ export const routes = {
       path: '/roles',
       component: lazy(() => import('../features/roles/RolesPage')),
     },
+
     {
       path: '/audit-logs',
       component: lazy(() => import('../features/audit_logs/AuditLogsPage')),

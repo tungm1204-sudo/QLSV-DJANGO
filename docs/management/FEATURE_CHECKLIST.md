@@ -124,8 +124,10 @@ Sử dụng danh sách này làm Checklist (TODO) khi triển khai code cho từ
 - [x] **Quản lý ảnh đại diện và giấy tờ đính kèm (CCCD, học bạ...)** - *(Backend Done)*
 - [x] **In thẻ sinh viên/giấy xác nhận** - *(Chưa làm UI In thẻ)*
 
-### Quản lý Giảng viên
-- [x] **Tạo hồ sơ giảng viên (thông tin cá nhân, học vị, học hàm)** - *(Backend Done)* *Frontend: Form nhập liệu. Backend: Validate dữ liệu và insert (POST) vào CSDL.*
+### Quản lý Giảng viên (Tái sử dụng chung mô hình Master Data)
+- [x] **CRUD Giảng viên (Thông tin công tác, học vị, hợp đồng...)**
+- [x] **Filter nâng cao (Theo Khoa, Trạng thái, Hợp đồng, Học vị...)**
+- [x] **Import/Export Excel Giảng viên**
 - [x] **Quản lý chuyên môn/lĩnh vực giảng dạy** - *(Backend Done)*
 - [x] **Quản lý lịch sử phân công giảng dạy** - *(Backend Done)*
 - [x] **Quản lý hợp đồng/biên chế (cơ hữu, thỉnh giảng)** - *(Backend Done)*
