@@ -10,6 +10,7 @@ import ConfirmModal from '../../components/ui/ConfirmModal';
 import { cn } from '../../utils';
 
 import { useUsers, useUserMutations, useRolesOptions } from './hooks/useUsers';
+import { useDebounce } from '@/hooks/useDebounce';
 import { userSchema } from './validations/userSchema';
 import UserTable from './components/UserTable';
 import UserForm from './components/UserForm';
@@ -25,6 +26,8 @@ export default function UsersPage() {
   const canDelete = hasPermission('USERS_DELETE');
 
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const [page, setPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [resetPasswordUser, setResetPasswordUser] = useState(null);
@@ -32,7 +35,7 @@ export default function UsersPage() {
   const [deleteUserConfig, setDeleteUserConfig] = useState({ isOpen: false, userId: null });
 
   // Fetch Users via Hook
-  const { data: usersData, isLoading: isLoadingUsers } = useUsers(searchQuery);
+  const { data: usersData, isLoading: isLoadingUsers } = useUsers(debouncedSearchQuery, page);
 
   // Use Mutations via Hook
   const {
@@ -51,6 +54,7 @@ export default function UsersPage() {
   // Fetch Roles for the Select Dropdown via Hook
   const { data: rolesData } = useRolesOptions();
 
+  const count = usersData?.count || 0;
   const users = Array.isArray(usersData) ? usersData : usersData?.results || [];
   const roles = Array.isArray(rolesData) ? rolesData : rolesData?.results || [];
 
@@ -130,7 +134,10 @@ export default function UsersPage() {
             type="text" 
             placeholder="Tìm kiếm theo email, họ tên..." 
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
             className="pl-10 bg-slate-50 border-slate-200"
           />
         </div>
@@ -148,6 +155,9 @@ export default function UsersPage() {
         setResetPasswordUser={setResetPasswordUser}
         setResetPasswordValue={setResetPasswordValue}
         setDeleteUserConfig={setDeleteUserConfig}
+        page={page}
+        setPage={setPage}
+        count={count}
       />
 
       {/* Modal User Form Component */}

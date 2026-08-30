@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { useStaffs, useStaffMutations, useImportStaffs } from '../hooks/useStaffs';
 import { staffApi } from '../api/staffApi';
 import StaffTable from '../components/StaffTable';
+import { usePermissions } from '@/hooks/usePermissions';
+import { useDebounce } from '@/hooks/useDebounce';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ConfirmModal from '@/components/ui/ConfirmModal';
@@ -32,7 +34,10 @@ import {
 
 export default function StaffListPage() {
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [page, setPage] = useState(1);
   const [deleteConfig, setDeleteConfig] = useState({ isOpen: false, id: null });
   const [isExporting, setIsExporting] = useState(false);
   const fileInputRef = useRef(null);
@@ -46,7 +51,7 @@ export default function StaffListPage() {
   });
   const [tempFilters, setTempFilters] = useState(filters);
   
-  const { data: response, isLoading } = useStaffs({ search: searchTerm, ...filters });
+  const { data: response, isLoading } = useStaffs({ search: debouncedSearchTerm, page, ...filters });
   const staffs = response?.results || response || [];
   const { deleteMutation } = useStaffMutations();
   const importMutation = useImportStaffs();

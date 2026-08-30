@@ -10,7 +10,7 @@ export function useAuditLogs(searchQuery, page, canView) {
   });
 
   const logs = logsData?.data?.results || [];
-  const totalPages = logsData?.data?.total_pages || 1;
+  const count = logsData?.data?.count || 0;
 
-  return { logs, totalPages, isLoading };
+  return { logs, count, isLoading };
 }

@@ -200,7 +200,7 @@ def export_report_to_pdf_html(data: list, report_type: str, title: str = '') -> 
         <thead><tr>{headers_html}</tr></thead>
         <tbody>{rows_html}</tbody>
     </table>
-    <div class="footer">Xuất ngày: {__import__('datetime').datetime.now().strftime('%d/%m/%Y %H:%M')}</div>
+    <div class="footer">Xuất ngày: {datetime.now().strftime('%d/%m/%Y %H:%M')}</div>
     <div class="no-print" style="margin-top:20px;text-align:center">
         <button onclick="window.print()" style="padding:8px 24px;cursor:pointer">🖨 In / Xuất PDF</button>
     </div>

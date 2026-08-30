@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import StatusBadge from '../../../../components/ui/StatusBadge';
+import AppPagination from '@/components/ui/AppPagination';
 
 export default function StudentTable({
   students,
@@ -11,12 +12,15 @@ export default function StudentTable({
   canUpdate,
   canDelete,
   handlePrintIdCard,
-  setDeleteConfig
+  setDeleteConfig,
+  page,
+  setPage,
+  count
 }) {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
       <Table>
         <TableHeader className="bg-slate-50">
           <TableRow>
@@ -116,6 +120,12 @@ export default function StudentTable({
           )}
         </TableBody>
       </Table>
+      
+      {count > 0 && (
+        <div className="px-6 py-4 border-t border-slate-200">
+          <AppPagination page={page} setPage={setPage} count={count} pageSize={10} />
+        </div>
+      )}
     </div>
   );
 }

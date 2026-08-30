@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, Shield, FileText, Settings, Bell, ChevronLeft, ChevronRight, GraduationCap, Database } from 'lucide-react';
+import { LayoutDashboard, Users, Shield, FileText, Settings, Bell, ChevronLeft, ChevronRight, GraduationCap, Database, BookOpen, CalendarDays } from 'lucide-react';
 import { useState } from 'react';
 import { usePermissions } from '../../hooks/usePermissions';
 import { cn } from '../../utils/index';
@@ -7,6 +7,9 @@ import { cn } from '../../utils/index';
 const menuItems = [
   { path: '/dashboard', icon: LayoutDashboard, label: 'Tổng quan' },
   { path: '/master-data', icon: Database, label: 'Danh mục gốc', requiredPerm: null }, // Mọi người đều có thể xem tạm thời
+  { path: '/curriculum/courses', icon: BookOpen, label: 'Quản lý Môn học', requiredPerm: null }, // Tạm thời để null
+  { path: '/curriculum/training-programs', icon: FileText, label: 'Quản lý Khung ĐT', requiredPerm: null },
+  { path: '/curriculum/training-plans', icon: CalendarDays, label: 'Kế hoạch Đào tạo', requiredPerm: null },
   { path: '/hr', icon: Users, label: 'Nhân sự', requiredPerm: 'HR_VIEW' },
   { path: '/users', icon: Shield, label: 'Người dùng', requiredPerm: 'USERS_VIEW' },
   { path: '/roles', icon: Shield, label: 'Phân quyền', requiredPerm: 'ROLES_VIEW' },
@@ -18,7 +21,7 @@ const menuItems = [
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const { hasPermission } = usePermissions();
-  
+
   const visibleMenuItems = menuItems.filter(item => {
     if (!item.requiredPerm) return true;
     return hasPermission(item.requiredPerm);

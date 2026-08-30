@@ -46,6 +46,62 @@ def delete_training_program(obj: TrainingProgram):
     obj.is_active = False
     obj.save(update_fields=['is_active'])
 
+# --- Knowledge Block Services ---
+@transaction.atomic
+def create_knowledge_block(**data):
+    from .models import KnowledgeBlock
+    obj = KnowledgeBlock(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_knowledge_block(obj, **data):
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_knowledge_block(obj):
+    obj.delete()
+
+def validate_knowledge_block_credits(block) -> bool:
+    """
+    Kiểm tra Rule 3: Tổng tín chỉ của các môn is_mandatory=True 
+    phải >= mandatory_credits của khối đó.
+    Được gọi khi muốn publish (Kích hoạt) Chương trình đào tạo.
+    """
+    from django.db.models import Sum
+    mandatory_courses = block.courses.filter(is_mandatory=True)
+    total_mandatory = mandatory_courses.aggregate(total=Sum('course__credits'))['total'] or 0
+    if total_mandatory < block.mandatory_credits:
+        raise ValidationError(f"Khối {block.code} yêu cầu {block.mandatory_credits} TC bắt buộc, nhưng các môn bắt buộc hiện tại chỉ có {total_mandatory} TC.")
+    return True
+
+# --- Training Program Course Services ---
+@transaction.atomic
+def create_training_program_course(**data):
+    from .models import TrainingProgramCourse
+    obj = TrainingProgramCourse(**data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_training_program_course(obj, **data):
+    for key, value in data.items():
+        setattr(obj, key, value)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def delete_training_program_course(obj):
+    obj.delete()
+
+
 @transaction.atomic
 def create_prerequisite(**data) -> Prerequisite:
     obj = Prerequisite(**data)
@@ -162,7 +218,60 @@ def delete_course_offering(obj: CourseOffering):
     obj.status = 'CANCELLED'
     obj.save(update_fields=['status'])
 
-# --- Schedule Services ---
+def validate_schedule_logic(course_offering, room, day_of_week, start_period, end_period, exclude_schedule_id=None) -> dict:
+    conflicts = []
+    
+    if start_period > end_period:
+        conflicts.append({
+            "type": "INVALID_PERIOD",
+            "message": "Tiết bắt đầu không thể lớn hơn tiết kết thúc"
+        })
+        return {"valid": False, "conflicts": conflicts}
+
+    # 1. Kiểm tra trùng lịch Phòng học
+    room_qs = Schedule.objects.filter(
+        room=room,
+        day_of_week=day_of_week,
+        course_offering__semester=course_offering.semester
+    ).filter(
+        Q(start_period__lte=end_period) & Q(end_period__gte=start_period)
+    )
+    if exclude_schedule_id:
+        room_qs = room_qs.exclude(id=exclude_schedule_id)
+
+    overlap_room = room_qs.first()
+    if overlap_room:
+        conflicts.append({
+            "type": "ROOM_CONFLICT",
+            "message": f"Phòng {room.name} đã được sử dụng bởi {overlap_room.course_offering.course.code} (Tiết {overlap_room.start_period}-{overlap_room.end_period})",
+            "schedule_id": str(overlap_room.id)
+        })
+
+    # 2. Kiểm tra trùng lịch Giảng viên
+    if course_offering.lecturer:
+        lecturer_qs = Schedule.objects.filter(
+            course_offering__lecturer=course_offering.lecturer,
+            day_of_week=day_of_week,
+            course_offering__semester=course_offering.semester
+        ).filter(
+            Q(start_period__lte=end_period) & Q(end_period__gte=start_period)
+        )
+        if exclude_schedule_id:
+            lecturer_qs = lecturer_qs.exclude(id=exclude_schedule_id)
+            
+        overlap_lecturer = lecturer_qs.first()
+        if overlap_lecturer:
+            conflicts.append({
+                "type": "LECTURER_CONFLICT",
+                "message": f"Giảng viên đã có lịch dạy lớp {overlap_lecturer.course_offering.course.code} (Tiết {overlap_lecturer.start_period}-{overlap_lecturer.end_period})",
+                "schedule_id": str(overlap_lecturer.id)
+            })
+
+    return {
+        "valid": len(conflicts) == 0,
+        "conflicts": conflicts
+    }
+
 @transaction.atomic
 def create_schedule(course_offering: CourseOffering, **data) -> Schedule:
     room = data.get('room')
@@ -170,35 +279,29 @@ def create_schedule(course_offering: CourseOffering, **data) -> Schedule:
     start_period = data.get('start_period')
     end_period = data.get('end_period')
 
-    if start_period > end_period:
-        raise ValidationError("Tiết bắt đầu không thể lớn hơn tiết kết thúc")
-
-    # 1. Kiểm tra trùng lịch Phòng học
-    overlap_room = Schedule.objects.filter(
-        room=room,
-        day_of_week=day_of_week,
-        course_offering__semester=course_offering.semester
-    ).filter(
-        Q(start_period__lte=end_period) & Q(end_period__gte=start_period)
-    ).exists()
-
-    if overlap_room:
-        raise ValidationError(f"Phòng {room.name} đã có lịch học trùng vào thời gian này")
-
-    # 2. Kiểm tra trùng lịch Giảng viên
-    if course_offering.lecturer:
-        overlap_lecturer = Schedule.objects.filter(
-            course_offering__lecturer=course_offering.lecturer,
-            day_of_week=day_of_week,
-            course_offering__semester=course_offering.semester
-        ).filter(
-            Q(start_period__lte=end_period) & Q(end_period__gte=start_period)
-        ).exists()
-
-        if overlap_lecturer:
-            raise ValidationError(f"Giảng viên {course_offering.lecturer.user.get_full_name()} đã có lịch dạy trùng vào thời gian này")
+    validation_result = validate_schedule_logic(course_offering, room, day_of_week, start_period, end_period)
+    if not validation_result['valid']:
+        raise ValidationError([c['message'] for c in validation_result['conflicts']])
 
     obj = Schedule(course_offering=course_offering, **data)
+    obj.full_clean()
+    obj.save()
+    return obj
+
+@transaction.atomic
+def update_schedule(obj: Schedule, **data) -> Schedule:
+    course_offering = obj.course_offering
+    room = data.get('room', obj.room)
+    day_of_week = data.get('day_of_week', obj.day_of_week)
+    start_period = data.get('start_period', obj.start_period)
+    end_period = data.get('end_period', obj.end_period)
+    
+    validation_result = validate_schedule_logic(course_offering, room, day_of_week, start_period, end_period, exclude_schedule_id=obj.id)
+    if not validation_result['valid']:
+        raise ValidationError([c['message'] for c in validation_result['conflicts']])
+        
+    for key, value in data.items():
+        setattr(obj, key, value)
     obj.full_clean()
     obj.save()
     return obj

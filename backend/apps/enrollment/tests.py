@@ -4,7 +4,7 @@ from types import SimpleNamespace
 from django.test import TestCase
 
 from apps.identity.models import User, Role
-from apps.master_data.models import Major, Semester, Department, Campus, Building, Room
+from apps.master_data.models import Major, Semester, Department, Campus, Building, Room, CourseType, Cohort, AcademicYear
 from apps.hr.models import Student
 from apps.curriculum.models import Course, CourseOffering, TrainingPlan
 from apps.enrollment.models import Enrollment
@@ -23,7 +23,9 @@ class EnrollmentServiceTests(TestCase):
         self.major = Major.objects.create(code='IT', name='IT', department=self.department)
         self.student = Student.objects.create(user=self.user, student_code='SV01', major=self.major)
         self.semester = Semester.objects.create(code='S1', start_date='2024-01-01', end_date='2024-06-01')
-        self.course = Course.objects.create(code='C1', name='Course 1', credits=3, major=self.major)
+
+        self.course_type = CourseType.objects.create(code='CT1', name='Type 1')
+        self.course = Course.objects.create(code='C1', name='Course 1', credits=3, department=self.department)
         self.plan = TrainingPlan.objects.create(name='Plan 1', semester=self.semester, department=self.department)
         
         self.offering1 = CourseOffering.objects.create(

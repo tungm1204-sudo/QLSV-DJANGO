@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Activity, Search, Download } from 'lucide-react';
 import { usePermissions } from '../../hooks/usePermissions';
+import { useDebounce } from '@/hooks/useDebounce';
 import { useAuditLogs } from './hooks/useAuditLogs';
 import AuditLogTable from './components/AuditLogTable';
 
@@ -10,10 +11,11 @@ export default function AuditLogsPage() {
   // const canExport = hasPermission('AUDIT_EXPORT');
 
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
   const [page, setPage] = useState(1);
   const [selectedLog, setSelectedLog] = useState(null);
 
-  const { logs, totalPages, isLoading } = useAuditLogs(searchQuery, page, canView);
+  const { logs, count, isLoading } = useAuditLogs(debouncedSearchQuery, page, canView);
 
   if (!canView) {
     return (
@@ -40,7 +42,10 @@ export default function AuditLogsPage() {
               type="text" 
               placeholder="Tìm kiếm log..." 
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setPage(1);
+              }}
               className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
             />
           </div>
@@ -56,7 +61,7 @@ export default function AuditLogsPage() {
         isLoading={isLoading}
         page={page}
         setPage={setPage}
-        totalPages={totalPages}
+        count={count}
         setSelectedLog={setSelectedLog}
       />
 

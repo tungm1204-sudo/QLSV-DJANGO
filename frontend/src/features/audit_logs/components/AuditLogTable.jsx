@@ -1,5 +1,6 @@
-import { Calendar, Globe, Monitor, FileJson, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, Globe, Monitor, FileJson } from 'lucide-react';
 import { cn } from '../../../utils';
+import AppPagination from '@/components/ui/AppPagination';
 
 const ACTION_COLORS = {
   CREATE: 'bg-emerald-50 text-emerald-700 border-emerald-100',
@@ -21,7 +22,7 @@ export default function AuditLogTable({
   isLoading,
   page,
   setPage,
-  totalPages,
+  count,
   setSelectedLog
 }) {
   return (
@@ -110,28 +111,11 @@ export default function AuditLogTable({
         </table>
       </div>
 
-      {/* Pagination */}
-      <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 mt-auto">
-        <p className="text-sm text-slate-500">
-          Trang <span className="font-medium text-slate-900">{page}</span> / <span className="font-medium text-slate-900">{totalPages}</span>
-        </p>
-        <div className="flex items-center gap-2">
-          <button 
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="p-2 border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <ChevronLeft size={16} />
-          </button>
-          <button 
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="p-2 border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            <ChevronRight size={16} />
-          </button>
+      {count > 0 && (
+        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50 mt-auto">
+          <AppPagination page={page} setPage={setPage} count={count} pageSize={10} />
         </div>
-      </div>
+      )}
     </div>
   );
 }

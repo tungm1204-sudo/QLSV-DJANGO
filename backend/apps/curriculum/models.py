@@ -6,7 +6,7 @@ Kế thừa TimeStampedModel để có sẵn id (UUID) và timestamps.
 """
 from django.db import models
 from apps.core.models import TimeStampedModel
-from apps.master_data.models import Major
+from apps.master_data.models import Major, Department, Cohort, Specialization
 
 class Course(TimeStampedModel):
     """
@@ -15,9 +15,11 @@ class Course(TimeStampedModel):
     """
     code = models.CharField(max_length=50, unique=True, help_text="Mã môn học (VD: IT101)")
     name = models.CharField(max_length=255, help_text="Tên môn học")
-    credits = models.IntegerField(help_text="Số tín chỉ (VD: 3)")
-    major = models.ForeignKey(Major, on_delete=models.PROTECT, related_name='courses', help_text="Thuộc ngành học nào")
-    course_type = models.ForeignKey('master_data.CourseType', on_delete=models.PROTECT, related_name='courses', null=True, help_text="Loại học phần")
+    credits = models.IntegerField(help_text="Tổng số tín chỉ (VD: 3)")
+    theory_credits = models.IntegerField(default=0, help_text="Số tín chỉ lý thuyết")
+    practical_credits = models.IntegerField(default=0, help_text="Số tín chỉ thực hành")
+    department = models.ForeignKey(Department, on_delete=models.PROTECT, related_name='courses', help_text="Thuộc Bộ môn/Khoa quản lý")
+    course_type = models.ForeignKey('master_data.CourseType', on_delete=models.PROTECT, related_name='courses', null=True, blank=True, help_text="Loại học phần")
     is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
 
     class Meta:
@@ -34,6 +36,8 @@ class TrainingProgram(TimeStampedModel):
     code = models.CharField(max_length=50, unique=True, help_text="Mã chương trình (VD: CTTT-CNTT)")
     name = models.CharField(max_length=255, help_text="Tên chương trình đào tạo")
     major = models.ForeignKey(Major, on_delete=models.PROTECT, related_name='training_programs', help_text="Chương trình thuộc ngành nào")
+    specialization = models.ForeignKey(Specialization, on_delete=models.PROTECT, null=True, blank=True, related_name='training_programs', help_text="Chuyên ngành áp dụng (nếu có)")
+    cohort = models.ForeignKey(Cohort, on_delete=models.PROTECT, related_name='training_programs', help_text="Áp dụng cho khóa nào")
     total_credits = models.IntegerField(help_text="Tổng số tín chỉ yêu cầu tốt nghiệp")
     is_active = models.BooleanField(default=True, help_text="Trạng thái hoạt động")
 
@@ -42,6 +46,70 @@ class TrainingProgram(TimeStampedModel):
 
     def __str__(self) -> str:
         return self.code
+
+class KnowledgeBlock(TimeStampedModel):
+    """
+    Khối kiến thức / Nhóm học phần trong một Chương trình đào tạo.
+    """
+    training_program = models.ForeignKey(TrainingProgram, on_delete=models.CASCADE, related_name='knowledge_blocks')
+    code = models.CharField(max_length=50, help_text="Mã khối (VD: K1-DAICUONG)")
+    name = models.CharField(max_length=255, help_text="Tên khối (VD: Khối kiến thức chuyên ngành)")
+    
+    mandatory_credits = models.PositiveSmallIntegerField(default=0, help_text="Số TC bắt buộc phải đạt")
+    elective_credits = models.PositiveSmallIntegerField(default=0, help_text="Số TC tự chọn tối thiểu phải đạt")
+    
+    order = models.PositiveSmallIntegerField(default=1)
+    notes = models.TextField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'curriculum_knowledge_blocks'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['training_program', 'code'],
+                name='unique_training_program_block_code'
+            )
+        ]
+
+    def __str__(self) -> str:
+        return f"[{self.code}] {self.name}"
+
+class TrainingProgramCourse(TimeStampedModel):
+    """
+    Chi tiết môn học trong khung chương trình đào tạo.
+    """
+    training_program = models.ForeignKey(TrainingProgram, on_delete=models.CASCADE, related_name='program_courses')
+    knowledge_block = models.ForeignKey(KnowledgeBlock, on_delete=models.CASCADE, related_name='courses')
+    course = models.ForeignKey(Course, on_delete=models.PROTECT, related_name='training_program_courses')
+    
+    semester_expected = models.PositiveSmallIntegerField(help_text="Học kỳ dự kiến (VD: 1-12)")
+    is_mandatory = models.BooleanField(default=True, help_text="True: Bắt buộc | False: Tự chọn")
+    
+    notes = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        db_table = 'curriculum_training_program_courses'
+        unique_together = ('training_program', 'course')
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        super().clean()
+        
+        # Rule 2: Ensure the knowledge_block belongs to the same training_program
+        if self.knowledge_block_id and self.training_program_id:
+            if self.knowledge_block.training_program_id != self.training_program_id:
+                raise ValidationError({
+                    'knowledge_block': 'Khối kiến thức này không thuộc Chương trình đào tạo đã chọn.'
+                })
+                
+        # Rule 5: semester_expected must be >= 1
+        if self.semester_expected is not None and self.semester_expected < 1:
+            raise ValidationError({
+                'semester_expected': 'Học kỳ dự kiến phải lớn hơn hoặc bằng 1.'
+            })
+
+    def __str__(self) -> str:
+        return f"{self.training_program.code} - {self.course.code}"
+
 
 class Prerequisite(TimeStampedModel):
     """

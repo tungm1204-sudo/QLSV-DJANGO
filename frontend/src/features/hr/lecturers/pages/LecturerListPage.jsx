@@ -5,6 +5,9 @@ import { toast } from 'sonner';
 import { useLecturers, useLecturerMutations, useLecturerImport } from '../hooks/useLecturers';
 import { exportLecturersApi } from '../api/lecturerApi';
 import LecturerTable from '../components/LecturerTable';
+
+import { usePermissions } from '@/hooks/usePermissions';
+import { useDebounce } from '@/hooks/useDebounce';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ConfirmModal from '@/components/ui/ConfirmModal';
@@ -31,7 +34,10 @@ import {
 
 export default function LecturerListPage() {
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [page, setPage] = useState(1);
   const [deleteConfig, setDeleteConfig] = useState({ isOpen: false, id: null });
   const [isExporting, setIsExporting] = useState(false);
   const fileInputRef = useRef(null);
@@ -45,7 +51,7 @@ export default function LecturerListPage() {
   });
   const [tempFilters, setTempFilters] = useState(filters);
   
-  const { data: response, isLoading } = useLecturers({ search: searchTerm, ...filters });
+  const { data: response, isLoading } = useLecturers({ search: debouncedSearchTerm, page, ...filters });
   const lecturers = response?.results || response || [];
   const { deleteMutation } = useLecturerMutations();
   const importMutation = useLecturerImport();

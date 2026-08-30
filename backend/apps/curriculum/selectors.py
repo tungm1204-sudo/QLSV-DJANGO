@@ -1,12 +1,12 @@
 """
 Curriculum Selectors
 """
-from typing import Iterable
+from typing import Iterable, Optional
 from .models import Course, TrainingProgram, Prerequisite, EquivalentCourse, TrainingPlan, CourseOffering, Schedule
 
-def get_courses(*, is_active: bool = None) -> Iterable[Course]:
-    qs = Course.objects.all()
-    qs = qs.select_related('major')
+def get_courses(*, is_active: Optional[bool] = None, department_id: Optional[str] = None) -> Iterable[Course]:
+    qs = Course.objects.all().order_by('-created_at')
+    qs = qs.select_related('department')
     if is_active is not None:
         qs = qs.filter(is_active=is_active)
     return qs
@@ -14,15 +14,41 @@ def get_courses(*, is_active: bool = None) -> Iterable[Course]:
 def get_course_by_id(id: str) -> Course:
     return Course.objects.get(id=id)
 
-def get_training_programs(*, is_active: bool = None) -> Iterable[TrainingProgram]:
-    qs = TrainingProgram.objects.all()
-    qs = qs.select_related('major')
+def get_training_programs(*, is_active: Optional[bool] = None, major_id: Optional[str] = None) -> Iterable[TrainingProgram]:
+    qs = TrainingProgram.objects.all().order_by('-created_at')
+    qs = qs.select_related('major', 'cohort', 'specialization')
     if is_active is not None:
         qs = qs.filter(is_active=is_active)
     return qs
 
 def get_training_program_by_id(id: str) -> TrainingProgram:
     return TrainingProgram.objects.get(id=id)
+
+def get_knowledge_blocks(*, training_program_id: Optional[str] = None) -> Iterable['KnowledgeBlock']:
+    from .models import KnowledgeBlock
+    qs = KnowledgeBlock.objects.all().order_by('order')
+    if training_program_id:
+        qs = qs.filter(training_program_id=training_program_id)
+    return qs
+
+def get_knowledge_block_by_id(id: str) -> 'KnowledgeBlock':
+    from .models import KnowledgeBlock
+    return KnowledgeBlock.objects.get(id=id)
+
+def get_training_program_courses(*, training_program_id: Optional[str] = None, knowledge_block_id: Optional[str] = None) -> Iterable['TrainingProgramCourse']:
+    from .models import TrainingProgramCourse
+    qs = TrainingProgramCourse.objects.all().order_by('semester_expected', 'course__code')
+    qs = qs.select_related('course')
+    if training_program_id:
+        qs = qs.filter(training_program_id=training_program_id)
+    if knowledge_block_id:
+        qs = qs.filter(knowledge_block_id=knowledge_block_id)
+    return qs
+
+def get_training_program_course_by_id(id: str) -> 'TrainingProgramCourse':
+    from .models import TrainingProgramCourse
+    return TrainingProgramCourse.objects.get(id=id)
+
 
 def get_prerequisites(*, is_active: bool = None) -> Iterable[Prerequisite]:
     qs = Prerequisite.objects.all()

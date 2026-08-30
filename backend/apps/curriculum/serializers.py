@@ -2,7 +2,7 @@
 Curriculum Serializers
 """
 from rest_framework import serializers
-from .models import Course, TrainingProgram, Prerequisite, EquivalentCourse
+from .models import Course, TrainingProgram, Prerequisite, EquivalentCourse, KnowledgeBlock, TrainingProgramCourse
 
 class CourseReadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,8 +12,7 @@ class CourseReadSerializer(serializers.ModelSerializer):
 class CourseWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
-        fields = '__all__'
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = ['id', 'code', 'name', 'credits', 'theory_credits', 'practical_credits', 'department', 'course_type', 'is_active', 'created_at', 'updated_at']
 
 class TrainingProgramReadSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,8 +22,36 @@ class TrainingProgramReadSerializer(serializers.ModelSerializer):
 class TrainingProgramWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = TrainingProgram
+        fields = ['id', 'code', 'name', 'major', 'specialization', 'cohort', 'total_credits', 'is_active', 'created_at', 'updated_at']
+
+class KnowledgeBlockReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KnowledgeBlock
+        fields = '__all__'
+
+class KnowledgeBlockWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KnowledgeBlock
         fields = '__all__'
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+class TrainingProgramCourseReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainingProgramCourse
+        fields = '__all__'
+
+class TrainingProgramCourseWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainingProgramCourse
+        fields = '__all__'
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class TrainingProgramDetailReadSerializer(serializers.ModelSerializer):
+    knowledge_blocks = KnowledgeBlockReadSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = TrainingProgram
+        fields = ['id', 'code', 'name', 'major', 'specialization', 'cohort', 'total_credits', 'is_active', 'knowledge_blocks', 'created_at', 'updated_at']
 
 class PrerequisiteReadSerializer(serializers.ModelSerializer):
     class Meta:

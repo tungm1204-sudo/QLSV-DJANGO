@@ -36,6 +36,26 @@ export const routes = {
     {
       path: '/hr/*',
       component: lazy(() => import('../features/hr/HrPage')),
+    },
+    {
+      path: '/curriculum/courses',
+      component: lazy(() => import('../features/curriculum/pages/CoursesPage')),
+    },
+    {
+      path: '/curriculum/training-programs',
+      component: lazy(() => import('../features/curriculum/pages/TrainingProgramsPage')),
+    },
+    {
+      path: '/curriculum/training-programs/:id',
+      component: lazy(() => import('../features/curriculum/pages/TrainingProgramDetailPage')),
+    },
+    {
+      path: '/curriculum/training-plans',
+      component: lazy(() => import('../features/curriculum/pages/TrainingPlansPage')),
+    },
+    {
+      path: '/curriculum/training-plans/:id',
+      component: lazy(() => import('../features/curriculum/pages/TrainingPlanManagementPage')),
     }
   ]
 };

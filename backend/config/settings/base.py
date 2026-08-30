@@ -140,9 +140,9 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ),
-    # Phân trang mặc định: 20 items/trang
+    # Phân trang mặc định: 10 items/trang
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': 10,
     # Mặc định mọi API đều yêu cầu đăng nhập.
     # Lý do: Bảo mật theo hướng "deny by default" — phải khai báo rõ AllowAny nếu muốn public.
     'DEFAULT_PERMISSION_CLASSES': (

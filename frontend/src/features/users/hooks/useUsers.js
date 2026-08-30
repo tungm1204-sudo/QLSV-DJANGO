@@ -23,11 +23,11 @@ const handleError = (err) => {
   toast.error('Có lỗi xảy ra');
 };
 
-export const useUsers = (searchQuery) => {
+export const useUsers = (searchQuery, page = 1) => {
   return useQuery({
-    queryKey: ['users', searchQuery],
+    queryKey: ['users', searchQuery, page],
     queryFn: async () => {
-      const res = await getUsersApi({ search: searchQuery });
+      const res = await getUsersApi({ search: searchQuery, page });
       return res.data;
     }
   });

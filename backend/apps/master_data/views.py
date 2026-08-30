@@ -67,6 +67,8 @@ class EducationSystemViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_education_system(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class DepartmentViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -102,6 +104,8 @@ class DepartmentViewSet(FilterMixin, viewsets.ViewSet):
         obj = selectors.get_department_by_id(pk)
         services.delete_department(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    partial_update = update
 
 
 class MajorViewSet(FilterMixin, viewsets.ViewSet):
@@ -139,6 +143,8 @@ class MajorViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_major(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class SpecializationViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -174,6 +180,8 @@ class SpecializationViewSet(FilterMixin, viewsets.ViewSet):
         obj = selectors.get_specialization_by_id(pk)
         services.delete_specialization(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    partial_update = update
 
 
 # ─────────────────────────────────────────────────────────────
@@ -214,6 +222,8 @@ class CampusViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_campus(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class BuildingViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -250,6 +260,8 @@ class BuildingViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_building(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class RoomViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -285,6 +297,8 @@ class RoomViewSet(FilterMixin, viewsets.ViewSet):
         obj = selectors.get_room_by_id(pk)
         services.delete_room(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    partial_update = update
 
 
 # ─────────────────────────────────────────────────────────────
@@ -325,6 +339,8 @@ class CohortViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_cohort(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class AcademicYearViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -359,6 +375,8 @@ class AcademicYearViewSet(FilterMixin, viewsets.ViewSet):
         obj = selectors.get_academic_year_by_id(pk)
         services.delete_academic_year(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    partial_update = update
 
 
 class SemesterViewSet(FilterMixin, viewsets.ViewSet):
@@ -396,6 +414,8 @@ class SemesterViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_semester(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class AdministrativeClassViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -431,6 +451,8 @@ class AdministrativeClassViewSet(FilterMixin, viewsets.ViewSet):
         obj = selectors.get_administrative_class_by_id(pk)
         services.delete_administrative_class(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    partial_update = update
 
 
 # ─────────────────────────────────────────────────────────────
@@ -471,6 +493,8 @@ class PriorityCategoryViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_priority_category(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class ExamTypeViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -505,6 +529,8 @@ class ExamTypeViewSet(FilterMixin, viewsets.ViewSet):
         obj = selectors.get_exam_type_by_id(pk)
         services.delete_exam_type(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    partial_update = update
 
 
 # ─────────────────────────────────────────────────────────────
@@ -545,6 +571,8 @@ class EthnicityViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_ethnicity(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class ReligionViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -580,6 +608,8 @@ class ReligionViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_religion(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class NationalityViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -614,6 +644,8 @@ class NationalityViewSet(FilterMixin, viewsets.ViewSet):
         obj = selectors.get_nationality_by_id(pk)
         services.delete_nationality(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    partial_update = update
 
 
 # ─────────────────────────────────────────────────────────────
@@ -654,6 +686,8 @@ class DegreeViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_degree(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class AcademicTitleViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -688,6 +722,8 @@ class AcademicTitleViewSet(FilterMixin, viewsets.ViewSet):
         obj = selectors.get_academictitle_by_id(pk)
         services.delete_academictitle(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    partial_update = update
 
 
 class AdmissionTypeViewSet(FilterMixin, viewsets.ViewSet):
@@ -724,6 +760,8 @@ class AdmissionTypeViewSet(FilterMixin, viewsets.ViewSet):
         services.delete_admissiontype(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    partial_update = update
+
 
 class PositionViewSet(FilterMixin, viewsets.ViewSet):
     pagination_class = CustomPagination
@@ -758,6 +796,8 @@ class PositionViewSet(FilterMixin, viewsets.ViewSet):
         obj = selectors.get_position_by_id(pk)
         services.delete_position(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    partial_update = update
 
 
 # ─────────────────────────────────────────────────────────────
@@ -797,3 +837,5 @@ class CourseTypeViewSet(FilterMixin, viewsets.ViewSet):
         obj = selectors.get_course_type_by_id(pk)
         services.delete_course_type(obj)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    partial_update = update

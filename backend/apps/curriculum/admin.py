@@ -3,9 +3,9 @@ from .models import Course, TrainingProgram, Prerequisite, EquivalentCourse, Tra
 
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'credits', 'major', 'is_active')
+    list_display = ('code', 'name', 'credits', 'department', 'is_active')
     search_fields = ('code', 'name')
-    list_filter = ('major', 'is_active')
+    list_filter = ('department', 'is_active')
 
 @admin.register(TrainingProgram)
 class TrainingProgramAdmin(admin.ModelAdmin):

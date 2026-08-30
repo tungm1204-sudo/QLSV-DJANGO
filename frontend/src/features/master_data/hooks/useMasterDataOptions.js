@@ -22,6 +22,7 @@ const createOptionHook = (queryKey, apiObj) => {
 };
 
 export const useMajorOptions = createOptionHook('majors', api.majorApi);
+export const useSpecializationOptions = createOptionHook('specializations', api.specializationApi);
 export const useDepartmentOptions = createOptionHook('departments', api.departmentApi);
 export const useAdministrativeClassOptions = createOptionHook('administrativeClasses', api.administrativeClassApi);
 export const useEducationSystemOptions = createOptionHook('educationSystems', api.educationSystemApi);
@@ -34,3 +35,6 @@ export const useNationalityOptions = createOptionHook('nationalities', api.natio
 export const useDegreeOptions = createOptionHook('degrees', api.degreeApi);
 export const useAcademicTitleOptions = createOptionHook('academicTitles', api.academicTitleApi);
 export const usePositionOptions = createOptionHook('positions', api.positionApi);
+export const useCourseTypeOptions = createOptionHook('courseTypes', api.courseTypeApi);
+export const useSemesterOptions = createOptionHook('semesters', api.semesterApi);
+export const useRoomOptions = createOptionHook('rooms', api.roomApi);

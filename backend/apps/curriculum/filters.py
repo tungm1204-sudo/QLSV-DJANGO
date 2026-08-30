@@ -2,13 +2,13 @@ import django_filters
 from .models import Course, CourseOffering, TrainingPlan, Schedule
 
 class CourseFilter(django_filters.FilterSet):
-    major_id = django_filters.UUIDFilter(field_name='major_id')
+    department_id = django_filters.UUIDFilter(field_name='department_id')
     course_type_id = django_filters.UUIDFilter(field_name='course_type_id')
     search = django_filters.CharFilter(method='filter_search')
 
     class Meta:
         model = Course
-        fields = ['major_id', 'course_type_id', 'is_active']
+        fields = ['department_id', 'course_type_id', 'is_active']
 
     def filter_search(self, queryset, name, value):
         from django.db.models import Q
@@ -38,6 +38,7 @@ class CourseOfferingFilter(django_filters.FilterSet):
 
 class ScheduleFilter(django_filters.FilterSet):
     course_offering_id = django_filters.UUIDFilter(field_name='course_offering_id')
+    training_plan_id = django_filters.UUIDFilter(field_name='course_offering__training_plan_id')
     room_id = django_filters.UUIDFilter(field_name='room_id')
     day_of_week = django_filters.CharFilter(field_name='day_of_week')
 

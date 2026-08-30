@@ -85,7 +85,7 @@ Các mã HTTP bắt buộc phải xử lý:
 ## 5. Tài khoản Test Mặc định
 Chạy Backend bằng lệnh `python manage.py runserver`, sau đó login bằng:
 - **Email:** `admin@school.edu.vn`
-- **Mật khẩu:** `Password123!`
+- **Mật khẩu:*Password123!* `                         `
 - **Role:** Administrator (Có quyền tạo thêm user và test mọi module).
 
 > **Lưu ý cuối:** Kiến trúc Backend đang sử dụng là **Thin Views - Fat Services** đảm bảo Transaction chặt chẽ và không có N+1 Queries. 

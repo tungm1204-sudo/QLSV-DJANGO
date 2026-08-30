@@ -8,6 +8,8 @@ import StudentTable from '../components/StudentTable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import { usePermissions } from '@/hooks/usePermissions';
+import { useDebounce } from '@/hooks/useDebounce';
 import {
   Dialog,
   DialogContent,
@@ -32,7 +34,10 @@ import {
 
 export default function StudentListPage() {
   const navigate = useNavigate();
+  const { hasPermission } = usePermissions();
   const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+  const [page, setPage] = useState(1);
   const [deleteConfig, setDeleteConfig] = useState({ isOpen: false, id: null });
   const [isExporting, setIsExporting] = useState(false);
   const fileInputRef = useRef(null);
@@ -46,8 +51,9 @@ export default function StudentListPage() {
   });
   const [tempFilters, setTempFilters] = useState(filters);
   
-  const { data: response, isLoading } = useStudents({ search: searchTerm, ...filters });
+  const { data: response, isLoading } = useStudents({ search: debouncedSearchTerm, page, ...filters });
   const students = response?.results || response || [];
+  const count = response?.count || 0;
   const { deleteMutation } = useStudentMutations();
   const importMutation = useStudentImport();
 
@@ -102,7 +108,10 @@ export default function StudentListPage() {
             <Input 
               placeholder="Tìm theo MSSV, Tên, Email..." 
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setPage(1);
+              }}
               className="pl-9"
             />
           </div>
@@ -195,11 +204,16 @@ export default function StudentListPage() {
                 <DialogFooter>
                   <Button 
                     variant="outline" 
-                    onClick={() => setTempFilters({ status: '', major: '', administrative_class: '', education_system: '' })}
+                    onClick={() => {
+                      setTempFilters({ status: '', major: '', administrative_class: '', education_system: '' });
+                      setFilters({ status: '', major: '', administrative_class: '', education_system: '' });
+                      setPage(1);
+                      setIsFilterOpen(false);
+                    }}
                   >
                     Xóa lọc
                   </Button>
-                  <Button onClick={() => { setFilters(tempFilters); setIsFilterOpen(false); }}>
+                  <Button onClick={() => { setFilters(tempFilters); setPage(1); setIsFilterOpen(false); }}>
                     Áp dụng
                   </Button>
                 </DialogFooter>
@@ -245,10 +259,13 @@ export default function StudentListPage() {
       <StudentTable 
         students={students}
         isLoading={isLoading}
-        canUpdate={true} // Tạm hardcode để test UI
-        canDelete={true} // Tạm hardcode để test UI
+        canUpdate={hasPermission('hr.change_student')}
+        canDelete={hasPermission('hr.delete_student')}
         handlePrintIdCard={handlePrintIdCard}
         setDeleteConfig={setDeleteConfig}
+        page={page}
+        setPage={setPage}
+        count={count}
       />
 
       <ConfirmModal 
